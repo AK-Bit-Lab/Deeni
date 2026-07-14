@@ -7,6 +7,7 @@ import {
   Calendar as CalendarIcon,
   Sparkles,
   Flame,
+  Trophy,
 } from "lucide-react";
 import ArabicLearning from "./components/ArabicLearning";
 import QiblaFinder from "./components/QiblaFinder";
@@ -14,6 +15,7 @@ import ZakatCalculator from "./components/ZakatCalculator";
 import HijriCalendar from "./components/HijriCalendar";
 import NamesOfAllah from "./components/NamesOfAllah";
 import DailyDeeds from "./components/DailyDeeds";
+import KnowledgeTest from "./components/KnowledgeTest";
 import SubscriptionGuard from "./components/SubscriptionGuard";
 
 function MainMenu() {
@@ -59,6 +61,13 @@ function MainMenu() {
       icon: <Sparkles className="w-7 h-7" />,
       path: "/names",
       color: "from-rose-500 to-rose-700",
+    },
+    {
+      title: "Knowledge Test",
+      desc: "Quiz · recorded on-chain",
+      icon: <Trophy className="w-7 h-7" />,
+      path: "/quiz",
+      color: "from-indigo-500 to-indigo-700",
     },
   ];
 
@@ -154,6 +163,7 @@ export default function App() {
           <Route path="/calendar" element={<HijriCalendar />} />
           <Route path="/names" element={<NamesOfAllah />} />
           <Route path="/deeds" element={<DailyDeeds />} />
+          <Route path="/quiz" element={<KnowledgeTest />} />
         </Routes>
       </SubscriptionGuard>
       <BottomNav />
