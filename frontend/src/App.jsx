@@ -26,8 +26,8 @@ function MainMenu() {
       color: "from-orange-500 to-orange-700",
     },
     {
-      title: "Learn Arabic",
-      desc: "28 letters with audio",
+      title: "Read Quran",
+      desc: "Letters · Tajweed · Words",
       icon: <BookOpen className="w-7 h-7" />,
       path: "/learn",
       color: "from-blue-500 to-blue-700",
