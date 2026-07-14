@@ -8,6 +8,8 @@ import {
   Sparkles,
   Flame,
   Trophy,
+  Sun,
+  Moon,
 } from "lucide-react";
 import ArabicLearning from "./components/ArabicLearning";
 import QiblaFinder from "./components/QiblaFinder";
@@ -18,6 +20,20 @@ import DailyDeeds from "./components/DailyDeeds";
 import KnowledgeTest from "./components/KnowledgeTest";
 import TasbihCounter from "./components/TasbihCounter";
 import SubscriptionGuard from "./components/SubscriptionGuard";
+import { useTheme } from "./hooks/useTheme";
+
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  return (
+    <button
+      onClick={toggle}
+      aria-label="Toggle dark mode"
+      className="w-9 h-9 rounded-full flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 active:scale-90 transition-transform"
+    >
+      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+    </button>
+  );
+}
 
 function MainMenu() {
   const cards = [
@@ -86,12 +102,13 @@ function MainMenu() {
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg shrink-0">
           <span className="text-2xl">☪️</span>
         </div>
-        <div>
-          <h1 className="text-3xl font-extrabold text-deeni-dark leading-none">
+        <div className="flex-1">
+          <h1 className="text-3xl font-extrabold text-deeni-dark dark:text-emerald-400 leading-none">
             Deeni
           </h1>
-          <p className="text-gray-500 text-sm">Your path of light · ديني</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Your path of light · ديني</p>
         </div>
+        <ThemeToggle />
       </div>
 
       {/* Bismillah banner */}
@@ -123,7 +140,7 @@ function MainMenu() {
 
       {/* On-chain badge */}
       <div className="mt-6 text-center">
-        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 bg-white px-3 py-1.5 rounded-full border border-gray-100">
+        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-gray-700">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           Fully on-chain · Built on Celo MiniPay
         </span>
@@ -142,13 +159,13 @@ function BottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 w-full bg-white/95 backdrop-blur border-t border-gray-200 flex justify-around p-2.5 pb-safe z-50">
+    <div className="fixed bottom-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur border-t border-gray-200 dark:border-gray-700 flex justify-around p-2.5 pb-safe z-50">
       {navs.map((n, i) => (
         <Link
           key={i}
           to={n.path}
           className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg ${
-            loc.pathname === n.path ? "text-deeni-dark" : "text-gray-400"
+            loc.pathname === n.path ? "text-deeni-dark dark:text-emerald-400" : "text-gray-400 dark:text-gray-500"
           }`}
         >
           {n.icon}
@@ -161,7 +178,7 @@ function BottomNav() {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-emerald-50 font-sans relative pb-20">
+    <div className="min-h-screen bg-emerald-50 dark:bg-gray-950 font-sans relative pb-20 transition-colors duration-300">
       <SubscriptionGuard>
         <Routes>
           <Route path="/" element={<MainMenu />} />
