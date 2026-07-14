@@ -16,6 +16,7 @@ import HijriCalendar from "./components/HijriCalendar";
 import NamesOfAllah from "./components/NamesOfAllah";
 import DailyDeeds from "./components/DailyDeeds";
 import KnowledgeTest from "./components/KnowledgeTest";
+import TasbihCounter from "./components/TasbihCounter";
 import SubscriptionGuard from "./components/SubscriptionGuard";
 
 function MainMenu() {
@@ -68,6 +69,13 @@ function MainMenu() {
       icon: <Trophy className="w-7 h-7" />,
       path: "/quiz",
       color: "from-indigo-500 to-indigo-700",
+    },
+    {
+      title: "Tasbih Counter",
+      desc: "Tap to count your dhikr",
+      icon: <span className="text-2xl leading-none">📿</span>,
+      path: "/tasbih",
+      color: "from-teal-500 to-teal-700",
     },
   ];
 
@@ -164,6 +172,7 @@ export default function App() {
           <Route path="/names" element={<NamesOfAllah />} />
           <Route path="/deeds" element={<DailyDeeds />} />
           <Route path="/quiz" element={<KnowledgeTest />} />
+          <Route path="/tasbih" element={<TasbihCounter />} />
         </Routes>
       </SubscriptionGuard>
       <BottomNav />
