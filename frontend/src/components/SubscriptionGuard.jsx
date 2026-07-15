@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { useSubscription } from "../hooks/useSubscription";
-import { isMiniPay } from "../constants";
+import { isMiniPay, DEENI_SUBSCRIPTION_ADDRESS } from "../constants";
 
 function formatExpiry(ts) {
   if (!ts) return null;
@@ -37,24 +37,11 @@ export default function SubscriptionGuard({ children }) {
 
   const [showPaywall, setShowPaywall] = useState(false);
 
-  // Once the contract address is configured, gate access on-chain.
+  // We treat the contract as "configured" only when the constant is non-zero.
   // While the address is still the placeholder (all zeros), we allow access
   // so the UI can be developed/tested before deployment.
-  const contractConfigured =
-    !!address &&
-    !/^0x0+$/.test(address) &&
-    !/^0x0+$/.test(
-      // imported lazily to avoid circular ref noise
-      (function () {
-        // eslint-disable-next-line no-undef
-        return "";
-      })()
-    );
-
-  // We treat the contract as "configured" only when the constant is non-zero.
-  const CONTRACT_ZERO = /^0x0+$/.test(
-    "0x0000000000000000000000000000000000000000"
-  );
+  const CONTRACT_ZERO = /^0x0+$/.test(DEENI_SUBSCRIPTION_ADDRESS);
+  const contractConfigured = !!address && !/^0x0+$/.test(address) && !CONTRACT_ZERO;
 
   useEffect(() => {
     if (!isConnected) return;
