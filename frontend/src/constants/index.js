@@ -6,14 +6,14 @@ export const DEENI_SUBSCRIPTION_ADDRESS =
   "0x0a254916F73A7b426abEEf24CEbC4bCAfD3a3aDD";
 
 // DeeniDeeds contract — on-chain daily deeds tracker.
-// TODO: set after deploying DeeniDeeds.sol
+// Deployed on Celo mainnet.
 export const DEENI_DEEDS_ADDRESS =
-  "0x0000000000000000000000000000000000000000";
+  "0xC8E75f3a0F1795FE4B60Fd18634657B6B98254A5";
 
 // DeeniQuiz contract — on-chain knowledge test results.
-// TODO: set after deploying DeeniQuiz.sol
+// Deployed on Celo mainnet.
 export const DEENI_QUIZ_ADDRESS =
-  "0x0000000000000000000000000000000000000000";
+  "0x12d3c130f4BdcEa1759A64399c3223Bbad1957c0";
 
 // 5 CELO subscription fee, matching the smart contract constant.
 export const SUBSCRIPTION_FEE_CELO = 5;
