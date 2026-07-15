@@ -11,6 +11,8 @@ export default function QiblaFinder() {
     heading !== null &&
     Math.abs(((direction - heading + 540) % 360) - 180) < 5;
 
+  const compassActive = heading !== null;
+
   return (
     <div className="p-5 max-w-md mx-auto pt-6 flex flex-col items-center">
       <Link to="/" className="self-start flex items-center gap-1 text-sm text-gray-500 mb-4">
@@ -83,10 +85,16 @@ export default function QiblaFinder() {
             className={`mt-5 px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
               aligned
                 ? "bg-emerald-600 text-white"
-                : "bg-emerald-50 text-emerald-700"
+                : compassActive
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-amber-50 text-amber-700"
             }`}
           >
-            {aligned ? "✅ Aligned with Qibla" : "Rotate to align"}
+            {aligned
+              ? "✅ Aligned with Qibla"
+              : compassActive
+              ? "Rotate to align"
+              : "Calibrating compass…"}
           </div>
 
           <p className="mt-4 text-center text-gray-600 font-medium">

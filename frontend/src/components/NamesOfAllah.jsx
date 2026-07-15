@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, Volume2, Search } from "lucide-react";
+import { speak } from "../utils/speak";
 
 // The 99 Names of Allah (Asma ul Husna).
 const NAMES = [
@@ -105,17 +106,7 @@ const NAMES = [
   { arabic: "الصَّبُورُ", translit: "As-Sabur", meaning: "The Patient One" },
 ];
 
-function speak(text) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  const ar = voices.find((v) => v.lang && v.lang.toLowerCase().startsWith("ar"));
-  if (ar) utter.voice = ar;
-  utter.lang = ar ? ar.lang : "ar-SA";
-  utter.rate = 0.75;
-  window.speechSynthesis.speak(utter);
-}
+// speak() is imported from ../utils/speak (robust mobile-friendly speech helper)
 
 export default function NamesOfAllah() {
   const [query, setQuery] = useState("");

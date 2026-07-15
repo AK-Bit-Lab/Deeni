@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Volume2, ChevronLeft, ChevronRight, BookOpen, CheckCircle2, Circle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { speak } from "../utils/speak";
 
 /* ────────────────────────────────────────────────────────────
    Deeni — Quran Reading Curriculum
@@ -114,18 +115,7 @@ const JOINING_EXAMPLES = [
 // Letters that do NOT connect to the following letter
 const NON_CONNECTING = ["ا", "د", "ذ", "ر", "ز", "و"];
 
-// ── Speech helper ────────────────────────────────────────────
-function speak(text) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  const ar = voices.find((v) => v.lang && v.lang.toLowerCase().startsWith("ar"));
-  if (ar) utter.voice = ar;
-  utter.rate = 0.75;
-  utter.lang = ar ? ar.lang : "ar-SA";
-  window.speechSynthesis.speak(utter);
-}
+// speak() is imported from ../utils/speak (robust mobile-friendly speech helper)
 
 // ── Stage definitions ─────────────────────────────────────────
 const STAGES = [

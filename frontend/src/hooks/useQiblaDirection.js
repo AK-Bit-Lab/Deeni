@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const MECCA_LAT = 21.422487;
 const MECCA_LNG = 39.826206;
@@ -9,6 +9,14 @@ const MECCA_LNG = 39.826206;
  * - Computes the true bearing from the user to the Kaaba (Qibla).
  * - Tracks the device compass heading so the UI can show a live needle
  *   that points toward Mecca relative to where the phone is facing.
+ *
+ * Key fixes for mobile (MiniPay / wallet dapp browsers):
+ * 1. Prefers `deviceorientationabsolute` (gives true compass heading on
+ *    Android) and does NOT let relative `deviceorientation` overwrite it.
+ * 2. Auto-starts the compass on non-iOS browsers (no permission needed).
+ * 3. Smooths the heading with a low-pass filter to reduce jitter.
+ * 4. Exposes `requestCompass()` for iOS 13+ permission (must be called
+ *    from a user gesture / tap).
  */
 export function useQiblaDirection() {
   const [direction, setDirection] = useState(null); // true bearing to Mecca
@@ -16,7 +24,10 @@ export function useQiblaDirection() {
   const [error, setError] = useState(null);
   const [location, setLocation] = useState(null);
   const [permission, setPermission] = useState("prompt");
+
   const cleanupRef = useRef(null);
+  const smoothRef = useRef(null); // smoothed heading for low-pass filter
+  const hasAbsoluteRef = useRef(false); // track if we've got absolute data
 
   // 1. Geolocation → bearing to Mecca
   useEffect(() => {
@@ -47,28 +58,66 @@ export function useQiblaDirection() {
     );
   }, []);
 
+  // Low-pass filter: smooth the heading to reduce sensor jitter.
+  // Handles wrap-around (0/360 boundary).
+  const smoothHeading = useCallback((raw) => {
+    const prev = smoothRef.current;
+    if (prev === null) {
+      smoothRef.current = raw;
+      return raw;
+    }
+    // Compute shortest angular difference
+    let diff = raw - prev;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    // Low-pass factor — lower = smoother but more lag
+    const smoothed = prev + diff * 0.3;
+    let result = (smoothed + 360) % 360;
+    smoothRef.current = result;
+    return result;
+  }, []);
+
   // 2. Device orientation → live compass heading
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const handler = (event) => {
       // iOS provides webkitCompassHeading (deg from North, clockwise).
+      // This is already absolute (true compass heading).
       if (typeof event.webkitCompassHeading === "number") {
-        setHeading(event.webkitCompassHeading);
+        hasAbsoluteRef.current = true;
+        setHeading(smoothHeading(event.webkitCompassHeading));
         return;
       }
-      // Android: alpha is rotation around z; heading = 360 - alpha.
-      if (typeof event.alpha === "number") {
+
+      // `deviceorientationabsolute` provides an absolute alpha (true compass).
+      if (event.absolute === true || event.type === "deviceorientationabsolute") {
+        if (typeof event.alpha === "number") {
+          hasAbsoluteRef.current = true;
+          // alpha is counter-clockwise from East on some devices, but
+          // for absolute events it's typically compass heading = 360 - alpha.
+          let h = 360 - event.alpha;
+          if (h >= 360) h -= 360;
+          setHeading(smoothHeading(h));
+        }
+        return;
+      }
+
+      // Regular `deviceorientation` — alpha is RELATIVE on Android.
+      // Only use it if we haven't received any absolute data yet.
+      if (!hasAbsoluteRef.current && typeof event.alpha === "number") {
         let h = 360 - event.alpha;
         if (h >= 360) h -= 360;
-        setHeading(h);
+        setHeading(smoothHeading(h));
       }
     };
 
     const start = async () => {
       // iOS 13+ requires permission via a user gesture.
-      if (typeof DeviceOrientationEvent !== "undefined" &&
-          typeof DeviceOrientationEvent.requestPermission === "function") {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+      ) {
         try {
           const res = await DeviceOrientationEvent.requestPermission();
           setPermission(res);
@@ -81,6 +130,8 @@ export function useQiblaDirection() {
           setPermission("denied");
         }
       } else {
+        // Android / other — no permission needed, auto-start.
+        // Register absolute first (preferred), then regular as fallback.
         window.addEventListener("deviceorientationabsolute", handler, true);
         window.addEventListener("deviceorientation", handler, true);
         cleanupRef.current = () => {
@@ -91,13 +142,23 @@ export function useQiblaDirection() {
       }
     };
 
-    // Expose a starter so the component can request permission on tap.
+    // Auto-start on non-iOS (Android, desktop). On iOS, the component
+    // will call requestCompass() from a tap.
+    const needsPermission =
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function";
+
+    if (!needsPermission) {
+      start();
+    }
+
+    // Expose starter for iOS tap-to-enable.
     useQiblaDirection._startCompass = start;
 
     return () => {
       if (cleanupRef.current) cleanupRef.current();
     };
-  }, []);
+  }, [smoothHeading]);
 
   // Relative angle the needle should rotate so it points to Mecca
   // given the phone's current heading.
@@ -111,6 +172,7 @@ export function useQiblaDirection() {
     location,
     error,
     permission,
-    requestCompass: () => useQiblaDirection._startCompass && useQiblaDirection._startCompass(),
+    requestCompass: () =>
+      useQiblaDirection._startCompass && useQiblaDirection._startCompass(),
   };
 }
