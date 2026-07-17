@@ -50,6 +50,18 @@ export default function SubscriptionGuard({ children }) {
     else setShowPaywall(false);
   }, [isConnected, isSubscribed, subLoading, CONTRACT_ZERO]);
 
+  // When the on-chain transaction is confirmed, reload the app so the
+  // freshly-updated subscription state is read from the contract. Without
+  // this the "Transaction confirmed! Reloading…" message stays forever
+  // because nothing actually triggers a refetch/reload.
+  useEffect(() => {
+    if (!isConfirmed) return;
+    const t = setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [isConfirmed]);
+
   // Not connected
   if (!isConnected) {
     const hasInjected =
