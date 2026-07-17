@@ -1,4 +1,6 @@
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { DEENI_DEEDS_ADDRESS, DEEDS_ABI } from "../constants";
 
 // Helper to read stats + "recorded today" for a single deed type id.
@@ -62,6 +64,25 @@ export function useDeeds() {
   const { writeContract, data: txHash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({ hash: txHash });
+
+  const queryClient = useQueryClient();
+
+  // After the recordDeed transaction is confirmed on-chain, invalidate all
+  // deed-related reads so the stats / "doneToday" / totalDeeds refetch and
+  // the UI updates immediately (progress count, streak, checkmark, etc.).
+  useEffect(() => {
+    if (!isConfirmed) return;
+    queryClient.invalidateQueries({
+      predicate: (query) =>
+        Array.isArray(query.queryKey) &&
+        query.queryKey.some(
+          (k) =>
+            typeof k === "object" &&
+            k !== null &&
+            k.address === DEENI_DEEDS_ADDRESS
+        ),
+    });
+  }, [isConfirmed, queryClient]);
 
   const recordDeed = (deedType, count) =>
     writeContract({

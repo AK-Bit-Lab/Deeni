@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, Flame, CheckCircle2, Loader2 } from "lucide-react";
 import { useDeeds } from "../hooks/useDeeds";
@@ -18,6 +18,13 @@ export default function DailyDeeds() {
     setActiveId(deed.id);
     recordDeed(deed.id, getCount(deed.id));
   };
+
+  // Once the on-chain transaction is confirmed, the hook invalidates the
+  // deed reads so stats refetch. Clear the active deed so the spinner stops
+  // and the freshly-updated checkmark / count render.
+  useEffect(() => {
+    if (isConfirmed) setActiveId(null);
+  }, [isConfirmed]);
 
   const doneTodayCount = stats.filter((s) => s.doneToday).length;
   const progress = Math.round((doneTodayCount / DEED_TYPES.length) * 100);
@@ -66,7 +73,7 @@ export default function DailyDeeds() {
       )}
       {isConfirmed && (
         <div className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
-          ✅ Deed recorded on-chain! Refreshing…
+          ✅ Deed recorded on-chain! Stats updated.
         </div>
       )}
 
