@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Volume2, ChevronLeft, ChevronRight, BookOpen, CheckCircle2, Circle } from "lucide-react";
+import { Volume2, ChevronLeft, ChevronRight, CheckCircle2, Circle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { speak } from "../utils/speak";
 
@@ -482,7 +482,7 @@ function StageJoining({ active, setActive }) {
             {active.word}
           </div>
           <div className="text-xl font-bold">{active.meaning}</div>
-          <div className="text-emerald-100 italic mb-2">"{active.phonetic}"</div>
+          <div className="text-emerald-100 italic mb-2">&ldquo;{active.phonetic}&rdquo;</div>
           <p className="text-emerald-100 text-xs mb-4 max-w-sm mx-auto">
             {active.note}
           </p>
