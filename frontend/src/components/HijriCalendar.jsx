@@ -78,9 +78,13 @@ export default function HijriCalendar() {
     return arr;
   }, [firstDay, numDays]);
 
+  const todayY = today.getFullYear();
+  const todayM = today.getMonth();
+  const todayD = today.getDate();
+
   const todayHijri = useMemo(
-    () => gregorianToHijri(today.getFullYear(), today.getMonth() + 1, today.getDate()),
-    [today.getFullYear(), today.getMonth(), today.getDate()]
+    () => gregorianToHijri(todayY, todayM + 1, todayD),
+    [todayY, todayM, todayD]
   );
 
   const prev = () =>
