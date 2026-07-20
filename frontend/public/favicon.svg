@@ -18,16 +18,24 @@
       <stop offset="0%" stop-color="#fef08a" /> <!-- Yellow 200 -->
       <stop offset="100%" stop-color="#f59e0b" /> <!-- Amber 500 -->
     </linearGradient>
+
+    <!-- Mask to create a mathematically perfect crescent -->
+    <mask id="crescentMask">
+      <rect width="64" height="64" fill="white" />
+      <circle cx="38" cy="26" r="16" fill="black" />
+    </mask>
   </defs>
 
   <!-- Base rounded rect with deep green gradient and subtle stroke -->
   <rect width="64" height="64" rx="18" fill="url(#g)" stroke="#34d399" stroke-width="1.5" opacity="0.9"/>
   
   <g filter="url(#glow)">
-    <!-- Modern crescent (slightly sharper, rotated for dynamic feel) -->
-    <path d="M42 34A14 14 0 1 1 24 16a11 11 0 1 0 18 18z" fill="#ecfdf5"/> <!-- Emerald 50 -->
+    <!-- The Crescent (using mask for perfect geometry) -->
+    <circle cx="28" cy="36" r="18" fill="#ecfdf5" mask="url(#crescentMask)" />
     
-    <!-- Dynamic star (sharper points, placed perfectly in the crescent curve) -->
-    <path d="M43 23l1.5 3 3.3.5-2.4 2.3.6 3.3-2.9-1.5-3 1.5.6-3.3-2.4-2.3 3.3-.5z" fill="url(#gold)"/>
+    <!-- The Star - Placed mathematically at the exact center of the subtracted curve (cx: 38, cy: 26) -->
+    <g transform="translate(38, 26)">
+      <polygon points="0,-7 2.2,-2.2 7,-2.2 3.1,1.5 4.5,6.5 0,4 -4.5,6.5 -3.1,1.5 -7,-2.2 -2.2,-2.2" fill="url(#gold)"/>
+    </g>
   </g>
 </svg>
