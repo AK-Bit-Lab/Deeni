@@ -182,7 +182,7 @@ export default function SubscriptionGuard({ children }) {
         )}
 
         {isConfirmed && (
-          <div className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
+          <div role="status" aria-live="polite" className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
             ✅ Transaction confirmed! Reloading…
           </div>
         )}

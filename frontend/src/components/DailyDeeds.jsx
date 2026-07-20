@@ -78,7 +78,7 @@ export default function DailyDeeds() {
         </div>
       )}
       {isConfirmed && (
-        <div className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
+        <div role="status" aria-live="polite" className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
           ✅ Deed recorded on-chain! Stats updated.
         </div>
       )}

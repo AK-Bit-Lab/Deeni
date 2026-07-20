@@ -439,7 +439,7 @@ export default function KnowledgeTest() {
           </div>
         )}
         {submitted && isConfirmed && (
-          <div className="flex items-center gap-2 text-sm text-emerald-600 mb-2 font-semibold">
+          <div role="status" aria-live="polite" className="flex items-center gap-2 text-sm text-emerald-600 mb-2 font-semibold">
             <CheckCircle2 className="w-4 h-4" /> Recorded on-chain! ✓
           </div>
         )}
