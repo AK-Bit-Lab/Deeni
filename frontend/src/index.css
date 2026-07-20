@@ -70,3 +70,18 @@ body {
 .animate-fade-up {
   animation: fadeUp 0.35s ease-out both;
 }
+
+/* Respect the user's OS-level reduced motion preference by disabling
+   decorative animations and transitions (compass needle, entrance
+   fade, theme/background transitions). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
+  .compass-needle {
+    transition: none;
+  }
+  body {
+    transition: none;
+  }
+}
