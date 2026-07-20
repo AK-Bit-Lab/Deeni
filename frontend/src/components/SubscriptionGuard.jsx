@@ -21,7 +21,7 @@ function daysLeft(ts) {
 }
 
 export default function SubscriptionGuard({ children }) {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { connect, connectors, isPending: isConnecting, error: connectError } = useConnect();
   const {
     isSubscribed,
@@ -42,7 +42,6 @@ export default function SubscriptionGuard({ children }) {
   // While the address is still the placeholder (all zeros), we allow access
   // so the UI can be developed/tested before deployment.
   const CONTRACT_ZERO = /^0x0+$/.test(DEENI_SUBSCRIPTION_ADDRESS);
-  const contractConfigured = !!address && !/^0x0+$/.test(address) && !CONTRACT_ZERO;
 
   useEffect(() => {
     if (!isConnected) return;
