@@ -21,9 +21,14 @@ export default function DailyDeeds() {
 
   // Once the on-chain transaction is confirmed, the hook invalidates the
   // deed reads so stats refetch. Clear the active deed so the spinner stops
-  // and the freshly-updated checkmark / count render.
+  // and the freshly-updated checkmark / count render. Then auto-reload the
+  // page after a short delay so the user sees the updated count without
+  // having to manually refresh.
   useEffect(() => {
-    if (isConfirmed) setActiveId(null);
+    if (!isConfirmed) return;
+    setActiveId(null);
+    const t = setTimeout(() => window.location.reload(), 1500);
+    return () => clearTimeout(t);
   }, [isConfirmed]);
 
   const doneTodayCount = stats.filter((s) => s.doneToday).length;
@@ -68,7 +73,16 @@ export default function DailyDeeds() {
 
       {error && (
         <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-xl">
-          {error.shortMessage || error.message}
+          {(() => {
+            const msg = error?.shortMessage || error?.message || "Transaction failed";
+            if (/user rejected|rejected request|User rejected|denied/i.test(msg))
+              return "Transaction rejected in wallet";
+            if (/reverted with the following reason/i.test(msg))
+              return "Transaction failed — contract reverted";
+            if (/nonce too low/i.test(msg))
+              return "Transaction failed — please try again";
+            return msg;
+          })()}
         </div>
       )}
       {isConfirmed && (
