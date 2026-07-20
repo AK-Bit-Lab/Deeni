@@ -176,7 +176,7 @@ export default function SubscriptionGuard({ children }) {
         </p>
 
         {error && (
-          <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-xl">
+          <div role="alert" className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-xl">
             {formatTxError(error)}
           </div>
         )}
