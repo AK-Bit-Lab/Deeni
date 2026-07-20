@@ -56,7 +56,7 @@ export default function DailyDeeds() {
       {/* Progress */}
       <div className="bg-white rounded-2xl shadow-sm border border-emerald-100 p-4 mb-5">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-semibold text-gray-700">Today's progress</span>
+          <span className="text-sm font-semibold text-gray-700">Today&apos;s progress</span>
           <span className="text-sm font-bold text-emerald-700">
             {doneTodayCount}/{DEED_TYPES.length}
           </span>
@@ -87,7 +87,7 @@ export default function DailyDeeds() {
       <div className="space-y-3 pb-24">
         {DEED_TYPES.map((deed) => {
           const s = stats[deed.id];
-          const busy = isPending && activeId === deed.id;
+          const busy = (isPending || isConfirming) && activeId === deed.id;
           return (
             <div
               key={deed.id}
