@@ -11,11 +11,14 @@
 | Feature | Description |
 |---------|-------------|
 | 🔥 **Daily Deeds** | Record daily worship on-chain — Quran recitation, dua, dhikr, salah, fasting, charity, learning, 99 Names. Tracks streaks, best streaks, and totals. Every record is a real Celo transaction. |
-| 📖 **Learn Arabic** | The full 28-letter Arabic alphabet with audio pronunciation (Web Speech API) & transliteration. |
+| 📖 **Learn Arabic** | A 4-stage curriculum — the 28 letters, harakat (vowel marks), Tajweed basics, and joining letters into words — with audio pronunciation (Web Speech API) & transliteration. |
 | 🧭 **Qibla Finder** | Live compass that points to the Kaaba using geolocation + device orientation (Haversine bearing). |
 | 🕌 **Hijri Calendar** | Accurate tabular Gregorian → Hijri conversion with a navigable month grid. |
 | 💰 **Zakat Calculator** | Gold, silver, cash, investments, business assets & debts with nisab threshold check (2.5%). |
 | ✨ **99 Names of Allah** | All 99 Asma ul Husna with Arabic text, transliteration, meaning, audio & search. |
+| 🏆 **Knowledge Test** | 10-topic Islamic quiz bank recorded on-chain (best score, attempt history) via `DeeniQuiz.sol`. |
+| 📿 **Tasbih Counter** | Tap-to-count dhikr with presets, haptic feedback, and persisted cycle/all-time totals. |
+| 🌗 **Dark mode** | System-aware light/dark theme toggle, persisted per device. |
 | 🔐 **On-chain Subscription** | 1-month free trial, then **5 CELO / month**. Fully managed by an on-chain smart contract. |
 
 ## 🏗️ Architecture
@@ -24,30 +27,42 @@
 deeni/
 ├── contracts/
 │   ├── DeeniSubscription.sol      # On-chain subscription (trial + 5 CELO/month)
-│   └── DeeniDeeds.sol             # On-chain daily deeds tracker (streaks + counts)
+│   ├── DeeniDeeds.sol             # On-chain daily deeds tracker (streaks + counts)
+│   └── DeeniQuiz.sol              # On-chain knowledge test results (best score, history)
 ├── flattened/                     # Single-file contracts for CeloScan verification
 │   ├── DeeniSubscription.sol
 │   ├── DeeniDeeds.sol
+│   ├── DeeniQuiz.sol
 │   └── DeeniCombined.sol
 └── frontend/
-    ├── index.html                 # branding, fonts (Inter, Scheherazade New, Amiri), favicon
-    ├── tailwind.config.js         # deeni color palette + Arabic fonts
+    ├── index.html                 # branding, fonts (Inter, Scheherazade New, Amiri), favicon, no-FOUC theme script
+    ├── tailwind.config.js         # deeni color palette + Arabic fonts + class-based dark mode
+    ├── vercel.json                # SPA rewrite so client-side routes survive a refresh on Vercel
+    ├── .eslintrc.cjs              # ESLint (React + hooks) — run with `npm run lint`
     └── src/
-        ├── App.jsx                # routes, home dashboard, bottom nav
-        ├── constants/index.js     # contract addresses + ABIs + DEED_TYPES + isMiniPay()
+        ├── App.jsx                # routes, home dashboard, dark mode toggle
+        ├── wagmiConfig.js         # wagmi v2 chain/connector config (Celo + Celo Sepolia)
+        ├── constants/index.js     # contract addresses + ABIs + DEED_TYPES + QUIZ_TOPICS + isMiniPay()
         ├── components/
-        │   ├── Providers.jsx          # wagmi v2 config + MiniPay auto-connect + web wallet
+        │   ├── Providers.jsx          # WagmiProvider/QueryClientProvider + MiniPay auto-connect
         │   ├── SubscriptionGuard.jsx  # on-chain gating (trial / pay) + Connect Wallet button
         │   ├── DailyDeeds.jsx         # on-chain deed recording UI with streaks
-        │   ├── ArabicLearning.jsx     # 28 letters + speech synthesis
+        │   ├── ArabicLearning.jsx     # 4-stage Quran reading curriculum + speech synthesis
         │   ├── QiblaFinder.jsx        # compass UI
         │   ├── ZakatCalculator.jsx    # multi-asset zakat
         │   ├── HijriCalendar.jsx      # tabular Hijri conversion
-        │   └── NamesOfAllah.jsx       # 99 names + audio + search
-        └── hooks/
-            ├── useSubscription.js     # read/write subscription contract
-            ├── useDeeds.js            # read/write deeds contract (streaks, counts)
-            └── useQiblaDirection.js   # geolocation + device orientation
+        │   ├── NamesOfAllah.jsx       # 99 names + audio + search
+        │   ├── KnowledgeTest.jsx      # on-chain quiz (10 topics, question bank, history)
+        │   └── TasbihCounter.jsx      # dhikr tap counter with presets + haptics
+        ├── hooks/
+        │   ├── useSubscription.js     # read/write subscription contract
+        │   ├── useDeeds.js            # read/write deeds contract (streaks, counts)
+        │   ├── useQuiz.js             # read/write quiz contract (best score, history)
+        │   ├── useQiblaDirection.js   # geolocation + device orientation
+        │   └── useTheme.js            # light/dark mode, persisted + system-aware
+        └── utils/
+            ├── speak.js               # speechSynthesis with Google TTS audio fallback (mobile webviews)
+            └── formatTxError.js       # shared wallet/tx error → friendly message mapping
 ```
 
 ### Tech stack
@@ -78,6 +93,8 @@ Both paths use the same wagmi `injected()` connector, so the on-chain subscripti
 cd frontend
 npm install
 npm run dev      # http://localhost:5173
+npm run lint     # ESLint check
+npm run build    # production build (dist/)
 ```
 
 ### 2. Deploy the smart contracts
@@ -113,6 +130,12 @@ Use the flattened contracts in [`flattened/`](flattened/README.md) to verify you
 - `getStats(user, deedType)` — total count, current streak, best streak
 - `getDeeds(user, offset, limit)` — paginated deed log
 - `DeedRecorded` event — emitted on every record for indexing
+
+### `DeeniQuiz`
+- `submitQuiz(topic, score, total, questionHash)` — record a completed quiz result on-chain (10 topics: Quran, Tajweed, Arabic Letters, Pillars of Islam, Pillars of Iman, Prophets, Seerah, Fiqh, Hadith, General Knowledge).
+- `getBest(user, topic)` — best score, best total, and attempt count for a topic
+- `getResults(user, offset, limit)` — paginated quiz history
+- `totalQuizzes(user)` — lifetime quiz count
 
 ## 📄 License
 
