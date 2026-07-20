@@ -149,7 +149,7 @@ export default function NamesOfAllah() {
             className="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 flex items-center gap-3 animate-fade-up"
           >
             <div className="flex-1">
-              <span className="text-2xl font-arabic text-rose-600 block leading-tight">
+              <span lang="ar" dir="rtl" className="text-2xl font-arabic text-rose-600 block leading-tight">
                 {name.arabic}
               </span>
               <span className="font-bold text-gray-800 text-sm">{name.translit}</span>
