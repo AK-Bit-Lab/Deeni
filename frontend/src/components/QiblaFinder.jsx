@@ -29,14 +29,18 @@ export default function QiblaFinder() {
           <p className="text-sm mt-1">{error}</p>
         </div>
       ) : direction === null ? (
-        <div className="flex flex-col items-center py-16">
+        <div className="flex flex-col items-center py-16" role="status" aria-live="polite">
           <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-gray-500">Detecting your location…</p>
         </div>
       ) : (
         <>
-          {/* Compass */}
-          <div className="relative w-64 h-64 rounded-full bg-white shadow-xl border-4 border-emerald-200 flex items-center justify-center">
+          {/* Compass — the visual bearing is announced as text below, so hide
+              the decorative graphic itself from screen readers. */}
+          <div
+            aria-hidden="true"
+            className="relative w-64 h-64 rounded-full bg-white shadow-xl border-4 border-emerald-200 flex items-center justify-center"
+          >
             {/* Cardinal labels */}
             <div className="absolute top-2 text-gray-400 font-bold text-sm">N</div>
             <div className="absolute right-3 text-gray-400 font-bold text-sm">E</div>
@@ -82,6 +86,8 @@ export default function QiblaFinder() {
 
           {/* Aligned indicator */}
           <div
+            role="status"
+            aria-live="polite"
             className={`mt-5 px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
               aligned
                 ? "bg-emerald-600 text-white"
