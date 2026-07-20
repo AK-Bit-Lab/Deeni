@@ -11,6 +11,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet" />
     <title>Deeni — Your Path of Light</title>
+    <script>
+      // Apply the saved/system theme before React mounts and before first
+      // paint, so dark-mode users don't see a flash of the light theme
+      // while useTheme's effect runs after hydration.
+      (function () {
+        try {
+          var stored = localStorage.getItem("deeni_theme");
+          var prefersDark =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (stored === "dark" || (!stored && prefersDark)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {
+          /* localStorage may be unavailable (e.g. privacy mode) — default to light */
+        }
+      })();
+    </script>
   </head>
   <body class="bg-emerald-50 text-gray-900">
     <div id="root"></div>
