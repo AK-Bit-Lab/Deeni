@@ -174,7 +174,7 @@ export default function TasbihCounter() {
 
       {/* Dhikr display */}
       <div className="bg-gradient-to-br from-teal-600 to-emerald-700 text-white rounded-2xl p-5 mb-4 shadow-md text-center">
-        <p className="font-quran text-3xl mb-2 leading-snug">{preset.arabic}</p>
+        <p lang="ar" dir="rtl" className="font-quran text-3xl mb-2 leading-snug">{preset.arabic}</p>
         <p className="text-teal-100 text-sm font-semibold">{preset.translit}</p>
         <p className="text-teal-200/70 text-xs mt-0.5">{preset.meaning}</p>
       </div>
