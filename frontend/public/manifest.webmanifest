@@ -1,0 +1,17 @@
+{
+  "name": "Deeni — Your Path of Light",
+  "short_name": "Deeni",
+  "description": "Deeni — your fully on-chain Islamic companion. Learn Arabic, find Qibla, calculate Zakat, Hijri calendar & the 99 Names of Allah. Built on Celo MiniPay.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ecfdf5",
+  "theme_color": "#047857",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
