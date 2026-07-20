@@ -20,12 +20,12 @@ export default function ZakatCalculator() {
   const [debts, setDebts] = useState("");
   const [useGoldNisab, setUseGoldNisab] = useState(true);
 
-  const goldValue = (parseFloat(goldGrams) || 0) * GOLD_PRICE_PER_GRAM;
-  const silverValue = (parseFloat(silverGrams) || 0) * SILVER_PRICE_PER_GRAM;
-  const cashValue = parseFloat(cash) || 0;
-  const invValue = parseFloat(investments) || 0;
-  const bizValue = parseFloat(business) || 0;
-  const debtValue = parseFloat(debts) || 0;
+  const goldValue = Math.max(0, parseFloat(goldGrams) || 0) * GOLD_PRICE_PER_GRAM;
+  const silverValue = Math.max(0, parseFloat(silverGrams) || 0) * SILVER_PRICE_PER_GRAM;
+  const cashValue = Math.max(0, parseFloat(cash) || 0);
+  const invValue = Math.max(0, parseFloat(investments) || 0);
+  const bizValue = Math.max(0, parseFloat(business) || 0);
+  const debtValue = Math.max(0, parseFloat(debts) || 0);
 
   const totalAssets = goldValue + silverValue + cashValue + invValue + bizValue;
   const totalWealth = Math.max(0, totalAssets - debtValue);
@@ -45,6 +45,7 @@ export default function ZakatCalculator() {
         <input
           type="number"
           inputMode="decimal"
+          min="0"
           value={value}
           onChange={(e) => setter(e.target.value)}
           className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-sm"
