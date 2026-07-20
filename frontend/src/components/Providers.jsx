@@ -1,25 +1,10 @@
 "use client";
 
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { celo, celoSepolia } from "wagmi/chains";
-import { injected } from "wagmi/connectors";
+import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useConnect, useAccount } from "wagmi";
-
-export const config = createConfig({
-  // Celo mainnet first (production). MiniPay on mainnet uses celo.
-  // Keep celoSepolia available for testnet developer testing.
-  chains: [celo, celoSepolia],
-  // `injected()` with no target picks up any injected EIP-1193 provider:
-  // MiniPay, MetaMask, Valora, Celo Wallet, etc.
-  connectors: [injected()],
-  transports: {
-    [celo.id]: http(),
-    [celoSepolia.id]: http(),
-  },
-  ssr: false,
-});
+import { config } from "../wagmiConfig";
 
 const queryClient = new QueryClient();
 
