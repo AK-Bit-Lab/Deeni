@@ -120,7 +120,7 @@ const NON_CONNECTING = ["ا", "د", "ذ", "ر", "ز", "و"];
 // ── Stage definitions ─────────────────────────────────────────
 const STAGES = [
   { id: 0, title: "The Letters", subtitle: "حُرُوف", desc: "Learn the 28 Arabic letters and their sounds.", icon: "🔤" },
-  { id: 1, title: "Harakat (Vowels)", subtitle: "حَرَكَات", desc: "Short & long vowel marks that go above and below letters.", icon: " vowel" },
+  { id: 1, title: "Harakat (Vowels)", subtitle: "حَرَكَات", desc: "Short & long vowel marks that go above and below letters.", icon: "🔡" },
   { id: 2, title: "Tajweed Basics", subtitle: "تَجْوِيد", desc: "Rules for proper pronunciation during recitation.", icon: "📜" },
   { id: 3, title: "Joining Letters", subtitle: "تَرْكِيب", desc: "Connect letters to form and read words.", icon: "🔗" },
 ];
@@ -293,7 +293,7 @@ function StageHarakat({ active, setActive }) {
   return (
     <div>
       <StageHeader
-        icon=" vowel"
+        icon="🔡"
         title="Harakat — Vowel Marks"
         arabic="حَرَكَات"
         desc="Harakat are the small marks above and below letters that give them their vowel sounds. Without them, Arabic letters have no vowel."
