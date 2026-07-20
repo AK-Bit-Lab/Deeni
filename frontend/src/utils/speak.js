@@ -70,7 +70,9 @@ function speakViaAudio(text, lang = "ar") {
   try {
     audio.pause();
     audio.currentTime = 0;
-  } catch (_) {}
+  } catch (_e) {
+    /* ignore — audio element may not have started playback yet */
+  }
 
   // Build TTS URL. Google Translate TTS endpoint.
   // textchunk: max ~200 chars per request.
@@ -109,10 +111,14 @@ export function speak(text, opts = {}) {
 
     try {
       synth.cancel();
-    } catch (_) {}
+    } catch (_e) {
+      /* cancel() can throw if no speech is queued; safe to ignore */
+    }
     try {
       synth.resume();
-    } catch (_) {}
+    } catch (_e) {
+      /* resume() can throw on some engines when nothing is paused */
+    }
 
     if (!voicesReady || !cachedVoices || cachedVoices.length === 0) {
       loadVoices();
@@ -172,7 +178,9 @@ export function speak(text, opts = {}) {
         speechFailed = true;
         try {
           synth.cancel();
-        } catch (_) {}
+        } catch (_e) {
+          /* ignore — best-effort cancel before falling back to audio */
+        }
         speakViaAudio(text, lang);
       }
     }, 3000);
@@ -196,7 +204,9 @@ export function primeSpeech() {
       const u = new SpeechSynthesisUtterance("");
       u.volume = 0;
       window.speechSynthesis.speak(u);
-    } catch (_) {}
+    } catch (_e) {
+      /* priming can fail silently on unsupported engines; non-fatal */
+    }
   }
   // Also pre-create the audio element so it's ready.
   getAudioEl();
