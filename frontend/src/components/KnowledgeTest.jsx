@@ -444,7 +444,7 @@ export default function KnowledgeTest() {
           </div>
         )}
         {error && (
-          <p className="text-xs text-rose-500 mb-2">{formatTxError(error)}</p>
+          <p role="alert" className="text-xs text-rose-500 mb-2">{formatTxError(error)}</p>
         )}
 
         <button
