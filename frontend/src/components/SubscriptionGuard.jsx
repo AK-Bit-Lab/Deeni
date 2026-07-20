@@ -97,7 +97,7 @@ export default function SubscriptionGuard({ children }) {
               Connect with MetaMask, Valora, Celo Wallet or any injected wallet.
             </p>
             {connectError && (
-              <p className="text-xs text-red-600 mt-2">
+              <p role="alert" className="text-xs text-red-600 mt-2">
                 {formatTxError(connectError, "Could not connect wallet")}
               </p>
             )}
