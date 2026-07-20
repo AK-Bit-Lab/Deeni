@@ -111,11 +111,13 @@ const NAMES = [
 export default function NamesOfAllah() {
   const [query, setQuery] = useState("");
 
-  const filtered = NAMES.filter(
-    (n) =>
-      n.translit.toLowerCase().includes(query.toLowerCase()) ||
-      n.meaning.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = NAMES.filter((n) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      n.translit.toLowerCase().includes(q) || n.meaning.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="p-5 max-w-screen-md mx-auto pt-6">
@@ -135,6 +137,7 @@ export default function NamesOfAllah() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search a name or meaning…"
+          aria-label="Search the 99 Names of Allah"
           className="w-full pl-10 pr-4 py-2.5 rounded-full border border-rose-100 bg-white text-sm focus:ring-2 focus:ring-rose-300 outline-none"
         />
       </div>
