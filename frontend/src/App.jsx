@@ -113,7 +113,7 @@ function MainMenu() {
 
       {/* Bismillah banner */}
       <div className="bg-gradient-to-r from-emerald-600 to-emerald-800 text-white rounded-2xl p-5 mb-6 shadow-md">
-        <p className="font-quran text-2xl text-center mb-1">
+        <p lang="ar" dir="rtl" className="font-quran text-2xl text-center mb-1">
           بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
         </p>
         <p className="text-emerald-100 text-xs text-center">
