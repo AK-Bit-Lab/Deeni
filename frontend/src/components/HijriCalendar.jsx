@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -69,14 +69,18 @@ export default function HijriCalendar() {
   const firstDay = new Date(view.year, view.month, 1).getDay();
   const numDays = daysInMonth(view.year, view.month);
 
-  const cells = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= numDays; d++) cells.push(d);
+  // Recomputing 30+ Hijri conversions on every render (e.g. from unrelated
+  // parent re-renders) is wasted work — memoize on the visible month/year.
+  const cells = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < firstDay; i++) arr.push(null);
+    for (let d = 1; d <= numDays; d++) arr.push(d);
+    return arr;
+  }, [firstDay, numDays]);
 
-  const todayHijri = gregorianToHijri(
-    today.getFullYear(),
-    today.getMonth() + 1,
-    today.getDate()
+  const todayHijri = useMemo(
+    () => gregorianToHijri(today.getFullYear(), today.getMonth() + 1, today.getDate()),
+    [today.getFullYear(), today.getMonth(), today.getDate()]
   );
 
   const prev = () =>
