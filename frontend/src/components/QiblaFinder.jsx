@@ -24,7 +24,7 @@ export default function QiblaFinder() {
       </p>
 
       {error ? (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl text-center w-full">
+        <div role="alert" className="bg-red-50 text-red-600 p-4 rounded-xl text-center w-full">
           <p className="font-semibold">Could not detect location</p>
           <p className="text-sm mt-1">{error}</p>
         </div>
