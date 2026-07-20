@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Trophy, CheckCircle2, XCircle, Loader2, Award } from "lucide-react";
 import { useQuiz, useQuizHistory } from "../hooks/useQuiz";
 import { QUIZ_TOPICS } from "../constants";
+import { formatTxError } from "../utils/formatTxError";
 
 /* ------------------------------------------------------------------ */
 /* Question bank — keyed by topic id (matches DeeniQuiz.sol 0-9).      */
@@ -443,7 +444,7 @@ export default function KnowledgeTest() {
           </div>
         )}
         {error && (
-          <p className="text-xs text-rose-500 mb-2">{error.shortMessage || error.message}</p>
+          <p className="text-xs text-rose-500 mb-2">{formatTxError(error)}</p>
         )}
 
         <button
