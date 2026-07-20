@@ -91,6 +91,17 @@ export default function TasbihCounter() {
     );
   }, [presetId, target, totalCount, vibrateOn]);
 
+  // Clear any pending pulse/cycle timers when the component unmounts, so
+  // setState is never called after unmount (avoids React warnings and a
+  // small memory leak if the user navigates away mid-animation).
+  const cycleTimer = useRef(null);
+  useEffect(() => {
+    return () => {
+      clearTimeout(pulseTimer.current);
+      clearTimeout(cycleTimer.current);
+    };
+  }, []);
+
   const tap = () => {
     const newCount = count + 1;
     setCount(newCount);
@@ -111,7 +122,8 @@ export default function TasbihCounter() {
       setTotalCycles((c) => c + 1);
       setCount(0);
       setShowCycleComplete(true);
-      setTimeout(() => setShowCycleComplete(false), 1500);
+      clearTimeout(cycleTimer.current);
+      cycleTimer.current = setTimeout(() => setShowCycleComplete(false), 1500);
     }
   };
 
