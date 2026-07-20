@@ -122,13 +122,13 @@ export default function HijriCalendar() {
       {/* Month grid */}
       <div className="bg-white rounded-2xl shadow-sm border border-purple-100 p-4">
         <div className="flex items-center justify-between mb-3">
-          <button onClick={prev} className="p-2 rounded-full hover:bg-purple-50">
+          <button onClick={prev} aria-label="Previous month" className="p-2 rounded-full hover:bg-purple-50">
             <ChevronLeft className="w-5 h-5 text-purple-700" />
           </button>
           <span className="font-bold text-purple-900">
             {GREG_MONTHS[view.month]} {view.year}
           </span>
-          <button onClick={next} className="p-2 rounded-full hover:bg-purple-50">
+          <button onClick={next} aria-label="Next month" className="p-2 rounded-full hover:bg-purple-50">
             <ChevronRight className="w-5 h-5 text-purple-700" />
           </button>
         </div>
