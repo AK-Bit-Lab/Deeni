@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { useSubscription } from "../hooks/useSubscription";
 import { isMiniPay, DEENI_SUBSCRIPTION_ADDRESS } from "../constants";
+import { formatTxError } from "../utils/formatTxError";
 
 function formatExpiry(ts) {
   if (!ts) return null;
@@ -98,7 +99,7 @@ export default function SubscriptionGuard({ children }) {
             </p>
             {connectError && (
               <p className="text-xs text-red-600 mt-2">
-                {connectError.shortMessage || connectError.message}
+                {formatTxError(connectError, "Could not connect wallet")}
               </p>
             )}
           </div>
@@ -177,7 +178,7 @@ export default function SubscriptionGuard({ children }) {
 
         {error && (
           <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-xl">
-            {error.shortMessage || error.message}
+            {formatTxError(error)}
           </div>
         )}
 

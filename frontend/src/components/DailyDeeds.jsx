@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, Flame, CheckCircle2, Loader2 } from "lucide-react";
 import { useDeeds } from "../hooks/useDeeds";
 import { DEED_TYPES, DEENI_DEEDS_ADDRESS } from "../constants";
+import { formatTxError } from "../utils/formatTxError";
 
 const DEEDS_ZERO = /^0x0+$/.test(DEENI_DEEDS_ADDRESS);
 
@@ -73,16 +74,7 @@ export default function DailyDeeds() {
 
       {error && (
         <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-xl">
-          {(() => {
-            const msg = error?.shortMessage || error?.message || "Transaction failed";
-            if (/user rejected|rejected request|User rejected|denied/i.test(msg))
-              return "Transaction rejected in wallet";
-            if (/reverted with the following reason/i.test(msg))
-              return "Transaction failed — contract reverted";
-            if (/nonce too low/i.test(msg))
-              return "Transaction failed — please try again";
-            return msg;
-          })()}
+          {formatTxError(error)}
         </div>
       )}
       {isConfirmed && (
