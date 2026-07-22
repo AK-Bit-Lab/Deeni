@@ -18,7 +18,7 @@ export const DEENI_QUIZ_ADDRESS =
 // DeeniQaidaProgress contract — on-chain Qaida lesson completion tracker.
 // Deployed on Celo mainnet.
 export const QAIDA_PROGRESS_ADDRESS =
-  "0x0000000000000000000000000000000000000000"; // TODO: deploy and update
+  "0x56b519312abb33f3a19f1bd5381218d283d52759";
 
 // 5 CELO subscription fee, matching the smart contract constant.
 export const SUBSCRIPTION_FEE_CELO = 5;
