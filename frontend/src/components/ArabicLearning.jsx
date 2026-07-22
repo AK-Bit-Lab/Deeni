@@ -1,125 +1,167 @@
 import { useState } from "react";
-import { Volume2, ChevronLeft, ChevronRight, CheckCircle2, Circle } from "lucide-react";
+import { Volume2, ChevronLeft, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { speak } from "../utils/speak";
 
-/* ────────────────────────────────────────────────────────────
-   Deeni — Quran Reading Curriculum
-   Stage 1: The 28 Arabic letters (Huroof)
-   Stage 2: Harakat — the short & long vowels (Fatha, Kasra, Damma, Sukun, Tanwin, Maddah)
-   Stage 3: Tajweed basics — pronunciation rules (Ghunnah, Qalqalah, Idgham, Ikhfa, Madd)
-   Stage 4: Joining letters — forming words from connected letters
-   ──────────────────────────────────────────────────────────── */
-
-// ── Stage 1: The 28 letters ──────────────────────────────────
-const ARABIC_ALPHABET = [
-  { letter: "ا", name: "Alif", translit: "ʾalif", phonetic: "alif" },
-  { letter: "ب", name: "Baa", translit: "bāʾ", phonetic: "baa" },
-  { letter: "ت", name: "Taa", translit: "tāʾ", phonetic: "taa" },
-  { letter: "ث", name: "Thaa", translit: "thāʾ", phonetic: "thaa" },
-  { letter: "ج", name: "Jeem", translit: "jīm", phonetic: "jeem" },
-  { letter: "ح", name: "Haa", translit: "ḥāʾ", phonetic: "haa" },
-  { letter: "خ", name: "Khaa", translit: "khāʾ", phonetic: "khaa" },
-  { letter: "د", name: "Daal", translit: "dāl", phonetic: "daal" },
-  { letter: "ذ", name: "Dhaal", translit: "dhāl", phonetic: "dhaal" },
-  { letter: "ر", name: "Raa", translit: "rāʾ", phonetic: "raa" },
-  { letter: "ز", name: "Zaa", translit: "zāy", phonetic: "zaa" },
-  { letter: "س", name: "Seen", translit: "sīn", phonetic: "seen" },
-  { letter: "ش", name: "Sheen", translit: "shīn", phonetic: "sheen" },
-  { letter: "ص", name: "Saad", translit: "ṣād", phonetic: "saad" },
-  { letter: "ض", name: "Daad", translit: "ḍād", phonetic: "daad" },
-  { letter: "ط", name: "Taa", translit: "ṭāʾ", phonetic: "taa" },
-  { letter: "ظ", name: "Zhaa", translit: "ẓāʾ", phonetic: "zhaa" },
-  { letter: "ع", name: "Ayn", translit: "ʿayn", phonetic: "ayn" },
-  { letter: "غ", name: "Ghayn", translit: "ghayn", phonetic: "ghayn" },
-  { letter: "ف", name: "Faa", translit: "fāʾ", phonetic: "faa" },
-  { letter: "ق", name: "Qaaf", translit: "qāf", phonetic: "qaaf" },
-  { letter: "ك", name: "Kaaf", translit: "kāf", phonetic: "kaaf" },
-  { letter: "ل", name: "Laam", translit: "lām", phonetic: "laam" },
-  { letter: "م", name: "Meem", translit: "mīm", phonetic: "meem" },
-  { letter: "ن", name: "Noon", translit: "nūn", phonetic: "noon" },
-  { letter: "ه", name: "Haa", translit: "hāʾ", phonetic: "haa" },
-  { letter: "و", name: "Waaw", translit: "wāw", phonetic: "waaw" },
-  { letter: "ي", name: "Yaa", translit: "yāʾ", phonetic: "yaa" },
-];
-
-// ── Stage 2: Harakat (vowel marks) ──────────────────────────
-const HARAKAT = [
-  { mark: "بَ", name: "Fatha", desc: "Short 'a' sound — a small diagonal line above the letter.", example: "بَ = ba", phonetic: "ba" },
-  { mark: "بِ", name: "Kasra", desc: "Short 'i' sound — a small diagonal line below the letter.", example: "بِ = bi", phonetic: "bi" },
-  { mark: "بُ", name: "Damma", desc: "Short 'u' sound — a small curl above the letter.", example: "بُ = bu", phonetic: "bu" },
-  { mark: "بْ", name: "Sukun", desc: "No vowel — a small circle above the letter. The consonant is pronounced without a following vowel.", example: "بْ = b (stop)", phonetic: "b" },
-  { mark: "بً", name: "Tanwin Fath", desc: "Double fatha — 'an' sound at the end of a word.", example: "بً = ban", phonetic: "ban" },
-  { mark: "بٍ", name: "Tanwin Kasr", desc: "Double kasra — 'in' sound at the end of a word.", example: "بٍ = bin", phonetic: "bin" },
-  { mark: "بٌ", name: "Tanwin Damm", desc: "Double damma — 'un' sound at the end of a word.", example: "بٌ = bun", phonetic: "bun" },
-  { mark: "آ", name: "Maddah", desc: "Long 'aa' — a tilde-shaped mark above Alif, extending the sound.", example: "آ = aa (long)", phonetic: "aa" },
-  { mark: "بّ", name: "Shadda", desc: "Doubles the consonant — a small 'w' shape above. The letter is pronounced twice.", example: "بّ = bb", phonetic: "bb" },
-];
-
-// ── Stage 3: Tajweed basics ──────────────────────────────────
-const TAJWEED_RULES = [
-  {
-    name: "Ghunnah (Nasalisation)",
-    arabic: "غُنَّة",
-    desc: "A nasal sound held for 2 beats. Occurs when a Noon or Meem has a Shadda, or when Noon Sakinah/ Tanwin meets Yaa or Waaw.",
-    example: "إِنَّا — 'innaa' (hold the 'nn' through the nose)",
-    phonetic: "innanaa",
-  },
-  {
-    name: "Qalqalah (Echo / Bounce)",
-    arabic: "قَلْقَلَة",
-    desc: "A slight bounce/echo on the letters ق ط ب ج د (Qutb Jadin) when they have a Sukun. The sound bounces without adding a vowel.",
-    example: "خَلَقْ — 'khalaq' (bounce on the q)",
-    phonetic: "khalaq",
-  },
-  {
-    name: "Idgham (Merging)",
-    arabic: "إِدْغَام",
-    desc: "When Noon Sakinah or Tanwin is followed by one of ي ر م ل و ن (Yarmalun), the Noon merges into the next letter.",
-    example: "مَنْ يَعْمَلْ — 'many yaʿmal' (merge the n into y)",
-    phonetic: "many yaʿmal",
-  },
-  {
-    name: "Ikhfa (Hiding)",
-    arabic: "إِخْفَاء",
-    desc: "When Noon Sakinah or Tanwin is followed by any of the 15 Ikhfa letters, the Noon is hidden with a nasal sound for 2 beats.",
-    example: "مِنْ قَبْلُ — 'min qablu' (soft nasal on the n)",
-    phonetic: "min qablu",
-  },
-  {
-    name: "Madd (Elongation)",
-    arabic: "مَدّ",
-    desc: "Stretching a vowel sound for 2 beats (some cases 4 or 6). Triggered by Alif, Waaw, Yaa after a matching short vowel, or by the Madd mark.",
-    example: "قَالَ — 'qaala' (stretch the aa to 2 beats)",
-    phonetic: "qaala",
-  },
-  {
-    name: "Iqlab (Conversion)",
-    arabic: "إِقْلَاب",
-    desc: "When Noon Sakinah or Tanwin is followed by Baa (ب), the Noon converts to a hidden Meem with a nasal sound.",
-    example: "مِنْ بَعْدِ — 'mim baʿdi' (n becomes m)",
-    phonetic: "mim baʿdi",
-  },
-];
-
-// ── Stage 4: Joining letters (word formation) ────────────────
-const JOINING_EXAMPLES = [
-  { word: "بَاب", parts: ["بَ", "ا", "ب"], meaning: "Door", phonetic: "baab", note: "Baa + Alif + Baa. Notice how Baa connects to Alif but the second Baa stands alone." },
-  { word: "كِتَاب", parts: ["كِ", "تَ", "ا", "ب"], meaning: "Book", phonetic: "kitaab", note: "Kaaf + Taa + Alif + Baa. The first three connect, Baa is separate." },
-  { word: "مَكْتَب", parts: ["مَ", "كْ", "تَ", "ب"], meaning: "Office / Desk", phonetic: "maktab", note: "Meem + Kaaf(sukun) + Taa + Baa. All connect together." },
-  { word: "أَحَد", parts: ["أَ", "حَ", "د"], meaning: "One", phonetic: "ahad", note: "Hamza + Haa + Daal. Daal never connects to the next letter." },
-  { word: "رَبّ", parts: ["رَ", "بّ"], meaning: "Lord", phonetic: "rabb", note: "Raa + Baa with Shadda (doubled). Hold the 'bb' for 2 beats." },
-  { word: "نُور", parts: ["نُ", "و", "ر"], meaning: "Light", phonetic: "noor", note: "Noon + Waaw + Raa. Waaw acts as a long 'oo' vowel here." },
-];
-
-// Letters that do NOT connect to the following letter
-const NON_CONNECTING = ["ا", "د", "ذ", "ر", "ز", "و"];
-
-// ── Stage 5: Practice Pages (Qaida Lessons) ──────────────────
+// ── Complete Linear Qaida Curriculum ─────────────────────────
 const QAIDA_LESSONS = [
   {
     id: 1,
-    title: "Lesson 1 (Pg 13)",
+    title: "Lesson 1: Alphabet",
+    subtitle: "حُرُوف الهِجَائِيَّة",
+    desc: "Learn the isolated Arabic letters.",
+    words: [
+      { text: "ا", phonetic: "alif" },
+      { text: "ب", phonetic: "baa" },
+      { text: "ت", phonetic: "taa" },
+      { text: "ث", phonetic: "thaa" },
+      { text: "ج", phonetic: "jeem" },
+      { text: "ح", phonetic: "haa" },
+      { text: "خ", phonetic: "khaa" },
+      { text: "د", phonetic: "daal" },
+      { text: "ذ", phonetic: "dhaal" },
+      { text: "ر", phonetic: "raa" },
+      { text: "ز", phonetic: "zaa" },
+      { text: "س", phonetic: "seen" },
+      { text: "ش", phonetic: "sheen" },
+      { text: "ص", phonetic: "saad" },
+      { text: "ض", phonetic: "daad" },
+      { text: "ط", phonetic: "taa" },
+      { text: "ظ", phonetic: "zhaa" },
+      { text: "ع", phonetic: "ayn" },
+      { text: "غ", phonetic: "ghayn" },
+      { text: "ف", phonetic: "faa" },
+      { text: "ق", phonetic: "qaaf" },
+      { text: "ك", phonetic: "kaaf" },
+      { text: "ل", phonetic: "laam" },
+      { text: "م", phonetic: "meem" },
+      { text: "ن", phonetic: "noon" },
+      { text: "و", phonetic: "waaw" },
+      { text: "ه", phonetic: "haa" },
+      { text: "لا", phonetic: "laam alif" },
+      { text: "ء", phonetic: "hamza" },
+      { text: "ي", phonetic: "yaa" }
+    ]
+  },
+  {
+    id: 2,
+    title: "Lesson 2: Fatha",
+    subtitle: "حَرَكَة الفَتْحَة",
+    desc: "Letters with the Fatha (short 'a') mark.",
+    words: [
+      { text: "اَ", phonetic: "a" },
+      { text: "بَ", phonetic: "ba" },
+      { text: "تَ", phonetic: "ta" },
+      { text: "ثَ", phonetic: "tha" },
+      { text: "جَ", phonetic: "ja" },
+      { text: "حَ", phonetic: "ha" },
+      { text: "خَ", phonetic: "kha" },
+      { text: "دَ", phonetic: "da" },
+      { text: "ذَ", phonetic: "dha" },
+      { text: "رَ", phonetic: "ra" },
+      { text: "زَ", phonetic: "za" },
+      { text: "سَ", phonetic: "sa" },
+      { text: "شَ", phonetic: "sha" },
+      { text: "صَ", phonetic: "sa" },
+      { text: "ضَ", phonetic: "da" },
+      { text: "طَ", phonetic: "ta" },
+      { text: "ظَ", phonetic: "za" },
+      { text: "عَ", phonetic: "a" },
+      { text: "غَ", phonetic: "gha" },
+      { text: "فَ", phonetic: "fa" },
+      { text: "قَ", phonetic: "qa" },
+      { text: "كَ", phonetic: "ka" },
+      { text: "لَ", phonetic: "la" },
+      { text: "مَ", phonetic: "ma" },
+      { text: "نَ", phonetic: "na" },
+      { text: "وَ", phonetic: "wa" },
+      { text: "هَ", phonetic: "ha" },
+      { text: "لاَ", phonetic: "laa" },
+      { text: "ءَ", phonetic: "a" },
+      { text: "يَ", phonetic: "ya" }
+    ]
+  },
+  {
+    id: 3,
+    title: "Lesson 3: Kasra",
+    subtitle: "حَرَكَة الكَسْرَة",
+    desc: "Letters with the Kasra (short 'i') mark.",
+    words: [
+      { text: "اِ", phonetic: "i" },
+      { text: "بِ", phonetic: "bi" },
+      { text: "تِ", phonetic: "ti" },
+      { text: "ثِ", phonetic: "thi" },
+      { text: "جِ", phonetic: "ji" },
+      { text: "حِ", phonetic: "hi" },
+      { text: "خِ", phonetic: "khi" },
+      { text: "دِ", phonetic: "di" },
+      { text: "ذِ", phonetic: "dhi" },
+      { text: "رِ", phonetic: "ri" },
+      { text: "زِ", phonetic: "zi" },
+      { text: "سِ", phonetic: "si" },
+      { text: "شِ", phonetic: "shi" },
+      { text: "صِ", phonetic: "si" },
+      { text: "ضِ", phonetic: "di" },
+      { text: "طِ", phonetic: "ti" },
+      { text: "ظِ", phonetic: "zi" },
+      { text: "عِ", phonetic: "i" },
+      { text: "غِ", phonetic: "ghi" },
+      { text: "فِ", phonetic: "fi" },
+      { text: "قِ", phonetic: "qi" },
+      { text: "كِ", phonetic: "ki" },
+      { text: "لِ", phonetic: "li" },
+      { text: "مِ", phonetic: "mi" },
+      { text: "نِ", phonetic: "ni" },
+      { text: "وِ", phonetic: "wi" },
+      { text: "هِ", phonetic: "hi" },
+      { text: "لاِ", phonetic: "li" },
+      { text: "ءِ", phonetic: "i" },
+      { text: "يِ", phonetic: "yi" }
+    ]
+  },
+  {
+    id: 4,
+    title: "Lesson 4: Damma",
+    subtitle: "حَرَكَة الضَّمَّة",
+    desc: "Letters with the Damma (short 'u') mark.",
+    words: [
+      { text: "اُ", phonetic: "u" },
+      { text: "بُ", phonetic: "bu" },
+      { text: "تُ", phonetic: "tu" },
+      { text: "ثُ", phonetic: "thu" },
+      { text: "جُ", phonetic: "ju" },
+      { text: "حُ", phonetic: "hu" },
+      { text: "خُ", phonetic: "khu" },
+      { text: "دُ", phonetic: "du" },
+      { text: "ذُ", phonetic: "dhu" },
+      { text: "رُ", phonetic: "ru" },
+      { text: "زُ", phonetic: "zu" },
+      { text: "سُ", phonetic: "su" },
+      { text: "شُ", phonetic: "shu" },
+      { text: "صُ", phonetic: "su" },
+      { text: "ضُ", phonetic: "du" },
+      { text: "طُ", phonetic: "tu" },
+      { text: "ظُ", phonetic: "zu" },
+      { text: "عُ", phonetic: "u" },
+      { text: "غُ", phonetic: "ghu" },
+      { text: "فُ", phonetic: "fu" },
+      { text: "قُ", phonetic: "qu" },
+      { text: "كُ", phonetic: "ku" },
+      { text: "لُ", phonetic: "lu" },
+      { text: "مُ", phonetic: "mu" },
+      { text: "نُ", phonetic: "nu" },
+      { text: "وُ", phonetic: "wu" },
+      { text: "هُ", phonetic: "hu" },
+      { text: "لاُ", phonetic: "lu" },
+      { text: "ءُ", phonetic: "u" },
+      { text: "يُ", phonetic: "yu" }
+    ]
+  },
+  {
+    id: 5,
+    title: "Lesson 5: Joining 1",
+    subtitle: "تَدْرِيبَات",
+    desc: "Practice reading joined words with vowels.",
     words: [
       { text: "أَغْوَا", phonetic: "aghwa" },
       { text: "أَفْوَا", phonetic: "afwa" },
@@ -135,8 +177,10 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 2,
-    title: "Lesson 2 (Pg 13)",
+    id: 6,
+    title: "Lesson 6: Joining 2",
+    subtitle: "تَدْرِيبَات",
+    desc: "More joined words.",
     words: [
       { text: "أَبِي", phonetic: "abi" },
       { text: "أَتِي", phonetic: "ati" },
@@ -168,10 +212,12 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 3,
-    title: "Lesson 3 (Pg 12)",
+    id: 7,
+    title: "Lesson 7: Practice",
+    subtitle: "تَدْرِيبَات",
+    desc: "Longer words and agreements.",
     words: [
-      { text: "خَائِفُونَ", phonetic: "khaa-ifoon" }, 
+      { text: "خَائِفُونَ", phonetic: "khaa-ifoon" },
       { text: "قَائِمُونَ", phonetic: "qaa-imoon" },
       { text: "غَافِلُونَ", phonetic: "ghaa-filoon" },
       { text: "حَاضِرُونَ", phonetic: "haa-diroon" },
@@ -186,8 +232,10 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 4,
-    title: "Lesson 4 (Pg 11)",
+    id: 8,
+    title: "Lesson 8: Phrases",
+    subtitle: "تَدْرِيبَات",
+    desc: "Short sentences and phrases.",
     words: [
       { text: "ذَاكِرُونَ", phonetic: "dhaa-kiroon" },
       { text: "رَاشِدُونَ", phonetic: "raa-shidoon" },
@@ -198,8 +246,10 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 5,
-    title: "Lesson 5 (Pg 10)",
+    id: 9,
+    title: "Lesson 9: More Words",
+    subtitle: "تَدْرِيبَات",
+    desc: "Additional spelling practice.",
     words: [
       { text: "قَلِيلٌ", phonetic: "qaleelun" },
       { text: "جَلِيلٌ", phonetic: "jaleelun" },
@@ -217,512 +267,147 @@ const QAIDA_LESSONS = [
   }
 ];
 
-// speak() is imported from ../utils/speak (robust mobile-friendly speech helper)
-
-// ── Stage definitions ─────────────────────────────────────────
-const STAGES = [
-  { id: 0, title: "Letters", subtitle: "حُرُوف", desc: "Learn the 28 Arabic letters and their sounds.", icon: "🔤" },
-  { id: 1, title: "Harakat", subtitle: "حَرَكَات", desc: "Short & long vowel marks that go above and below letters.", icon: "🔡" },
-  { id: 2, title: "Tajweed Basics", subtitle: "تَجْوِيد", desc: "Rules for proper pronunciation during recitation.", icon: "📜" },
-  { id: 3, title: "Joining Letters", subtitle: "تَرْكِيب", desc: "Connect letters to form words.", icon: "🔗" },
-  { id: 4, title: "Practice Pages", subtitle: "تَدْرِيبَات", desc: "Full lesson pages ending with 'Walsalam'.", icon: "📖" },
-];
-
-// ── Main component ────────────────────────────────────────────
 export default function ArabicLearning() {
-  const [stage, setStage] = useState(0);
-  const [active, setActive] = useState(null);
-  const [completed, setCompleted] = useState(() => {
+  const [activeLessonId, setActiveLessonId] = useState(1);
+  const [activeWord, setActiveWord] = useState(null);
+  const [completedLessons, setCompletedLessons] = useState(() => {
     try {
-      const saved = localStorage.getItem("deeni_quran_progress");
+      const saved = localStorage.getItem("deeni_qaida_progress");
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
-  const markComplete = (stageId) => {
-    if (completed.includes(stageId)) return;
-    const next = [...completed, stageId];
-    setCompleted(next);
-    try {
-      localStorage.setItem("deeni_quran_progress", JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
+  const currentLesson = QAIDA_LESSONS.find(l => l.id === activeLessonId);
+
+  const selectWord = (wordObj) => {
+    setActiveWord(wordObj);
+    speak(wordObj.text);
   };
 
-  const goStage = (id) => {
-    setStage(id);
-    setActive(null);
+  const completeLesson = () => {
+    // Mark as complete
+    if (!completedLessons.includes(activeLessonId)) {
+      const nextProgress = [...completedLessons, activeLessonId];
+      setCompletedLessons(nextProgress);
+      try {
+        localStorage.setItem("deeni_qaida_progress", JSON.stringify(nextProgress));
+      } catch {
+        // ignore
+      }
+    }
+
+    // Go to next lesson
+    if (activeLessonId < QAIDA_LESSONS.length) {
+      setActiveLessonId(activeLessonId + 1);
+      setActiveWord(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
     <div className="p-5 max-w-3xl mx-auto pt-6 pb-24">
-      <Link to="/" className="flex items-center gap-1 text-sm text-gray-500 mb-4">
-        <ChevronLeft className="w-4 h-4" /> Home
+      <Link to="/" className="flex items-center gap-1 text-sm text-gray-500 mb-4 hover:text-emerald-600 transition-colors">
+        <ChevronLeft className="w-4 h-4" /> Back to Home
       </Link>
 
       <h2 className="text-2xl font-extrabold text-emerald-800 mb-1">
         Learn to Read the Quran
       </h2>
       <p className="text-gray-500 text-sm mb-5">
-        A step-by-step journey: letters → vowels → tajweed → reading words.
+        Follow the lessons exactly as they appear in the book. Finish each page by reading all words and tapping Walsalam.
       </p>
 
-      {/* Stage progress bar */}
-      <div className="flex items-center gap-1.5 mb-6">
-        {STAGES.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => goStage(s.id)}
-            className={`flex-1 flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-[11px] font-semibold transition-all ${
-              stage === s.id
-                ? "bg-emerald-600 text-white shadow"
-                : completed.includes(s.id)
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-gray-100 text-gray-500"
-            }`}
-          >
-            {completed.includes(s.id) ? (
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            ) : (
-              <Circle className="w-3.5 h-3.5" />
-            )}
-            <span className="hidden sm:inline">{s.title}</span>
-            <span className="sm:hidden">{s.id + 1}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Stage content */}
-      {stage === 0 && <StageLetters active={active} setActive={setActive} />}
-      {stage === 1 && <StageHarakat active={active} setActive={setActive} />}
-      {stage === 2 && <StageTajweed active={active} setActive={setActive} />}
-      {stage === 3 && <StageJoining active={active} setActive={setActive} />}
-      {stage === 4 && <StagePracticePages active={active} setActive={setActive} />}
-
-      {/* Navigation */}
-      <div className="flex items-center justify-between mt-8 gap-3">
-        <button
-          onClick={() => stage > 0 && goStage(stage - 1)}
-          disabled={stage === 0}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 text-gray-600 disabled:opacity-40 hover:bg-gray-200 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" /> Previous
-        </button>
-
-        <div className="text-center">
-          <div className="text-xs text-gray-400">
-            Stage {stage + 1} of {STAGES.length}
-          </div>
-          <div className="text-sm font-semibold text-emerald-700">
-            {STAGES[stage].title}
-          </div>
-        </div>
-
-        {stage < STAGES.length - 1 ? (
-          <button
-            onClick={() => {
-              markComplete(stage);
-              goStage(stage + 1);
-            }}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
-          >
-            Next <ChevronRight className="w-4 h-4" />
-          </button>
-        ) : (
-          <button
-            onClick={() => markComplete(stage)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
-          >
-            <CheckCircle2 className="w-4 h-4" /> Finish
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ── Stage 1: Letters ──────────────────────────────────────── */
-function StageLetters({ active, setActive }) {
-  const select = (item) => {
-    setActive(item);
-    speak(item.letter);
-  };
-
-  return (
-    <div>
-      <StageHeader
-        icon="🔤"
-        title="The 28 Arabic Letters"
-        arabic="حُرُوف الهِجَائِيَّة"
-        desc="Tap any letter to hear its pronunciation. Master each letter before moving to vowels."
-      />
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-        {ARABIC_ALPHABET.map((item, idx) => (
-          <button
-            key={idx}
-            onClick={() => select(item)}
-            className={`bg-white rounded-2xl shadow-sm border p-4 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${
-              active && active.letter === item.letter
-                ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-50"
-                : "border-emerald-100 hover:bg-emerald-50"
-            }`}
-          >
-            <div className="text-4xl font-arabic text-emerald-600 leading-none">
-              {item.letter}
-            </div>
-            <div className="text-sm font-semibold text-gray-700 mt-1">
-              {item.name}
-            </div>
-            <div className="text-xs text-gray-400 italic">{item.translit}</div>
-          </button>
-        ))}
-      </div>
-      <ActiveCard active={active} field="letter" />
-    </div>
-  );
-}
-
-/* ── Stage 2: Harakat ──────────────────────────────────────── */
-function StageHarakat({ active, setActive }) {
-  const select = (item) => {
-    setActive(item);
-    speak(item.mark);
-  };
-
-  return (
-    <div>
-      <StageHeader
-        icon="🔡"
-        title="Harakat — Vowel Marks"
-        arabic="حَرَكَات"
-        desc="Harakat are the small marks above and below letters that give them their vowel sounds. Without them, Arabic letters have no vowel."
-      />
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {HARAKAT.map((item, idx) => (
-          <button
-            key={idx}
-            onClick={() => select(item)}
-            className={`bg-white rounded-2xl shadow-sm border p-4 flex flex-col items-center gap-1 transition-all active:scale-95 ${
-              active && active.name === item.name
-                ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-50"
-                : "border-emerald-100 hover:bg-emerald-50"
-            }`}
-          >
-            <div className="text-4xl font-arabic text-emerald-600 leading-none">
-              {item.mark}
-            </div>
-            <div className="text-sm font-semibold text-gray-700 mt-1">
-              {item.name}
-            </div>
-            <div className="text-xs text-gray-400">{item.example}</div>
-          </button>
-        ))}
-      </div>
-
-      {active && (
-        <div className="mt-6 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up">
-          <div className="text-6xl font-arabic mb-3 leading-none">{active.mark}</div>
-          <div className="text-xl font-bold">{active.name}</div>
-          <p className="text-emerald-100 text-sm mt-2 mb-4">{active.desc}</p>
-          <button
-            onClick={() => speak(active.mark)}
-            className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
-          >
-            <Volume2 className="w-4 h-4" /> Hear it
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Stage 3: Tajweed ──────────────────────────────────────── */
-function StageTajweed({ active, setActive }) {
-  const select = (item) => {
-    setActive(item);
-    speak(item.phonetic);
-  };
-
-  return (
-    <div>
-      <StageHeader
-        icon="📜"
-        title="Tajweed — Pronunciation Rules"
-        arabic="أَحْكَام التَّجْوِيد"
-        desc="Tajweed is the set of rules that governs proper pronunciation of letters and timing during recitation. This ensures you read the Quran accurately."
-      />
-      <div className="space-y-3">
-        {TAJWEED_RULES.map((item, idx) => (
-          <button
-            key={idx}
-            onClick={() => select(item)}
-            className={`w-full text-left bg-white rounded-2xl shadow-sm border p-4 transition-all active:scale-[0.98] ${
-              active && active.name === item.name
-                ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-50"
-                : "border-emerald-100 hover:bg-emerald-50"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-gray-800">
-                  {item.name}
-                </span>
-                <span className="text-lg font-arabic text-emerald-600">
-                  {item.arabic}
-                </span>
-              </div>
-              <Volume2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            </div>
-            <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
-            <div className="mt-2 bg-emerald-50 rounded-lg px-3 py-1.5">
-              <span className="text-sm font-arabic text-emerald-700">
-                {item.example}
-              </span>
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {active && (
-        <div className="mt-5 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up">
-          <div className="text-3xl font-arabic mb-2">{active.arabic}</div>
-          <div className="text-lg font-bold">{active.name}</div>
-          <p className="text-emerald-100 text-sm mt-2 mb-4">{active.desc}</p>
-          <button
-            onClick={() => speak(active.phonetic)}
-            className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
-          >
-            <Volume2 className="w-4 h-4" /> Hear example
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Stage 4: Joining letters ──────────────────────────────── */
-function StageJoining({ active, setActive }) {
-  const select = (item) => {
-    setActive(item);
-    speak(item.word);
-  };
-
-  return (
-    <div>
-      <StageHeader
-        icon="🔗"
-        title="Joining Letters — Reading Words"
-        arabic="تَرْكِيب الكَلِمَات"
-        desc="Arabic letters connect to form words. Most letters connect on both sides, but six letters (ا د ذ ر ز و) only connect to the letter before them, never after."
-      />
-
-      {/* Non-connecting letters reminder */}
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-5">
-        <div className="text-xs font-semibold text-amber-700 mb-2">
-          Non-connecting letters (only join from the right):
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {NON_CONNECTING.map((l, i) => (
-            <span
-              key={i}
-              className="text-2xl font-arabic bg-white rounded-lg px-3 py-1 text-amber-700 border border-amber-200"
-            >
-              {l}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        {JOINING_EXAMPLES.map((item, idx) => (
-          <button
-            key={idx}
-            onClick={() => select(item)}
-            className={`w-full text-left bg-white rounded-2xl shadow-sm border p-4 transition-all active:scale-[0.98] ${
-              active && active.word === item.word
-                ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-50"
-                : "border-emerald-100 hover:bg-emerald-50"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-4xl font-arabic text-emerald-700">
-                {item.word}
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-bold text-gray-700">
-                  {item.meaning}
-                </div>
-                <div className="text-xs text-gray-400 italic">
-                  {item.phonetic}
-                </div>
-              </div>
-            </div>
-            {/* Show the letter breakdown */}
-            <div className="flex items-center gap-1 flex-wrap mt-2">
-              {item.parts.map((p, i) => (
-                <span key={i} className="flex items-center">
-                  <span className="text-xl font-arabic bg-emerald-50 rounded px-2 py-0.5 text-emerald-600 border border-emerald-100">
-                    {p}
-                  </span>
-                  {i < item.parts.length - 1 && (
-                    <span className="text-gray-300 mx-0.5">+</span>
-                  )}
-                </span>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-2">{item.note}</p>
-          </button>
-        ))}
-      </div>
-
-      {active && (
-        <div className="mt-6 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up">
-          <div className="text-6xl font-arabic mb-3 leading-none">
-            {active.word}
-          </div>
-          <div className="text-xl font-bold">{active.meaning}</div>
-          <div className="text-emerald-100 italic mb-2">&ldquo;{active.phonetic}&rdquo;</div>
-          <p className="text-emerald-100 text-xs mb-4 max-w-sm mx-auto">
-            {active.note}
-          </p>
-          <button
-            onClick={() => speak(active.word)}
-            className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
-          >
-            <Volume2 className="w-4 h-4" /> Pronounce word
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Stage 5: Practice Pages (Qaida Layout) ───────────────── */
-function StagePracticePages({ active, setActive }) {
-  const [currentLesson, setCurrentLesson] = useState(QAIDA_LESSONS[0]);
-
-  const select = (wordObj) => {
-    setActive({ ...wordObj, name: wordObj.phonetic, letter: wordObj.text, mark: wordObj.text, translit: wordObj.phonetic });
-    speak(wordObj.text);
-  };
-
-  const completeLesson = () => {
-    const idx = QAIDA_LESSONS.findIndex(l => l.id === currentLesson.id);
-    if (idx < QAIDA_LESSONS.length - 1) {
-      setCurrentLesson(QAIDA_LESSONS[idx + 1]);
-      setActive(null);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  return (
-    <div>
-      <StageHeader
-        icon="📖"
-        title="Reading Practice"
-        arabic="تَدْرِيبَات هِجَائِيَّة"
-        desc="Practice reading full words as seen in a traditional Qaida book. Tap each word to hear it pronounced. Tap 'وَالسَّلَام' when you finish the lesson!"
-      />
-
-      <div className="flex flex-wrap gap-2 mb-6">
+      {/* Lesson Selector Row */}
+      <div className="flex overflow-x-auto gap-2 pb-3 mb-4 scrollbar-hide">
         {QAIDA_LESSONS.map((lesson) => (
           <button
             key={lesson.id}
-            onClick={() => { setCurrentLesson(lesson); setActive(null); }}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              currentLesson.id === lesson.id
+            onClick={() => { setActiveLessonId(lesson.id); setActiveWord(null); }}
+            className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-semibold transition-all ${activeLessonId === lesson.id
                 ? "bg-emerald-600 text-white shadow-sm"
-                : "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
-            }`}
+                : completedLessons.includes(lesson.id)
+                  ? "bg-emerald-100/50 text-emerald-700 border-emerald-200 border"
+                  : "bg-white text-gray-500 border border-gray-200"
+              }`}
           >
-            {lesson.title}
+            {completedLessons.includes(lesson.id) ? (
+              <CheckCircle2 className="w-3.5 h-3.5" />
+            ) : (
+              <span className="w-4 h-4 rounded-full bg-black/10 flex items-center justify-center text-[10px]">
+                {lesson.id}
+              </span>
+            )}
+            Lesson {lesson.id}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 bg-white p-4 rounded-t-2xl shadow-sm border border-emerald-100 border-b-0" dir="rtl">
+      {/* Lesson Header */}
+      <div className="mb-5 bg-white p-4 rounded-2xl shadow-sm border border-emerald-100 flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-2xl">📖</span>
+            <h3 className="text-lg font-bold text-emerald-800">{currentLesson.title}</h3>
+          </div>
+          <p className="text-gray-500 text-xs sm:text-sm leading-relaxed">{currentLesson.desc}</p>
+        </div>
+        <div className="text-2xl font-arabic text-emerald-500 hidden sm:block">
+          {currentLesson.subtitle}
+        </div>
+      </div>
+
+      {/* Practice Grid */}
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 sm:gap-3 bg-white p-4 sm:p-5 rounded-t-2xl shadow-sm border border-emerald-100 border-b-0" dir="rtl">
         {currentLesson.words.map((item, idx) => (
           <button
             key={idx}
-            onClick={() => select(item)}
-            className={`bg-emerald-50/50 rounded-xl border p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${
-              active && active.text === item.text
+            onClick={() => selectWord(item)}
+            className={`bg-emerald-50/40 rounded-xl border p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-90 ${activeWord && activeWord.text === item.text
                 ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-100"
-                : "border-emerald-100 hover:bg-emerald-100"
-            }`}
+                : "border-emerald-100 hover:bg-emerald-100/60"
+              }`}
           >
-            <div className="text-2xl font-arabic text-emerald-700 leading-none">
+            <div className="text-3xl font-arabic text-emerald-800 leading-none">
               {item.text}
             </div>
-            <div className="text-[10px] text-gray-500 italic font-sans mt-0.5" dir="ltr">
+            <div className="text-[9px] text-gray-400 italic font-sans mt-1" dir="ltr">
               {item.phonetic}
             </div>
           </button>
         ))}
       </div>
-      
+
       {/* Walsalam Button Bottom Bar */}
       <button
         onClick={completeLesson}
-        className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-600 to-emerald-800 text-white rounded-b-2xl p-5 shadow-sm active:scale-[0.99] transition-transform group flex flex-col items-center justify-center"
+        className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-600 to-emerald-800 text-white rounded-b-2xl p-6 shadow-sm active:scale-[0.99] transition-transform group flex flex-col items-center justify-center"
       >
         <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <div className="border border-emerald-400/40 px-6 py-2 rounded">
-          <span className="text-3xl font-arabic font-extrabold tracking-widest drop-shadow-sm">وَالسَّلَام</span>
+        <div className="border border-emerald-400/30 px-8 py-3 rounded bg-emerald-900/20 backdrop-blur-sm">
+          <span className="text-4xl sm:text-5xl font-arabic font-extrabold tracking-widest drop-shadow-sm text-emerald-50">وَالسَّلَام</span>
         </div>
-        <span className="text-emerald-100 text-[10px] font-bold uppercase mt-2 tracking-widest">Complete Lesson</span>
+        <span className="text-emerald-100/70 text-[11px] font-bold uppercase mt-3 tracking-widest group-hover:text-white transition-colors">
+          Tap when finished with this page
+        </span>
       </button>
 
-      {active && (
-        <div className="mt-6 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up">
-          <div className="text-5xl font-arabic mb-3 leading-none">
-            {active.text}
+      {/* Active Pronunciation Card */}
+      {activeWord && (
+        <div className="mt-6 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up shadow-lg">
+          <div className="text-7xl font-arabic mb-4 leading-none pt-2">
+            {activeWord.text}
           </div>
-          <div className="text-xl font-bold font-sans">{active.phonetic}</div>
+          <div className="text-xl font-bold font-sans tracking-wide text-emerald-50">{activeWord.phonetic}</div>
           <button
-            onClick={() => speak(active.text)}
-            className="mt-4 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
+            onClick={() => speak(activeWord.text)}
+            className="mt-6 inline-flex items-center justify-center w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full transition-colors active:scale-90"
           >
-            <Volume2 className="w-4 h-4" /> Listen
+            <Volume2 className="w-5 h-5" />
           </button>
         </div>
       )}
-    </div>
-  );
-}
-
-/* ── Shared sub-components ─────────────────────────────────── */
-function StageHeader({ icon, title, arabic, desc }) {
-  return (
-    <div className="mb-5">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="text-2xl">{icon}</span>
-        <h3 className="text-lg font-bold text-emerald-800">{title}</h3>
-        <span className="text-lg font-arabic text-emerald-500">{arabic}</span>
-      </div>
-      <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
-    </div>
-  );
-}
-
-function ActiveCard({ active, field }) {
-  if (!active) return null;
-  return (
-    <div className="mt-6 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up">
-      <div className="text-7xl font-arabic mb-3 leading-none">
-        {active[field]}
-      </div>
-      <div className="text-xl font-bold">{active.name}</div>
-      <div className="text-emerald-100 italic mb-4">{active.translit}</div>
-      <button
-        onClick={() => speak(active[field])}
-        className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
-      >
-        <Volume2 className="w-4 h-4" /> Pronounce again
-      </button>
     </div>
   );
 }
