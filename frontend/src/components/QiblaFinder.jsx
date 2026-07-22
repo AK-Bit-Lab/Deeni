@@ -3,7 +3,7 @@ import { ChevronLeft, Navigation } from "lucide-react";
 import { useQiblaDirection } from "../hooks/useQiblaDirection";
 
 export default function QiblaFinder() {
-  const { direction, heading, needleAngle, location, error, permission, requestCompass } =
+  const { direction, heading, needleAngle, location, error, permission, compassState, requestCompass } =
     useQiblaDirection();
 
   const aligned =
@@ -12,6 +12,7 @@ export default function QiblaFinder() {
     Math.abs(((direction - heading + 540) % 360) - 180) < 5;
 
   const compassActive = heading !== null;
+  const compassUnavailable = compassState === "unavailable";
 
   return (
     <div className="p-5 max-w-md mx-auto pt-6 flex flex-col items-center">
@@ -100,6 +101,8 @@ export default function QiblaFinder() {
               ? "✅ Aligned with Qibla"
               : compassActive
               ? "Rotate to align"
+              : compassUnavailable
+              ? "Compass unavailable — use bearing below"
               : "Calibrating compass…"}
           </div>
 
@@ -116,13 +119,24 @@ export default function QiblaFinder() {
             </p>
           )}
 
-          {permission !== "granted" && (
+          {permission !== "granted" && !compassUnavailable && (
             <button
               onClick={requestCompass}
               className="mt-5 inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-emerald-700"
             >
               <Navigation className="w-4 h-4" /> Enable live compass
             </button>
+          )}
+
+          {compassUnavailable && direction !== null && (
+            <div className="mt-5 bg-amber-50 border border-amber-200 rounded-xl p-4 text-center w-full">
+              <p className="text-amber-700 text-sm font-medium mb-2">
+                Your device does not have a compass sensor, or permission was denied.
+              </p>
+              <p className="text-amber-600 text-xs">
+                Use the bearing above ({Math.round(direction)}°) and a physical compass to find the Qibla.
+              </p>
+            </div>
           )}
         </>
       )}

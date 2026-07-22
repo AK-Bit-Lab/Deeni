@@ -10,13 +10,19 @@ const MECCA_LNG = 39.826206;
  * - Tracks the device compass heading so the UI can show a live needle
  *   that points toward Mecca relative to where the phone is facing.
  *
- * Key fixes for mobile (MiniPay / wallet dapp browsers):
- * 1. Prefers `deviceorientationabsolute` (gives true compass heading on
- *    Android) and does NOT let relative `deviceorientation` overwrite it.
+ * Robustness fixes:
+ * 1. Prefers `deviceorientationabsolute` (true compass on Android) and
+ *    does NOT let relative `deviceorientation` overwrite it.
  * 2. Auto-starts the compass on non-iOS browsers (no permission needed).
  * 3. Smooths the heading with a low-pass filter to reduce jitter.
  * 4. Exposes `requestCompass()` for iOS 13+ permission (must be called
  *    from a user gesture / tap).
+ * 5. Falls back gracefully when no orientation sensor is available
+ *    (desktop, denied permission, etc.) — still shows the bearing to
+ *    Mecca so the user can manually rotate.
+ * 6. Adds a timeout: if no orientation event arrives within 6s of
+ *    starting, we mark the compass as "unavailable" so the UI stops
+ *    showing "Calibrating compass…" forever.
  */
 export function useQiblaDirection() {
   const [direction, setDirection] = useState(null); // true bearing to Mecca
@@ -24,10 +30,12 @@ export function useQiblaDirection() {
   const [error, setError] = useState(null);
   const [location, setLocation] = useState(null);
   const [permission, setPermission] = useState("prompt");
+  const [compassState, setCompassState] = useState("idle"); // idle | starting | active | unavailable
 
   const cleanupRef = useRef(null);
   const smoothRef = useRef(null); // smoothed heading for low-pass filter
   const hasAbsoluteRef = useRef(false); // track if we've got absolute data
+  const startCompassRef = useRef(null); // stable ref to start function
 
   // 1. Geolocation → bearing to Mecca
   useEffect(() => {
@@ -86,6 +94,7 @@ export function useQiblaDirection() {
       // This is already absolute (true compass heading).
       if (typeof event.webkitCompassHeading === "number") {
         hasAbsoluteRef.current = true;
+        setCompassState("active");
         setHeading(smoothHeading(event.webkitCompassHeading));
         return;
       }
@@ -94,6 +103,7 @@ export function useQiblaDirection() {
       if (event.absolute === true || event.type === "deviceorientationabsolute") {
         if (typeof event.alpha === "number") {
           hasAbsoluteRef.current = true;
+          setCompassState("active");
           // alpha is counter-clockwise from East on some devices, but
           // for absolute events it's typically compass heading = 360 - alpha.
           let h = 360 - event.alpha;
@@ -108,6 +118,7 @@ export function useQiblaDirection() {
       if (!hasAbsoluteRef.current && typeof event.alpha === "number") {
         let h = 360 - event.alpha;
         if (h >= 360) h -= 360;
+        setCompassState("active");
         setHeading(smoothHeading(h));
       }
     };
@@ -125,9 +136,13 @@ export function useQiblaDirection() {
             window.addEventListener("deviceorientation", handler, true);
             cleanupRef.current = () =>
               window.removeEventListener("deviceorientation", handler, true);
+            setCompassState("starting");
+          } else {
+            setCompassState("unavailable");
           }
         } catch (e) {
           setPermission("denied");
+          setCompassState("unavailable");
         }
       } else {
         // Android / other — no permission needed, auto-start.
@@ -139,8 +154,11 @@ export function useQiblaDirection() {
           window.removeEventListener("deviceorientation", handler, true);
         };
         setPermission("granted");
+        setCompassState("starting");
       }
     };
+
+    startCompassRef.current = start;
 
     // Auto-start on non-iOS (Android, desktop). On iOS, the component
     // will call requestCompass() from a tap.
@@ -152,13 +170,19 @@ export function useQiblaDirection() {
       start();
     }
 
-    // Expose starter for iOS tap-to-enable.
-    useQiblaDirection._startCompass = start;
-
     return () => {
       if (cleanupRef.current) cleanupRef.current();
     };
   }, [smoothHeading]);
+
+  // Timeout: if no orientation event arrives within 6s, mark unavailable.
+  useEffect(() => {
+    if (compassState !== "starting") return;
+    const t = setTimeout(() => {
+      setCompassState((prev) => (prev === "starting" ? "unavailable" : prev));
+    }, 6000);
+    return () => clearTimeout(t);
+  }, [compassState]);
 
   // Relative angle the needle should rotate so it points to Mecca
   // given the phone's current heading.
@@ -172,7 +196,8 @@ export function useQiblaDirection() {
     location,
     error,
     permission,
+    compassState,
     requestCompass: () =>
-      useQiblaDirection._startCompass && useQiblaDirection._startCompass(),
+      startCompassRef.current && startCompassRef.current(),
   };
 }
