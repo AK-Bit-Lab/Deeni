@@ -115,14 +115,117 @@ const JOINING_EXAMPLES = [
 // Letters that do NOT connect to the following letter
 const NON_CONNECTING = ["ا", "د", "ذ", "ر", "ز", "و"];
 
+// ── Stage 5: Practice Pages (Qaida Lessons) ──────────────────
+const QAIDA_LESSONS = [
+  {
+    id: 1,
+    title: "Lesson 1 (Pg 13)",
+    words: [
+      { text: "أَغْوَا", phonetic: "aghwa" },
+      { text: "أَفْوَا", phonetic: "afwa" },
+      { text: "أَقْوَا", phonetic: "aqwa" },
+      { text: "أَكْوَا", phonetic: "akwa" },
+      { text: "أَلْوَا", phonetic: "alwa" },
+      { text: "أَمْوَا", phonetic: "amwa" },
+      { text: "أَنْوَا", phonetic: "anwa" },
+      { text: "أَوْوَا", phonetic: "awwa" },
+      { text: "أَهْوَا", phonetic: "ahwa" },
+      { text: "لَاء", phonetic: "laa" },
+      { text: "أَيَّوَا", phonetic: "ayyawa" },
+    ]
+  },
+  {
+    id: 2,
+    title: "Lesson 2 (Pg 13)",
+    words: [
+      { text: "أَبِي", phonetic: "abi" },
+      { text: "أَتِي", phonetic: "ati" },
+      { text: "أَثِي", phonetic: "athi" },
+      { text: "أَجِي", phonetic: "aji" },
+      { text: "أَحِي", phonetic: "ahi" },
+      { text: "أَخِي", phonetic: "akhi" },
+      { text: "أَدِي", phonetic: "adi" },
+      { text: "أَذِي", phonetic: "adhi" },
+      { text: "أَرِي", phonetic: "ari" },
+      { text: "أَزِي", phonetic: "azi" },
+      { text: "أَسِي", phonetic: "asi" },
+      { text: "أَشِي", phonetic: "ashi" },
+      { text: "أَصِي", phonetic: "asi" },
+      { text: "أَضِي", phonetic: "adi" },
+      { text: "أَطِي", phonetic: "ati" },
+      { text: "أَظِي", phonetic: "athi" },
+      { text: "أَعِي", phonetic: "a'i" },
+      { text: "أَغِي", phonetic: "aghi" },
+      { text: "أَفِي", phonetic: "afi" },
+      { text: "أَقِي", phonetic: "aqi" },
+      { text: "أَكِي", phonetic: "aki" },
+      { text: "أَلِي", phonetic: "ali" },
+      { text: "أَمِي", phonetic: "ami" },
+      { text: "أَنِي", phonetic: "ani" },
+      { text: "أَوِي", phonetic: "awi" },
+      { text: "هَوِي", phonetic: "hawi" },
+      { text: "يَوِي", phonetic: "yawi" }
+    ]
+  },
+  {
+    id: 3,
+    title: "Lesson 3 (Pg 12)",
+    words: [
+      { text: "خَائِفُونَ", phonetic: "khaa-ifoon" }, 
+      { text: "قَائِمُونَ", phonetic: "qaa-imoon" },
+      { text: "غَافِلُونَ", phonetic: "ghaa-filoon" },
+      { text: "حَاضِرُونَ", phonetic: "haa-diroon" },
+      { text: "تَائِبُونَ", phonetic: "taa-iboon" },
+      { text: "تَعْلَمُونَ", phonetic: "ta'lamoon" },
+      { text: "يَعْقِلُونَ", phonetic: "ya'qiloon" },
+      { text: "مَالِكُونَ", phonetic: "maa-likoon" },
+      { text: "هَاشِمُونَ", phonetic: "haa-shimoon" },
+      { text: "وَاسِعُونَ", phonetic: "waa-si'oon" },
+      { text: "تَكْلِمُونَ", phonetic: "tak-limoon" },
+      { text: "بَيْنَهُم", phonetic: "bay-nahum" }
+    ]
+  },
+  {
+    id: 4,
+    title: "Lesson 4 (Pg 11)",
+    words: [
+      { text: "ذَاكِرُونَ", phonetic: "dhaa-kiroon" },
+      { text: "رَاشِدُونَ", phonetic: "raa-shidoon" },
+      { text: "رَاهِبِينَ", phonetic: "raa-hibeen" },
+      { text: "الْعَالَمِينَ", phonetic: "al-aalameen" },
+      { text: "إنَّ اللَّهَ", phonetic: "innallaha" },
+      { text: "غَفُورٌ رَّحِيمٌ", phonetic: "ghafoorun-raheem" }
+    ]
+  },
+  {
+    id: 5,
+    title: "Lesson 5 (Pg 10)",
+    words: [
+      { text: "قَلِيلٌ", phonetic: "qaleelun" },
+      { text: "جَلِيلٌ", phonetic: "jaleelun" },
+      { text: "عَلِيلٌ", phonetic: "aleelun" },
+      { text: "رَفِيقٌ", phonetic: "rafeequn" },
+      { text: "رَحِيقٌ", phonetic: "raheequn" },
+      { text: "شَهِيقٌ", phonetic: "shaheequn" },
+      { text: "عَمِيقٌ", phonetic: "ameequn" },
+      { text: "مُعِينٌ", phonetic: "mu'eenun" },
+      { text: "مَتِينٌ", phonetic: "mateenun" },
+      { text: "أَمِينٌ", phonetic: "ameenun" },
+      { text: "بَعِيدٌ", phonetic: "ba'eedun" },
+      { text: "رَشِيدٌ", phonetic: "rasheedun" }
+    ]
+  }
+];
+
 // speak() is imported from ../utils/speak (robust mobile-friendly speech helper)
 
 // ── Stage definitions ─────────────────────────────────────────
 const STAGES = [
-  { id: 0, title: "The Letters", subtitle: "حُرُوف", desc: "Learn the 28 Arabic letters and their sounds.", icon: "🔤" },
-  { id: 1, title: "Harakat (Vowels)", subtitle: "حَرَكَات", desc: "Short & long vowel marks that go above and below letters.", icon: "🔡" },
+  { id: 0, title: "Letters", subtitle: "حُرُوف", desc: "Learn the 28 Arabic letters and their sounds.", icon: "🔤" },
+  { id: 1, title: "Harakat", subtitle: "حَرَكَات", desc: "Short & long vowel marks that go above and below letters.", icon: "🔡" },
   { id: 2, title: "Tajweed Basics", subtitle: "تَجْوِيد", desc: "Rules for proper pronunciation during recitation.", icon: "📜" },
-  { id: 3, title: "Joining Letters", subtitle: "تَرْكِيب", desc: "Connect letters to form and read words.", icon: "🔗" },
+  { id: 3, title: "Joining Letters", subtitle: "تَرْكِيب", desc: "Connect letters to form words.", icon: "🔗" },
+  { id: 4, title: "Practice Pages", subtitle: "تَدْرِيبَات", desc: "Full lesson pages ending with 'Walsalam'.", icon: "📖" },
 ];
 
 // ── Main component ────────────────────────────────────────────
@@ -193,12 +296,11 @@ export default function ArabicLearning() {
       </div>
 
       {/* Stage content */}
-      {stage === 0 && (
-        <StageLetters active={active} setActive={setActive} />
-      )}
+      {stage === 0 && <StageLetters active={active} setActive={setActive} />}
       {stage === 1 && <StageHarakat active={active} setActive={setActive} />}
       {stage === 2 && <StageTajweed active={active} setActive={setActive} />}
       {stage === 3 && <StageJoining active={active} setActive={setActive} />}
+      {stage === 4 && <StagePracticePages active={active} setActive={setActive} />}
 
       {/* Navigation */}
       <div className="flex items-center justify-between mt-8 gap-3">
@@ -491,6 +593,100 @@ function StageJoining({ active, setActive }) {
             className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
           >
             <Volume2 className="w-4 h-4" /> Pronounce word
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Stage 5: Practice Pages (Qaida Layout) ───────────────── */
+function StagePracticePages({ active, setActive }) {
+  const [currentLesson, setCurrentLesson] = useState(QAIDA_LESSONS[0]);
+
+  const select = (wordObj) => {
+    setActive({ ...wordObj, name: wordObj.phonetic, letter: wordObj.text, mark: wordObj.text, translit: wordObj.phonetic });
+    speak(wordObj.text);
+  };
+
+  const completeLesson = () => {
+    const idx = QAIDA_LESSONS.findIndex(l => l.id === currentLesson.id);
+    if (idx < QAIDA_LESSONS.length - 1) {
+      setCurrentLesson(QAIDA_LESSONS[idx + 1]);
+      setActive(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div>
+      <StageHeader
+        icon="📖"
+        title="Reading Practice"
+        arabic="تَدْرِيبَات هِجَائِيَّة"
+        desc="Practice reading full words as seen in a traditional Qaida book. Tap each word to hear it pronounced. Tap 'وَالسَّلَام' when you finish the lesson!"
+      />
+
+      <div className="flex flex-wrap gap-2 mb-6">
+        {QAIDA_LESSONS.map((lesson) => (
+          <button
+            key={lesson.id}
+            onClick={() => { setCurrentLesson(lesson); setActive(null); }}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              currentLesson.id === lesson.id
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
+            }`}
+          >
+            {lesson.title}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 bg-white p-4 rounded-t-2xl shadow-sm border border-emerald-100 border-b-0" dir="rtl">
+        {currentLesson.words.map((item, idx) => (
+          <button
+            key={idx}
+            onClick={() => select(item)}
+            className={`bg-emerald-50/50 rounded-xl border p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${
+              active && active.text === item.text
+                ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-100"
+                : "border-emerald-100 hover:bg-emerald-100"
+            }`}
+          >
+            <div className="text-2xl font-arabic text-emerald-700 leading-none">
+              {item.text}
+            </div>
+            <div className="text-[10px] text-gray-500 italic font-sans mt-0.5" dir="ltr">
+              {item.phonetic}
+            </div>
+          </button>
+        ))}
+      </div>
+      
+      {/* Walsalam Button Bottom Bar */}
+      <button
+        onClick={completeLesson}
+        className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-600 to-emerald-800 text-white rounded-b-2xl p-5 shadow-sm active:scale-[0.99] transition-transform group flex flex-col items-center justify-center"
+      >
+        <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div className="border border-emerald-400/40 px-6 py-2 rounded">
+          <span className="text-3xl font-arabic font-extrabold tracking-widest drop-shadow-sm">وَالسَّلَام</span>
+        </div>
+        <span className="text-emerald-100 text-[10px] font-bold uppercase mt-2 tracking-widest">Complete Lesson</span>
+      </button>
+
+      {active && (
+        <div className="mt-6 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-6 text-center animate-fade-up">
+          <div className="text-5xl font-arabic mb-3 leading-none">
+            {active.text}
+          </div>
+          <div className="text-xl font-bold font-sans">{active.phonetic}</div>
+          <button
+            onClick={() => speak(active.text)}
+            className="mt-4 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
+          >
+            <Volume2 className="w-4 h-4" /> Listen
           </button>
         </div>
       )}
