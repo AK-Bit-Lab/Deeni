@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { Volume2, ChevronLeft, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Volume2, ChevronLeft, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAccount } from "wagmi";
 import { speak } from "../utils/speak";
+import { useQaidaProgress } from "../hooks/useQaidaProgress";
 
 // ── Complete Linear Qaida Curriculum ─────────────────────────
 const QAIDA_LESSONS = [
@@ -551,16 +553,17 @@ export default function ArabicLearning() {
       return [];
     }
   });
+  const [txState, setTxState] = useState("idle"); // idle | pending | confirming | confirmed | error
+  const [txError, setTxError] = useState(null);
 
-  const currentLesson = QAIDA_LESSONS.find(l => l.id === activeLessonId);
+  const { isConnected } = useAccount();
+  const { completeLesson: recordOnChain, isPending, isConfirming, isConfirmed, error } = useQaidaProgress();
 
-  const selectWord = (wordObj) => {
-    setActiveWord(wordObj);
-    speak(wordObj.text);
-  };
+  // When the on-chain transaction confirms, mark the lesson complete locally and advance
+  useEffect(() => {
+    if (!isConfirmed) return;
+    setTxState("confirmed");
 
-  const completeLesson = () => {
-    // Mark as complete
     if (!completedLessons.includes(activeLessonId)) {
       const nextProgress = [...completedLessons, activeLessonId];
       setCompletedLessons(nextProgress);
@@ -576,6 +579,45 @@ export default function ArabicLearning() {
       setActiveLessonId(activeLessonId + 1);
       setActiveWord(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isConfirmed]);
+
+  // Surface write-contract errors
+  useEffect(() => {
+    if (!error) return;
+    setTxState("error");
+    setTxError(error);
+  }, [error]);
+
+  const currentLesson = QAIDA_LESSONS.find(l => l.id === activeLessonId);
+
+  const selectWord = (wordObj) => {
+    setActiveWord(wordObj);
+    speak(wordObj.text);
+  };
+
+  const completeLesson = () => {
+    if (isConnected) {
+      // On-chain flow: trigger transaction, advance on confirmation
+      setTxState("pending");
+      setTxError(null);
+      recordOnChain(activeLessonId);
+    } else {
+      // Fallback: local-only (no wallet connected)
+      if (!completedLessons.includes(activeLessonId)) {
+        const nextProgress = [...completedLessons, activeLessonId];
+        setCompletedLessons(nextProgress);
+        try {
+          localStorage.setItem("deeni_qaida_progress", JSON.stringify(nextProgress));
+        } catch {
+          // ignore
+        }
+      }
+      if (activeLessonId < QAIDA_LESSONS.length) {
+        setActiveLessonId(activeLessonId + 1);
+        setActiveWord(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -655,16 +697,51 @@ export default function ArabicLearning() {
       {/* Walsalam Button Bottom Bar */}
       <button
         onClick={completeLesson}
-        className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-600 to-emerald-800 text-white rounded-b-2xl p-6 shadow-sm active:scale-[0.99] transition-transform group flex flex-col items-center justify-center"
+        disabled={isPending || isConfirming}
+        className={`w-full relative overflow-hidden rounded-b-2xl p-6 shadow-sm transition-all group flex flex-col items-center justify-center ${
+          isPending || isConfirming
+            ? "bg-gradient-to-r from-emerald-500 to-emerald-700 cursor-wait"
+            : "bg-gradient-to-r from-emerald-600 to-emerald-800 active:scale-[0.99]"
+        }`}
       >
         <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
         <div className="border border-emerald-400/30 px-8 py-3 rounded bg-emerald-900/20 backdrop-blur-sm">
-          <span className="text-4xl sm:text-5xl font-arabic font-extrabold tracking-widest drop-shadow-sm text-emerald-50">وَالسَّلَام</span>
+          {isPending || isConfirming ? (
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-6 h-6 animate-spin text-emerald-200" />
+              <span className="text-lg font-bold text-emerald-100">
+                {isPending ? "Confirm in wallet…" : "Recording on-chain…"}
+              </span>
+            </div>
+          ) : (
+            <span className="text-4xl sm:text-5xl font-arabic font-extrabold tracking-widest drop-shadow-sm text-emerald-50">وَالسَّلَام</span>
+          )}
         </div>
         <span className="text-emerald-100/70 text-[11px] font-bold uppercase mt-3 tracking-widest group-hover:text-white transition-colors">
-          Tap when finished with this page
+          {isPending || isConfirming
+            ? "Please wait…"
+            : isConnected
+            ? "Sign on-chain to complete this lesson"
+            : "Tap when finished with this page"}
         </span>
       </button>
+
+      {/* Transaction error banner */}
+      {txState === "error" && txError && (
+        <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-red-700">Transaction failed</p>
+            <p className="text-xs text-red-500 mt-1">{txError.shortMessage || txError.message || "Unknown error"}</p>
+            <button
+              onClick={() => { setTxState("idle"); setTxError(null); }}
+              className="mt-2 text-xs font-semibold text-red-600 underline hover:text-red-800"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Active Pronunciation Card */}
       {activeWord && (

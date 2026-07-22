@@ -15,6 +15,11 @@ export const DEENI_DEEDS_ADDRESS =
 export const DEENI_QUIZ_ADDRESS =
   "0x12d3c130f4BdcEa1759A64399c3223Bbad1957c0";
 
+// DeeniQaidaProgress contract — on-chain Qaida lesson completion tracker.
+// Deployed on Celo mainnet.
+export const QAIDA_PROGRESS_ADDRESS =
+  "0x0000000000000000000000000000000000000000"; // TODO: deploy and update
+
 // 5 CELO subscription fee, matching the smart contract constant.
 export const SUBSCRIPTION_FEE_CELO = 5;
 
@@ -267,6 +272,85 @@ export const QUIZ_ABI = [
       { name: "score", type: "uint16", indexed: false },
       { name: "total", type: "uint16", indexed: false },
       { name: "questionHash", type: "bytes32", indexed: false },
+      { name: "timestamp", type: "uint64", indexed: false },
+    ],
+  },
+];
+
+// ABI for DeeniQaidaProgress.sol
+export const QAIDA_PROGRESS_ABI = [
+  {
+    type: "function",
+    name: "completeLesson",
+    inputs: [{ name: "lessonId", type: "uint8" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "completed",
+    inputs: [
+      { name: "", type: "address" },
+      { name: "", type: "uint8" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "highestLesson",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "uint8" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "totalCompletions",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "logCount",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getProgress",
+    inputs: [
+      { name: "user", type: "address" },
+      { name: "lessonId", type: "uint8" },
+    ],
+    outputs: [
+      { name: "highest", type: "uint8" },
+      { name: "total", type: "uint256" },
+      { name: "isCompleted", type: "bool" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getLogs",
+    inputs: [
+      { name: "user", type: "address" },
+      { name: "offset", type: "uint256" },
+      { name: "limit", type: "uint256" },
+    ],
+    outputs: [{ name: "page", type: "tuple[]", components: [
+      { name: "lessonId", type: "uint8" },
+      { name: "timestamp", type: "uint64" },
+    ]}],
+    stateMutability: "view",
+  },
+  {
+    type: "event",
+    name: "LessonCompleted",
+    inputs: [
+      { name: "user", type: "address", indexed: true },
+      { name: "lessonId", type: "uint8", indexed: true },
       { name: "timestamp", type: "uint64", indexed: false },
     ],
   },
