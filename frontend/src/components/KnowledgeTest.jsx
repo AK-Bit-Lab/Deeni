@@ -125,18 +125,26 @@ const QUESTION_BANK = {
 const QUESTIONS_PER_QUIZ = 5;
 
 // Simple string hash → bytes32 (deterministic, tamper-evident).
+// Produces a full 32-byte (64 hex char) value by hashing with four
+// independent 32-bit accumulators.
 function hashQuestions(questions) {
   const str = questions.map((q) => `${q.q}|${q.answer}`).join("||");
-  let h1 = 0x811c9dc5;
-  let h2 = 0x1000193;
+  let h0 = 0x811c9dc5;
+  let h1 = 0x1000193;
+  let h2 = 0x85ebca6b;
+  let h3 = 0xc2b2ae35;
   for (let i = 0; i < str.length; i++) {
     const c = str.charCodeAt(i);
-    h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
-    h2 = Math.imul((h2 + c) ^ (h2 >>> 13), 0x85ebca6b) >>> 0;
+    h0 = Math.imul(h0 ^ c, 0x01000193) >>> 0;
+    h1 = Math.imul((h1 + c) ^ (h1 >>> 13), 0x85ebca6b) >>> 0;
+    h2 = Math.imul(h2 ^ (c * 0x9e3779b9), 0x5bd1e995) >>> 0;
+    h3 = Math.imul((h3 + c) ^ (h3 >>> 17), 0x4b0bb929) >>> 0;
   }
   const hex =
+    h0.toString(16).padStart(8, "0") +
     h1.toString(16).padStart(8, "0") +
     h2.toString(16).padStart(8, "0") +
+    h3.toString(16).padStart(8, "0") +
     "00000000000000000000000000000000";
   return "0x" + hex.slice(0, 64);
 }
