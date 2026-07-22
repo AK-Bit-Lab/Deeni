@@ -343,7 +343,70 @@ const QAIDA_LESSONS = [
   },
   {
     id: 10,
-    title: "Lesson 10: Mixed Syllables",
+    title: "Lesson 10: Joined Syllables (Waw/Yaa)",
+    subtitle: "تَدْرِيبَات",
+    desc: "Practice reading joined syllables with Waw and Yaa after the Walsalam.",
+    words: [
+      { text: "اِبْنَوْ", phonetic: "ibnaw" },
+      { text: "زُوْ", phonetic: "zoo" },
+      { text: "جَا", phonetic: "jaa" },
+      { text: "خُوْ", phonetic: "khoo" },
+      { text: "زُوْ", phonetic: "zoo" },
+      { text: "زُبْ", phonetic: "zub" },
+      { text: "رَبِّي", phonetic: "rabbee" },
+      { text: "زَأْسُوْ", phonetic: "za'soo" },
+      { text: "شَوْوِيْ", phonetic: "shawwee" },
+      { text: "صَيْ", phonetic: "say" },
+      { text: "طَا", phonetic: "taa" },
+      { text: "ظُفْرُ", phonetic: "zufru" },
+      { text: "مَغْوْ", phonetic: "maghw" },
+      { text: "غَيْ", phonetic: "ghay" },
+      { text: "بِنْ", phonetic: "bin" },
+      { text: "قَوْ", phonetic: "qaw" },
+      { text: "لَوْ", phonetic: "law" },
+      { text: "بِيْ", phonetic: "bee" },
+      { text: "رَا", phonetic: "raa" },
+      { text: "مُوْهِيْ", phonetic: "moohee" },
+      { text: "تَكْوَلَاءُ", phonetic: "takwalaa'u" },
+      { text: "قَوْلَاءُ", phonetic: "qawlaa'u" },
+      { text: "وَالسَّلَام", phonetic: "wassalaam" }
+    ]
+  },
+  {
+    id: 11,
+    title: "Lesson 11: Joined Syllables & Phrases",
+    subtitle: "تَدْرِيبَات",
+    desc: "Practice reading joined syllables and short phrases after the Walsalam.",
+    words: [
+      { text: "اِبْزُوْ", phonetic: "ibzoo" },
+      { text: "زُوْ", phonetic: "zoo" },
+      { text: "جَا", phonetic: "jaa" },
+      { text: "خُوْ", phonetic: "khoo" },
+      { text: "زُوْ", phonetic: "zoo" },
+      { text: "زُبْ", phonetic: "zub" },
+      { text: "رَبِّي", phonetic: "rabbee" },
+      { text: "زَأْسُوْ", phonetic: "za'soo" },
+      { text: "شَوْوِيْ", phonetic: "shawwee" },
+      { text: "صَيْ", phonetic: "say" },
+      { text: "طَا", phonetic: "taa" },
+      { text: "ظُفْرُ", phonetic: "zufru" },
+      { text: "مَغْوْ", phonetic: "maghw" },
+      { text: "غَيْ", phonetic: "ghay" },
+      { text: "بِنْ", phonetic: "bin" },
+      { text: "قَوْ", phonetic: "qaw" },
+      { text: "لَوْ", phonetic: "law" },
+      { text: "بِيْ", phonetic: "bee" },
+      { text: "رَا", phonetic: "raa" },
+      { text: "مُوْهِيْ", phonetic: "moohee" },
+      { text: "تَكْوَلَاءُ", phonetic: "takwalaa'u" },
+      { text: "قَوْلَاءُ", phonetic: "qawlaa'u" },
+      { text: "وَالسَّلَام", phonetic: "wassalaam" },
+      { text: "مَلِكِ النَّاسِ", phonetic: "malikin-naas" }
+    ]
+  },
+  {
+    id: 12,
+    title: "Lesson 12: Mixed Syllables",
     subtitle: "تَدْرِيبَات",
     desc: "A mix of syllables to practice reading fluency.",
     words: [
@@ -368,8 +431,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 11,
-    title: "Lesson 11: Joining 1",
+    id: 13,
+    title: "Lesson 13: Joining 1",
     subtitle: "تَدْرِيبَات",
     desc: "Practice reading joined words with vowels.",
     words: [
@@ -387,8 +450,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 12,
-    title: "Lesson 12: Joining 2",
+    id: 14,
+    title: "Lesson 14: Joining 2",
     subtitle: "تَدْرِيبَات",
     desc: "More joined words.",
     words: [
@@ -422,8 +485,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 13,
-    title: "Lesson 13: Practice",
+    id: 15,
+    title: "Lesson 15: Practice",
     subtitle: "تَدْرِيبَات",
     desc: "Longer words and agreements.",
     words: [
@@ -442,8 +505,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 14,
-    title: "Lesson 14: Phrases",
+    id: 16,
+    title: "Lesson 16: Phrases",
     subtitle: "تَدْرِيبَات",
     desc: "Short sentences and phrases.",
     words: [
@@ -456,8 +519,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 15,
-    title: "Lesson 15: More Words",
+    id: 17,
+    title: "Lesson 17: More Words",
     subtitle: "تَدْرِيبَات",
     desc: "Additional spelling practice.",
     words: [

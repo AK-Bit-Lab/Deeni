@@ -16,6 +16,9 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Local-only tooling (never committed or exposed)
+/scripts/
+
 # Editor / OS
 .DS_Store
 .vscode/
@@ -26,3 +29,4 @@ yarn-error.log*
 # Cache
 .eslintcache
 .vite/
+.vercel
