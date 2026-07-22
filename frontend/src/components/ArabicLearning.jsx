@@ -159,7 +159,81 @@ const QAIDA_LESSONS = [
   },
   {
     id: 5,
-    title: "Lesson 5: Joining 1",
+    title: "Lesson 5: Vowels Mixed (Isolate)",
+    subtitle: "تَدْرِيبَات",
+    desc: "Read each letter with Fatha, Kasra, and Damma in sequence.",
+    words: [
+      { text: "أَ إِ أُ", phonetic: "a i u" },
+      { text: "بَ بِ بُ", phonetic: "ba bi bu" },
+      { text: "تَ تِ تُ", phonetic: "ta ti tu" },
+      { text: "ثَ ثِ ثُ", phonetic: "tha thi thu" },
+      { text: "جَ جِ جُ", phonetic: "ja ji ju" },
+      { text: "حَ حِ حُ", phonetic: "ha hi hu" },
+      { text: "خَ خِ خُ", phonetic: "kha khi khu" },
+      { text: "دَ دِ دُ", phonetic: "da di du" },
+      { text: "ذَ ذِ ذُ", phonetic: "dha dhi dhu" },
+      { text: "رَ رِ رُ", phonetic: "ra ri ru" },
+      { text: "زَ زِ زُ", phonetic: "za zi zu" },
+      { text: "سَ سِ سُ", phonetic: "sa si su" },
+      { text: "شَ شِ شُ", phonetic: "sha shi shu" },
+      { text: "صَ صِ صُ", phonetic: "sa si su" },
+      { text: "ضَ ضِ ضُ", phonetic: "da di du" },
+      { text: "طَ طِ طُ", phonetic: "ta ti tu" },
+      { text: "ظَ ظِ ظُ", phonetic: "za zi zu" },
+      { text: "عَ عِ عُ", phonetic: "a i u" },
+      { text: "غَ غِ غُ", phonetic: "gha ghi ghu" },
+      { text: "فَ فِ فُ", phonetic: "fa fi fu" },
+      { text: "قَ قِ قُ", phonetic: "qa qi qu" },
+      { text: "كَ كِ كُ", phonetic: "ka ki ku" },
+      { text: "لَ لِ لُ", phonetic: "la li lu" },
+      { text: "مَ مِ مُ", phonetic: "ma mi mu" },
+      { text: "نَ نِ نُ", phonetic: "na ni nu" },
+      { text: "وَ وِ وُ", phonetic: "wa wi wu" },
+      { text: "هَ هِ هُ", phonetic: "ha hi hu" },
+      { text: "ءَ ءِ ءُ", phonetic: "a i u" },
+      { text: "يَ يِ يُ", phonetic: "ya yi yu" }
+    ]
+  },
+  {
+    id: 6,
+    title: "Lesson 6: Vowels Mixed (Joined)",
+    subtitle: "تَدْرِيبَات",
+    desc: "Read the same mixed vowels, but notice how the letters connect to one another.",
+    words: [
+      { text: "آإِأُ", phonetic: "a i u" },
+      { text: "بَبِبُ", phonetic: "ba bi bu" },
+      { text: "تَتِتُ", phonetic: "ta ti tu" },
+      { text: "ثَثِثُ", phonetic: "tha thi thu" },
+      { text: "جَجِجُ", phonetic: "ja ji ju" },
+      { text: "حَحِحُ", phonetic: "ha hi hu" },
+      { text: "خَخِخُ", phonetic: "kha khi khu" },
+      { text: "دَدِدُ", phonetic: "da di du" },
+      { text: "ذَذِذُ", phonetic: "dha dhi dhu" },
+      { text: "رَرِرُ", phonetic: "ra ri ru" },
+      { text: "زَزِزُ", phonetic: "za zi zu" },
+      { text: "سَسِسُ", phonetic: "sa si su" },
+      { text: "شَشِشُ", phonetic: "sha shi shu" },
+      { text: "صَصِصُ", phonetic: "sa si su" },
+      { text: "ضَضِضُ", phonetic: "da di du" },
+      { text: "طَطِطُ", phonetic: "ta ti tu" },
+      { text: "ظَظِظُ", phonetic: "za zi zu" },
+      { text: "عَعِعُ", phonetic: "a i u" },
+      { text: "غَغِغُ", phonetic: "gha ghi ghu" },
+      { text: "فَفِفُ", phonetic: "fa fi fu" },
+      { text: "قَقِقُ", phonetic: "qa qi qu" },
+      { text: "كَكِكُ", phonetic: "ka ki ku" },
+      { text: "لَلِلُ", phonetic: "la li lu" },
+      { text: "مَمِمُ", phonetic: "ma mi mu" },
+      { text: "نَنِنُ", phonetic: "na ni nu" },
+      { text: "وَوِوُ", phonetic: "wa wi wu" },
+      { text: "هَهْهُ", phonetic: "ha hi hu" },
+      { text: "ءَئِؤُ", phonetic: "a i u" },
+      { text: "يَيِيُ", phonetic: "ya yi yu" }
+    ]
+  },
+  {
+    id: 7,
+    title: "Lesson 7: Joining 1",
     subtitle: "تَدْرِيبَات",
     desc: "Practice reading joined words with vowels.",
     words: [
@@ -177,8 +251,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 6,
-    title: "Lesson 6: Joining 2",
+    id: 8,
+    title: "Lesson 8: Joining 2",
     subtitle: "تَدْرِيبَات",
     desc: "More joined words.",
     words: [
@@ -212,8 +286,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 7,
-    title: "Lesson 7: Practice",
+    id: 9,
+    title: "Lesson 9: Practice",
     subtitle: "تَدْرِيبَات",
     desc: "Longer words and agreements.",
     words: [
@@ -232,8 +306,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 8,
-    title: "Lesson 8: Phrases",
+    id: 10,
+    title: "Lesson 10: Phrases",
     subtitle: "تَدْرِيبَات",
     desc: "Short sentences and phrases.",
     words: [
@@ -246,8 +320,8 @@ const QAIDA_LESSONS = [
     ]
   },
   {
-    id: 9,
-    title: "Lesson 9: More Words",
+    id: 11,
+    title: "Lesson 11: More Words",
     subtitle: "تَدْرِيبَات",
     desc: "Additional spelling practice.",
     words: [
@@ -326,10 +400,10 @@ export default function ArabicLearning() {
             key={lesson.id}
             onClick={() => { setActiveLessonId(lesson.id); setActiveWord(null); }}
             className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-semibold transition-all ${activeLessonId === lesson.id
-                ? "bg-emerald-600 text-white shadow-sm"
-                : completedLessons.includes(lesson.id)
-                  ? "bg-emerald-100/50 text-emerald-700 border-emerald-200 border"
-                  : "bg-white text-gray-500 border border-gray-200"
+              ? "bg-emerald-600 text-white shadow-sm"
+              : completedLessons.includes(lesson.id)
+                ? "bg-emerald-100/50 text-emerald-700 border-emerald-200 border"
+                : "bg-white text-gray-500 border border-gray-200"
               }`}
           >
             {completedLessons.includes(lesson.id) ? (
@@ -365,8 +439,8 @@ export default function ArabicLearning() {
             key={idx}
             onClick={() => selectWord(item)}
             className={`bg-emerald-50/40 rounded-xl border p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-90 ${activeWord && activeWord.text === item.text
-                ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-100"
-                : "border-emerald-100 hover:bg-emerald-100/60"
+              ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-100"
+              : "border-emerald-100 hover:bg-emerald-100/60"
               }`}
           >
             <div className="text-3xl font-arabic text-emerald-800 leading-none">
