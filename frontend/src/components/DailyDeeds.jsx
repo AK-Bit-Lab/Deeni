@@ -42,7 +42,7 @@ export default function DailyDeeds() {
       </Link>
       <h2 className="text-2xl font-extrabold text-emerald-800 mb-1">Daily Deeds</h2>
       <p className="text-gray-500 text-sm mb-5">
-        Record your daily worship on-chain. Each entry is a Celo transaction — an
+        Record your daily worship on-chain. Each entry is a Celo transaction - an
         immutable, verifiable log of your spiritual journey.
       </p>
 

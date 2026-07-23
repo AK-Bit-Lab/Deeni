@@ -17,7 +17,7 @@ function AutoConnect({ children }) {
 
   useEffect(() => {
     if (isConnected) return;
-    // MiniPay exposes window.ethereum.isMiniPay — connect implicitly.
+    // MiniPay exposes window.ethereum.isMiniPay - connect implicitly.
     if (typeof window !== "undefined" && window.ethereum && window.ethereum.isMiniPay) {
       connect({ connector: connectors[0] });
       return;

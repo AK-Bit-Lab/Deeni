@@ -1,9 +1,9 @@
 /**
- * speak.js — robust text-to-speech for mobile webviews (MiniPay, wallet
+ * speak.js - robust text-to-speech for mobile webviews (MiniPay, wallet
  * dapp browsers, in-app browsers).
  *
  * Strategy:
- * 1. Try the Web Speech API (speechSynthesis) — works in regular browsers.
+ * 1. Try the Web Speech API (speechSynthesis) - works in regular browsers.
  * 2. If speechSynthesis is missing or fails, fall back to an HTML5 <audio>
  *    element playing a Google Translate TTS URL. This works in any webview
  *    that can play audio (which is nearly all of them).
@@ -57,7 +57,7 @@ function getAudioEl() {
  * Play text via Google Translate TTS audio URL.
  * This endpoint returns an MP3 audio stream for the given text.
  * @param {string} text
- * @param {string} lang  — e.g. "ar" for Arabic
+ * @param {string} lang  - e.g. "ar" for Arabic
  */
 function speakViaAudio(text, lang = "ar") {
   const audio = getAudioEl();
@@ -71,7 +71,7 @@ function speakViaAudio(text, lang = "ar") {
     audio.pause();
     audio.currentTime = 0;
   } catch (_e) {
-    /* ignore — audio element may not have started playback yet */
+    /* ignore - audio element may not have started playback yet */
   }
 
   // Build TTS URL. Google Translate TTS endpoint.
@@ -94,8 +94,8 @@ function speakViaAudio(text, lang = "ar") {
 
 /**
  * Speak the given text. Safe to call on tap (user gesture).
- * @param {string} text  — the text to speak (Arabic or transliteration).
- * @param {object} opts   — optional: { rate, pitch, lang, forceAudio }
+ * @param {string} text  - the text to speak (Arabic or transliteration).
+ * @param {object} opts   - optional: { rate, pitch, lang, forceAudio }
  */
 export function speak(text, opts = {}) {
   if (typeof window === "undefined") {
@@ -179,7 +179,7 @@ export function speak(text, opts = {}) {
         try {
           synth.cancel();
         } catch (_e) {
-          /* ignore — best-effort cancel before falling back to audio */
+          /* ignore - best-effort cancel before falling back to audio */
         }
         speakViaAudio(text, lang);
       }
@@ -188,7 +188,7 @@ export function speak(text, opts = {}) {
     return;
   }
 
-  // No speechSynthesis — use audio TTS fallback.
+  // No speechSynthesis - use audio TTS fallback.
   speakViaAudio(text, lang);
 }
 

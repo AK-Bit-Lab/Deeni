@@ -5,17 +5,17 @@
 export const DEENI_SUBSCRIPTION_ADDRESS =
   "0x0a254916F73A7b426abEEf24CEbC4bCAfD3a3aDD";
 
-// DeeniDeeds contract — on-chain daily deeds tracker.
+// DeeniDeeds contract - on-chain daily deeds tracker.
 // Deployed on Celo mainnet.
 export const DEENI_DEEDS_ADDRESS =
   "0xC8E75f3a0F1795FE4B60Fd18634657B6B98254A5";
 
-// DeeniQuiz contract — on-chain knowledge test results.
+// DeeniQuiz contract - on-chain knowledge test results.
 // Deployed on Celo mainnet.
 export const DEENI_QUIZ_ADDRESS =
   "0x12d3c130f4BdcEa1759A64399c3223Bbad1957c0";
 
-// DeeniQaidaProgress contract — on-chain Qaida lesson completion tracker.
+// DeeniQaidaProgress contract - on-chain Qaida lesson completion tracker.
 // Deployed on Celo mainnet.
 export const QAIDA_PROGRESS_ADDRESS =
   "0x56b519312abb33f3a19f1bd5381218d283d52759";

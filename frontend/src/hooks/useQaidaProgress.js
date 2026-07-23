@@ -7,7 +7,7 @@ import { QAIDA_PROGRESS_ADDRESS, QAIDA_PROGRESS_ABI } from "../constants";
  * useQaidaProgress
  * Reads on-chain Qaida lesson progress for the connected wallet and exposes
  * a write helper to record lesson completion (which costs gas on Celo).
- * Unlike DeeniDeeds, there is no "once per day" restriction — users can
+ * Unlike DeeniDeeds, there is no "once per day" restriction - users can
  * complete multiple lessons in a single session.
  */
 export function useQaidaProgress() {
@@ -66,6 +66,7 @@ export function useQaidaProgress() {
     highestLesson: highestLesson ? Number(highestLesson) : 0,
     totalCompletions: totalCompletions ? Number(totalCompletions) : 0,
     completeLesson,
+    txHash,
     isPending,
     isConfirming,
     isConfirmed,

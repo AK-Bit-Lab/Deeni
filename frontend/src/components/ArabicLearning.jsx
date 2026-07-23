@@ -557,11 +557,14 @@ export default function ArabicLearning() {
   const [txError, setTxError] = useState(null);
 
   const { isConnected } = useAccount();
-  const { completeLesson: recordOnChain, isPending, isConfirming, isConfirmed, error } = useQaidaProgress();
+  const { completeLesson: recordOnChain, txHash, isPending, isConfirming, isConfirmed, error } = useQaidaProgress();
 
-  // When the on-chain transaction confirms, mark the lesson complete locally and advance
+  // When the on-chain transaction confirms, mark the lesson complete locally and advance.
+  // We depend on txHash (not just isConfirmed) so the effect fires on every new
+  // transaction - otherwise isConfirmed stays true after the first lesson and the
+  // page never auto-advances for subsequent lessons.
   useEffect(() => {
-    if (!isConfirmed) return;
+    if (!isConfirmed || !txHash) return;
     setTxState("confirmed");
 
     if (!completedLessons.includes(activeLessonId)) {
@@ -580,7 +583,7 @@ export default function ArabicLearning() {
       setActiveWord(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [isConfirmed]);
+  }, [isConfirmed, txHash]);
 
   // Surface write-contract errors
   useEffect(() => {

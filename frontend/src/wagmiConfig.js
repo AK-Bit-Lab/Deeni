@@ -3,7 +3,7 @@ import { celo, celoSepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 
 // Wagmi config lives in its own module (rather than inside Providers.jsx)
-// so that file only exports the Providers component — this keeps Vite's
+// so that file only exports the Providers component - this keeps Vite's
 // React Fast Refresh working correctly, since a file mixing component and
 // non-component exports forces a full reload on every edit.
 export const config = createConfig({

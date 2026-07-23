@@ -76,7 +76,7 @@ export default function SubscriptionGuard({ children }) {
           Welcome to Deeni
         </h1>
         <p className="text-gray-600 mb-6 max-w-xs">
-          Your fully on-chain Islamic companion — learn Arabic, find Qibla,
+          Your fully on-chain Islamic companion - learn Arabic, find Qibla,
           calculate Zakat and more.
         </p>
 
@@ -125,13 +125,13 @@ export default function SubscriptionGuard({ children }) {
     );
   }
 
-  // Dev mode (contract not deployed yet) — open access
+  // Dev mode (contract not deployed yet) - open access
   if (CONTRACT_ZERO) {
     return (
       <>
         {children}
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-amber-100 text-amber-800 text-xs px-3 py-1.5 rounded-full shadow z-40">
-          Dev mode — set contract address to enable on-chain subscription
+          Dev mode - set contract address to enable on-chain subscription
         </div>
       </>
     );
@@ -146,7 +146,7 @@ export default function SubscriptionGuard({ children }) {
     );
   }
 
-  // Subscribed — show app + status badge
+  // Subscribed - show app + status badge
   if (isSubscribed && !showPaywall) {
     return (
       <>
@@ -172,7 +172,7 @@ export default function SubscriptionGuard({ children }) {
         </h2>
         <p className="text-gray-600 mb-6 text-sm">
           Get full access to Arabic learning, Qibla compass, Zakat calculator,
-          Hijri calendar and the 99 Names of Allah — fully on-chain.
+          Hijri calendar and the 99 Names of Allah - fully on-chain.
         </p>
 
         {error && (

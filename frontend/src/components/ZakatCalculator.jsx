@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 
 // Approximate nisab thresholds (USD). Nisab = value of 85g of gold OR 595g of silver.
 // Gold nisab is the stricter (lower) threshold commonly used.
-const GOLD_PRICE_PER_GRAM = 65; // USD/g — update with a live feed in production
+const GOLD_PRICE_PER_GRAM = 65; // USD/g - update with a live feed in production
 const SILVER_PRICE_PER_GRAM = 0.8; // USD/g
 const GOLD_NISAB_GRAMS = 85;
 const SILVER_NISAB_GRAMS = 595;
@@ -111,7 +111,7 @@ export default function ZakatCalculator() {
           </div>
           {!eligible && (
             <p className="text-xs text-gray-500 pt-1">
-              Your wealth is below the nisab threshold — no Zakat is due.
+              Your wealth is below the nisab threshold - no Zakat is due.
             </p>
           )}
         </div>

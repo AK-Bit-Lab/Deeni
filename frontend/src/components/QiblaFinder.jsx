@@ -36,7 +36,7 @@ export default function QiblaFinder() {
         </div>
       ) : (
         <>
-          {/* Compass — the visual bearing is announced as text below, so hide
+          {/* Compass - the visual bearing is announced as text below, so hide
               the decorative graphic itself from screen readers. */}
           <div
             aria-hidden="true"
@@ -69,7 +69,7 @@ export default function QiblaFinder() {
               ))}
             </div>
 
-            {/* Qibla needle — points to Mecca relative to phone heading */}
+            {/* Qibla needle - points to Mecca relative to phone heading */}
             <div
               className="absolute left-1/2 top-1/2 compass-needle"
               style={{
@@ -102,7 +102,7 @@ export default function QiblaFinder() {
               : compassActive
               ? "Rotate to align"
               : compassUnavailable
-              ? "Compass unavailable — use bearing below"
+              ? "Compass unavailable - use bearing below"
               : "Calibrating compass…"}
           </div>
 

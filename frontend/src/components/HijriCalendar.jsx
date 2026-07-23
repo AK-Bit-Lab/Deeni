@@ -70,7 +70,7 @@ export default function HijriCalendar() {
   const numDays = daysInMonth(view.year, view.month);
 
   // Recomputing 30+ Hijri conversions on every render (e.g. from unrelated
-  // parent re-renders) is wasted work — memoize on the visible month/year.
+  // parent re-renders) is wasted work - memoize on the visible month/year.
   const cells = useMemo(() => {
     const arr = [];
     for (let i = 0; i < firstDay; i++) arr.push(null);

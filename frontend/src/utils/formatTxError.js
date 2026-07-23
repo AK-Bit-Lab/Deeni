@@ -1,5 +1,5 @@
 /**
- * formatTxError.js — turn raw wagmi/viem transaction errors into short,
+ * formatTxError.js - turn raw wagmi/viem transaction errors into short,
  * user-friendly messages.
  *
  * Wallet and RPC errors are often long, technical strings (e.g. full
@@ -15,10 +15,10 @@ export function formatTxError(error, fallback = "Transaction failed") {
     return "Transaction rejected in wallet";
   }
   if (/reverted with the following reason/i.test(msg)) {
-    return "Transaction failed — contract reverted";
+    return "Transaction failed - contract reverted";
   }
   if (/nonce too low/i.test(msg)) {
-    return "Transaction failed — please try again";
+    return "Transaction failed - please try again";
   }
   if (/insufficient funds/i.test(msg)) {
     return "Insufficient CELO balance for this transaction";

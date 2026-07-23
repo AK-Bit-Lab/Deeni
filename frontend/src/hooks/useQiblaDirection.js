@@ -18,7 +18,7 @@ const MECCA_LNG = 39.826206;
  * 4. Exposes `requestCompass()` for iOS 13+ permission (must be called
  *    from a user gesture / tap).
  * 5. Falls back gracefully when no orientation sensor is available
- *    (desktop, denied permission, etc.) — still shows the bearing to
+ *    (desktop, denied permission, etc.) - still shows the bearing to
  *    Mecca so the user can manually rotate.
  * 6. Adds a timeout: if no orientation event arrives within 6s of
  *    starting, we mark the compass as "unavailable" so the UI stops
@@ -78,7 +78,7 @@ export function useQiblaDirection() {
     let diff = raw - prev;
     if (diff > 180) diff -= 360;
     if (diff < -180) diff += 360;
-    // Low-pass factor — lower = smoother but more lag
+    // Low-pass factor - lower = smoother but more lag
     const smoothed = prev + diff * 0.3;
     let result = (smoothed + 360) % 360;
     smoothRef.current = result;
@@ -113,7 +113,7 @@ export function useQiblaDirection() {
         return;
       }
 
-      // Regular `deviceorientation` — alpha is RELATIVE on Android.
+      // Regular `deviceorientation` - alpha is RELATIVE on Android.
       // Only use it if we haven't received any absolute data yet.
       if (!hasAbsoluteRef.current && typeof event.alpha === "number") {
         let h = 360 - event.alpha;
@@ -145,7 +145,7 @@ export function useQiblaDirection() {
           setCompassState("unavailable");
         }
       } else {
-        // Android / other — no permission needed, auto-start.
+        // Android / other - no permission needed, auto-start.
         // Register absolute first (preferred), then regular as fallback.
         window.addEventListener("deviceorientationabsolute", handler, true);
         window.addEventListener("deviceorientation", handler, true);

@@ -6,11 +6,11 @@ import { QUIZ_TOPICS } from "../constants";
 import { formatTxError } from "../utils/formatTxError";
 
 /* ------------------------------------------------------------------ */
-/* Question bank — keyed by topic id (matches DeeniQuiz.sol 0-9).      */
+/* Question bank - keyed by topic id (matches DeeniQuiz.sol 0-9).      */
 /* Each question: { q, options[], answer (index) }                     */
 /* ------------------------------------------------------------------ */
 const QUESTION_BANK = {
-  // 0 — Quran
+  // 0 - Quran
   0: [
     { q: "How many surahs are in the Quran?", options: ["100", "114", "120", "99"], answer: 1 },
     { q: "Which is the longest surah in the Quran?", options: ["Surah Al-Baqarah", "Surah Al-Imran", "Surah An-Nisa", "Surah Al-Ma'idah"], answer: 0 },
@@ -21,7 +21,7 @@ const QUESTION_BANK = {
     { q: "Which surah is called 'The Mother of the Book'?", options: ["Al-Baqarah", "Al-Fatihah", "Al-Ikhlas", "Yasin"], answer: 1 },
     { q: "What is the first word revealed of the Quran?", options: ["Bismillah", "Iqra", "Qul", "Alhamdulillah"], answer: 1 },
   ],
-  // 1 — Tajweed
+  // 1 - Tajweed
   1: [
     { q: "What does 'Tajweed' mean?", options: ["To recite fast", "To make beautiful / proficient", "To memorize", "To translate"], answer: 1 },
     { q: "Which is a rule of Tajweed?", options: ["Qalqalah", "Salah", "Zakat", "Sawm"], answer: 0 },
@@ -32,7 +32,7 @@ const QUESTION_BANK = {
     { q: "Ikhfa means what?", options: ["Hiding / concealment", "Merging", "Echo", "Stopping"], answer: 0 },
     { q: "How many harakat (vowel marks) are there in Arabic?", options: ["3", "5", "7", "9"], answer: 3 },
   ],
-  // 2 — Arabic Letters
+  // 2 - Arabic Letters
   2: [
     { q: "How many letters are in the Arabic alphabet?", options: ["26", "28", "30", "32"], answer: 1 },
     { q: "Which letter is 'Alif'?", options: ["ا", "ب", "ت", "ث"], answer: 0 },
@@ -43,7 +43,7 @@ const QUESTION_BANK = {
     { q: "Shadda indicates what?", options: ["A long vowel", "Doubling a consonant", "No vowel", "A nasal sound"], answer: 1 },
     { q: "Which letter is 'Noon'?", options: ["ن", "م", "ب", "ت"], answer: 0 },
   ],
-  // 3 — Pillars of Islam
+  // 3 - Pillars of Islam
   3: [
     { q: "How many pillars of Islam are there?", options: ["3", "4", "5", "6"], answer: 2 },
     { q: "What is the first pillar of Islam?", options: ["Salah", "Shahadah", "Zakat", "Hajj"], answer: 1 },
@@ -54,7 +54,7 @@ const QUESTION_BANK = {
     { q: "The Shahadah declares belief in what?", options: ["One God and Muhammad as His messenger", "Five prayers", "Charity", "Fasting"], answer: 0 },
     { q: "Which prayer has the most rakats?", options: ["Fajr", "Dhuhr", "Maghrib", "Isha"], answer: 3 },
   ],
-  // 4 — Pillars of Iman
+  // 4 - Pillars of Iman
   4: [
     { q: "How many pillars of Iman (faith) are there?", options: ["5", "6", "7", "8"], answer: 1 },
     { q: "Belief in which is NOT a pillar of Iman?", options: ["Allah", "Angels", "Books", "Money"], answer: 3 },
@@ -65,7 +65,7 @@ const QUESTION_BANK = {
     { q: "Which is a pillar of Iman?", options: ["Salah", "Belief in Allah's books", "Zakat", "Hajj"], answer: 1 },
     { q: "Angels are created from what?", options: ["Clay", "Light", "Fire", "Water"], answer: 1 },
   ],
-  // 5 — Prophets
+  // 5 - Prophets
   5: [
     { q: "Who is the final prophet in Islam?", options: ["Musa", "Isa", "Muhammad ﷺ", "Ibrahim"], answer: 2 },
     { q: "Which prophet built the Kaaba with his son?", options: ["Musa", "Ibrahim", "Nuh", "Dawud"], answer: 1 },
@@ -76,7 +76,7 @@ const QUESTION_BANK = {
     { q: "How many prophets are mentioned by name in the Quran?", options: ["15", "25", "40", "124000"], answer: 1 },
     { q: "Which prophet could speak to animals and ruled a kingdom?", options: ["Dawud", "Sulaiman", "Yusuf", "Yunus"], answer: 1 },
   ],
-  // 6 — Seerah
+  // 6 - Seerah
   6: [
     { q: "In which year was Prophet Muhammad ﷺ born?", options: ["570 CE", "610 CE", "622 CE", "632 CE"], answer: 0 },
     { q: "In which cave did the Prophet ﷺ receive the first revelation?", options: ["Cave Hira", "Cave Thawr", "Cave Uhud", "Cave Badr"], answer: 0 },
@@ -87,7 +87,7 @@ const QUESTION_BANK = {
     { q: "The Prophet ﷺ passed away in which year?", options: ["622 CE", "630 CE", "632 CE", "640 CE"], answer: 2 },
     { q: "Who was the first caliph after the Prophet ﷺ?", options: ["Umar", "Abu Bakr", "Uthman", "Ali"], answer: 1 },
   ],
-  // 7 — Fiqh / Salah
+  // 7 - Fiqh / Salah
   7: [
     { q: "How many rakats are in Fajr prayer?", options: ["2", "3", "4", "5"], answer: 0 },
     { q: "Which direction do Muslims face during prayer?", options: ["North", "Qibla (Kaaba)", "East", "West"], answer: 1 },
@@ -98,7 +98,7 @@ const QUESTION_BANK = {
     { q: "How many obligatory (fard) rakats in Dhuhr?", options: ["2", "3", "4", "6"], answer: 2 },
     { q: "Jumu'ah prayer replaces which prayer on Friday?", options: ["Fajr", "Dhuhr", "Asr", "Maghrib"], answer: 1 },
   ],
-  // 8 — Hadith
+  // 8 - Hadith
   8: [
     { q: "What is a hadith?", options: ["A verse of the Quran", "A saying/action of the Prophet ﷺ", "A prayer", "A charity"], answer: 1 },
     { q: "Which collection is considered the most authentic after the Quran?", options: ["Sahih al-Bukhari", "Sunan Abu Dawud", "Muwatta Malik", "Musnad Ahmad"], answer: 0 },
@@ -109,7 +109,7 @@ const QUESTION_BANK = {
     { q: "Sahih Muslim was compiled by whom?", options: ["Imam Muslim", "Imam Bukhari", "Imam Ahmad", "Imam Malik"], answer: 0 },
     { q: "A 'sahih' hadith means it is what?", options: ["Weak", "Authentic", "Fabricated", "Abrogated"], answer: 1 },
   ],
-  // 9 — General Knowledge
+  // 9 - General Knowledge
   9: [
     { q: "What does 'Islam' mean?", options: ["Peace / submission", "Prayer", "Charity", "Knowledge"], answer: 0 },
     { q: "What is the Islamic greeting?", options: ["Hello", "Assalamu alaikum", "Shalom", "Namaste"], answer: 1 },

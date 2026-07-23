@@ -128,7 +128,7 @@ export default function NamesOfAllah() {
         99 Names of Allah
       </h2>
       <p className="text-gray-500 text-sm mb-5 text-center">
-        Asma ul Husna — tap the speaker to hear each name.
+        Asma ul Husna - tap the speaker to hear each name.
       </p>
 
       <div className="relative mb-5">

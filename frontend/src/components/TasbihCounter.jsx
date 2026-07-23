@@ -218,7 +218,7 @@ export default function TasbihCounter() {
         ))}
       </div>
 
-      {/* Counter circle — the main tap target */}
+      {/* Counter circle - the main tap target */}
       <div className="flex-1 flex flex-col items-center justify-center mb-4">
         <button
           onClick={tap}
