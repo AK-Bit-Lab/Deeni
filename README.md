@@ -151,3 +151,5 @@ Use the flattened contracts in [`flattened/`](flattened/README.md) to verify you
 ## 📄 License
 
 MIT
+
+<!-- Updated on latest commit -->
