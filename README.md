@@ -21,16 +21,6 @@
 | 🌗 **Dark mode** | System-aware light/dark theme toggle, persisted per device. |
 | 🔐 **On-chain Subscription** | 1-month free trial, then **5 CELO / month**. Fully managed by an on-chain smart contract. |
 
-## 📈 Latest Improvements
-
-- **Qaida Lesson Completion Contract**: Added `DeeniQaidaProgress.sol` to record lesson completions on-chain without the once‑per‑day restriction of `DeeniDeeds`. The contract tracks each lesson ID, timestamps, highest lesson completed, and total completions.
-- **Frontend Integration**: New `useQaidaProgress` hook (`frontend/src/hooks/useQaidaProgress.js`) reads progress and writes lesson completions. The **ArabicLearning** component now requires an on‑chain signature when a wallet is connected, automatically advancing to the next lesson after the transaction confirms.
-- **Auto‑Advance Fix**: The component now watches the transaction hash (`txHash`) so each new lesson triggers a page refresh and navigation without manual interaction.
-- **Compass Fallback**: `useQiblaDirection` now marks the compass as unavailable after 6 seconds and shows a bearing fallback, preventing endless “Calibrating compass…” states.
-- **Knowledge Test Bytes32 Fix**: Updated `hashQuestions()` to produce a proper 32‑byte hash, eliminating the `bytes24` size error.
-- **Documentation Updates**: All em‑dashes have been replaced with hyphens throughout the README and codebase for consistency.
-
-These improvements enhance the user experience, provide more flexible lesson tracking, and resolve previous bugs.
 
 ## 🏗️ Architecture
 
@@ -147,6 +137,9 @@ Use the flattened contracts in [`flattened/`](flattened/README.md) to verify you
 - `getBest(user, topic)` - best score, best total, and attempt count for a topic
 - `getResults(user, offset, limit)` - paginated quiz history
 - `totalQuizzes(user)` - lifetime quiz count
+
+### `DeeniQaidaProgress`
+- `completeLesson(uint8 lessonId)` – records a Qaida lesson completion on-chain without the once‑per‑day restriction of `DeeniDeeds`. Tracks lesson ID, timestamp, highest lesson completed, and total completions.
 
 ## 📄 License
 
