@@ -577,11 +577,14 @@ export default function ArabicLearning() {
       }
     }
 
-    // Go to next lesson
+    // Go to next lesson and refresh the page
     if (activeLessonId < QAIDA_LESSONS.length) {
-      setActiveLessonId(activeLessonId + 1);
+      const nextId = activeLessonId + 1;
+      setActiveLessonId(nextId);
       setActiveWord(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Force a full page reload so the new lesson loads fresh
+      window.location.reload();
     }
   }, [isConfirmed, txHash]);
 
