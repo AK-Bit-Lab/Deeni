@@ -15,9 +15,24 @@ contract DeeniSubscription {
 
     address public owner;
 
+    /// @notice Emitted when a user successfully claims the one-time free trial.
+    /// @param user   The address that claimed the trial.
+    /// @param expiry Unix timestamp at which the trial access expires.
     event TrialStarted(address indexed user, uint256 expiry);
+    /// @notice Emitted when a user pays the subscription fee and extends access.
+    /// @param user      The address that paid.
+    /// @param newExpiry Unix timestamp at which the new subscription expires.
+    /// @param amount    The amount of CELO paid (in wei).
     event SubscriptionPaid(address indexed user, uint256 newExpiry, uint256 amount);
+    /// @notice Emitted when the owner withdraws accumulated CELO from the contract.
+    /// @param to     The destination address that received the funds.
+    /// @param amount The amount of CELO withdrawn (in wei).
     event Withdrawn(address indexed to, uint256 amount);
+    /// @notice Emitted when ownership of the contract is transferred.
+    ///         Used for both the initial assignment in the constructor and
+    ///         the two-step transfer finalisation in `acceptOwnership`.
+    /// @param previousOwner The address that owned the contract before.
+    /// @param newOwner      The address that owns the contract after.
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     /// @notice Emitted when the contract receives plain CELO via receive()/fallback().
     event Received(address indexed from, uint256 amount);
