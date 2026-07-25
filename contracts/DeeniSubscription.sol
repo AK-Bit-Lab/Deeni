@@ -19,6 +19,8 @@ contract DeeniSubscription {
     event SubscriptionPaid(address indexed user, uint256 newExpiry, uint256 amount);
     event Withdrawn(address indexed to, uint256 amount);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    /// @notice Emitted when the contract receives plain CELO via receive()/fallback().
+    event Received(address indexed from, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -28,6 +30,21 @@ contract DeeniSubscription {
     constructor() {
         owner = msg.sender;
         emit OwnershipTransferred(address(0), msg.sender);
+    }
+
+    /// @notice Accept plain CELO transfers (e.g. tips, donations, or accidental
+    ///         sends). Without this, any direct transfer to the contract would
+    ///         revert because Solidity rejects transfers to contracts without
+    ///         a receive() or fallback() function. Funds received here are
+    ///         treated as subscription payments and can be withdrawn by the
+    ///         owner via `withdraw`.
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
+
+    /// @notice Fallback for non-call-data sends. Same behaviour as receive().
+    fallback() external payable {
+        emit Received(msg.sender, msg.value);
     }
 
     /// @notice Claim the one-time 30-day free trial.
