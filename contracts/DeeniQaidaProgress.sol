@@ -10,6 +10,11 @@ pragma solidity ^0.8.20;
 contract DeeniQaidaProgress {
     struct LessonLog {
         uint8  lessonId;   // 1-17 (matches frontend QAIDA_LESSONS)
+        // NOTE: timestamp is stored as uint64. Unix timestamps fit in uint64
+        // until year 584,942,417,355 (~5.8e11 AD), well beyond any practical
+        // horizon. uint64 was chosen over uint256 to pack the struct tightly
+        // (1 byte lessonId + 8 bytes timestamp = 9 bytes, rounded to one
+        // 32-byte storage slot) and save gas on SSTOREs.
         uint64 timestamp;
     }
 
