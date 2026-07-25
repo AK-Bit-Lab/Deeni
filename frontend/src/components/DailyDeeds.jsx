@@ -21,15 +21,15 @@ export default function DailyDeeds() {
   };
 
   // Once the on-chain transaction is confirmed, the hook invalidates the
-  // deed reads so stats refetch. Clear the active deed so the spinner stops
-  // and the freshly-updated checkmark / count render. Then auto-reload the
-  // page after a short delay so the user sees the updated count without
-  // having to manually refresh.
+  // deed reads so stats refetch automatically. Clear the active deed so the
+  // spinner stops and the freshly-updated checkmark / count render. No
+  // page reload is needed: TanStack Query refetches and React re-renders
+  // with the new stats. The previous setTimeout + window.location.reload()
+  // was redundant and harmful (full SPA re-hydration, lost scroll/focus,
+  // extra network round-trip).
   useEffect(() => {
     if (!isConfirmed) return;
     setActiveId(null);
-    const t = setTimeout(() => window.location.reload(), 1500);
-    return () => clearTimeout(t);
   }, [isConfirmed]);
 
   const doneTodayCount = stats.filter((s) => s.doneToday).length;
