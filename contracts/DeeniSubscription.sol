@@ -21,6 +21,10 @@ contract DeeniSubscription {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     /// @notice Emitted when the contract receives plain CELO via receive()/fallback().
     event Received(address indexed from, uint256 amount);
+    /// @notice Emitted when the current owner nominates a new pending owner.
+    event OwnershipTransferStarted(address indexed currentOwner, address indexed pendingOwner);
+    /// @notice Emitted when a pending ownership transfer is cancelled.
+    event OwnershipTransferCancelled(address indexed currentOwner, address indexed pendingOwner);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -117,10 +121,43 @@ contract DeeniSubscription {
         emit Withdrawn(to, balance);
     }
 
-    /// @notice Transfer contract ownership.
+    /// @notice Pending owner set by the current owner. The transfer is only
+    ///         finalised once the pending owner calls acceptOwnership().
+    ///         This two-step pattern prevents accidental transfers to
+    ///         mistyped or unrecoverable addresses.
+    address public pendingOwner;
+
+    /// @notice Step 1 of ownership transfer: nominate a new owner.
+    ///         The new owner must call acceptOwnership() to complete the
+    ///         transfer. The current owner remains in control until then.
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Zero address");
-        emit OwnershipTransferred(owner, newOwner);
-        owner = newOwner;
+        require(newOwner != owner, "Already owner");
+        pendingOwner = newOwner;
+        emit OwnershipTransferStarted(owner, newOwner);
+    }
+
+    /// @notice Step 2 of ownership transfer: the nominated pending owner
+    ///         accepts and becomes the new owner. Anyone can call this
+    ///         but only the pending owner will succeed.
+    function acceptOwnership() external {
+        address pending = pendingOwner;
+        require(msg.sender == pending, "Not pending owner");
+        require(pending != address(0), "No pending transfer");
+
+        address previousOwner = owner;
+        owner = pending;
+        pendingOwner = address(0);
+
+        emit OwnershipTransferred(previousOwner, pending);
+    }
+
+    /// @notice Cancel a pending ownership transfer. Only callable by the
+    ///         current owner. Useful if the nominated address was wrong.
+    function cancelOwnershipTransfer() external onlyOwner {
+        address pending = pendingOwner;
+        require(pending != address(0), "No pending transfer");
+        pendingOwner = address(0);
+        emit OwnershipTransferCancelled(owner, pending);
     }
 }
