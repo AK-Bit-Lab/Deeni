@@ -198,11 +198,18 @@ contract DeeniSubscription {
         _locked = 1;
     }
 
-    /// @notice Owner withdraws accumulated subscription fees.
-    /// @dev Uses the checks-effects-interactions pattern with a reentrancy
-    ///      guard. The state (balance read) is captured BEFORE the external
-    ///      call, and the lock prevents a malicious recipient from re-entering
-    ///      `withdraw` (or any future guarded function) during the transfer.
+    /// @notice Owner withdraws the entire CELO balance held by this contract.
+    /// @param to The destination address that will receive the funds. Must be a payable address
+    ///           capable of receiving plain ETH/CELO transfers (contracts without a receive/fallback
+    ///           function will cause this call to revert).
+    /// @dev Uses the checks-effects-interactions pattern with a reentrancy guard. The state
+    ///      (balance read) is captured BEFORE the external call, and the lock prevents a
+    ///      malicious recipient from re-entering `withdraw` (or any future guarded function)
+    ///      during the transfer. The function reverts with "Nothing to withdraw" when the
+    ///      contract holds no balance, which avoids emitting a misleading zero-value event and
+    ///      saves gas on no-op calls. On a failed transfer the entire transaction reverts and
+    ///      no `Withdrawn` event is emitted, so off-chain indexers can rely on the event as
+    ///      proof of a successful payout.
     function withdraw(address payable to) external onlyOwner nonReentrant {
         uint256 balance = address(this).balance;
         require(balance > 0, "Nothing to withdraw");
