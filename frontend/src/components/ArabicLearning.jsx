@@ -567,15 +567,19 @@ export default function ArabicLearning() {
     if (!isConfirmed || !txHash) return;
     setTxState("confirmed");
 
-    if (!completedLessons.includes(activeLessonId)) {
-      const nextProgress = [...completedLessons, activeLessonId];
-      setCompletedLessons(nextProgress);
+    // Use the functional setter form so we don't need `completedLessons`
+    // in the deps array (avoids the exhaustive-deps lint warning while
+    // still reading the latest value).
+    setCompletedLessons((prev) => {
+      if (prev.includes(activeLessonId)) return prev;
+      const nextProgress = [...prev, activeLessonId];
       try {
         localStorage.setItem("deeni_qaida_progress", JSON.stringify(nextProgress));
       } catch {
         // ignore
       }
-    }
+      return nextProgress;
+    });
 
     // Go to next lesson and refresh the page
     if (activeLessonId < QAIDA_LESSONS.length) {
@@ -586,7 +590,9 @@ export default function ArabicLearning() {
       // Force a full page reload so the new lesson loads fresh
       window.location.reload();
     }
-  }, [isConfirmed, txHash]);
+    // activeLessonId is intentionally included so the effect re-runs if
+    // the user navigates between lessons while a tx is in flight.
+  }, [isConfirmed, txHash, activeLessonId]);
 
   // Surface write-contract errors
   useEffect(() => {
