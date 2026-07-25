@@ -153,17 +153,35 @@ contract DeeniSubscription {
         emit SubscriptionPaid(msg.sender, newExpiry, msg.value);
     }
 
-    /// @notice Returns true while the user's subscription is still active.
+    /// @notice Returns whether the caller-supplied address currently has an active subscription.
+    /// @param user The address whose subscription status is being queried.
+    /// @return True if `user` has paid (or trialed) and the resulting expiry is still in the future.
+    /// @dev A subscription is considered active when `subscriptionExpiry[user] >= block.timestamp`.
+    ///      This means a subscription that expires exactly at the current block timestamp is still
+    ///      reported as active. Users who have never paid or trialed return false because their
+    ///      stored expiry is the default zero, which is always in the past.
     function isSubscribed(address user) external view returns (bool) {
         return subscriptionExpiry[user] >= block.timestamp;
     }
 
-    /// @notice Returns the unix timestamp at which the user's access expires (0 if never).
+    /// @notice Returns the unix timestamp (seconds since epoch) at which the user's access expires.
+    /// @param user The address whose expiry is being queried.
+    /// @return The expiry timestamp, or zero if the user has never subscribed or trialed.
+    /// @dev The frontend uses this value to render countdown timers and "days remaining" labels.
+    ///      A return value of zero means the user has no recorded subscription and should be
+    ///      prompted to start a trial or pay. The value is a unix timestamp in seconds and is
+    ///      comparable directly against `block.timestamp`.
     function getExpiry(address user) external view returns (uint256) {
         return subscriptionExpiry[user];
     }
 
-    /// @notice Returns whether the user has already claimed their free trial.
+    /// @notice Returns whether the user has already redeemed their one-time free trial.
+    /// @param user The address whose trial status is being queried.
+    /// @return True if `user` has previously called `startFreeTrial`, false otherwise.
+    /// @dev This flag is permanent: once set it can never be cleared. The contract enforces the
+    ///      same invariant in `startFreeTrial` by reverting when the flag is already true, so
+    ///      this view is the canonical way for off-chain clients to decide whether to show the
+    ///      "Start free trial" button or hide it in favour of the "Pay subscription" option.
     function trialClaimed(address user) external view returns (bool) {
         return hasClaimedTrial[user];
     }
