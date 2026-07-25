@@ -224,9 +224,16 @@ contract DeeniSubscription {
     ///         mistyped or unrecoverable addresses.
     address public pendingOwner;
 
-    /// @notice Step 1 of ownership transfer: nominate a new owner.
-    ///         The new owner must call acceptOwnership() to complete the
-    ///         transfer. The current owner remains in control until then.
+    /// @notice Step 1 of the two-step ownership transfer: nominate a new owner.
+    /// @param newOwner The address that will become the owner if it accepts the transfer.
+    /// @dev The current owner remains in control until the nominated address calls
+    ///      `acceptOwnership`. This two-step pattern prevents accidental transfers to
+    ///      mistyped or unrecoverable addresses. Reverts with "Zero address" if
+    ///      `newOwner` is the zero address and with "Already owner" if it equals the
+    ///      current owner (which would otherwise be a no-op that still emits an event).
+    ///      Calling this function while a previous transfer is still pending simply
+    ///      overwrites `pendingOwner` with the new nominee; the previous nominee loses
+    ///      its pending status without ever being notified.
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Zero address");
         require(newOwner != owner, "Already owner");
@@ -234,9 +241,15 @@ contract DeeniSubscription {
         emit OwnershipTransferStarted(owner, newOwner);
     }
 
-    /// @notice Step 2 of ownership transfer: the nominated pending owner
-    ///         accepts and becomes the new owner. Anyone can call this
-    ///         but only the pending owner will succeed.
+    /// @notice Step 2 of the two-step ownership transfer: the nominated pending owner
+    ///         accepts and becomes the new owner.
+    /// @dev Anyone can call this function but only the pending owner will succeed.
+    ///      Reverts with "Not pending owner" if `msg.sender` is not the current
+    ///      `pendingOwner`, and with "No pending transfer" if there is no pending
+    ///      transfer (i.e. `pendingOwner` is the zero address). On success the
+    ///      previous owner is recorded in the `OwnershipTransferred` event for
+    ///      off-chain indexers and `pendingOwner` is reset to zero so a new
+    ///      transfer can be initiated later.
     function acceptOwnership() external {
         address pending = pendingOwner;
         require(msg.sender == pending, "Not pending owner");
@@ -249,8 +262,13 @@ contract DeeniSubscription {
         emit OwnershipTransferred(previousOwner, pending);
     }
 
-    /// @notice Cancel a pending ownership transfer. Only callable by the
-    ///         current owner. Useful if the nominated address was wrong.
+    /// @notice Cancel a pending ownership transfer before it has been accepted.
+    /// @dev Only callable by the current owner. Useful if the nominated address was
+    ///      wrong, lost its keys, or otherwise can no longer accept. Reverts with
+    ///      "No pending transfer" if there is nothing to cancel. The cancelled
+    ///      nominee is included in the `OwnershipTransferCancelled` event so the
+    ///      off-chain nominee (if it is monitoring events) can be notified that
+    ///      it no longer needs to call `acceptOwnership`.
     function cancelOwnershipTransfer() external onlyOwner {
         address pending = pendingOwner;
         require(pending != address(0), "No pending transfer");
