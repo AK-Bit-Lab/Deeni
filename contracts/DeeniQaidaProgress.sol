@@ -64,6 +64,14 @@ contract DeeniQaidaProgress {
     }
 
     /// @notice Returns a page of lesson logs (newest first via offset from end).
+    /// @param user   The user whose lesson history to read.
+    /// @param offset Number of most-recent entries to skip (0 = start from the
+    ///               newest). Capped implicitly by the user's log length.
+    /// @param limit  Maximum number of entries to return. Callers should pass
+    ///               a sensible upper bound (e.g. 20) to bound gas.
+    /// @return page  Array of LessonLog entries, ordered oldest -> newest
+    ///               within the returned window. Returns an empty array if
+    ///               offset is past the end of the log.
     function getLogs(address user, uint256 offset, uint256 limit)
         external
         view
