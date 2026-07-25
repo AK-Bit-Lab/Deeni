@@ -581,14 +581,15 @@ export default function ArabicLearning() {
       return nextProgress;
     });
 
-    // Go to next lesson and refresh the page
+    // Advance to the next lesson. The state updates above already trigger
+    // a re-render with the new lesson content, so a full page reload is
+    // unnecessary (and would lose scroll position, focus, and any in-flight
+    // UI state). Just scroll to the top so the user sees the new lesson.
     if (activeLessonId < QAIDA_LESSONS.length) {
       const nextId = activeLessonId + 1;
       setActiveLessonId(nextId);
       setActiveWord(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Force a full page reload so the new lesson loads fresh
-      window.location.reload();
     }
     // activeLessonId is intentionally included so the effect re-runs if
     // the user navigates between lessons while a tx is in flight.
