@@ -114,6 +114,14 @@ contract DeeniQuiz {
     }
 
     /// @notice Returns a page of quiz results (newest first via offset from end).
+    /// @param user   The user whose quiz history to read.
+    /// @param offset Number of most-recent entries to skip (0 = start from the
+    ///               newest). Capped implicitly by the user's result count.
+    /// @param limit  Maximum number of entries to return. Callers should pass
+    ///               a sensible upper bound (e.g. 20) to bound gas.
+    /// @return page  Array of QuizResult entries, ordered oldest -> newest
+    ///               within the returned window. Returns an empty array if
+    ///               offset is past the end of the history.
     function getResults(address user, uint256 offset, uint256 limit)
         external
         view
