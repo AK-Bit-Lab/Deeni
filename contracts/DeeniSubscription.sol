@@ -89,11 +89,18 @@ contract DeeniSubscription {
     ///         a receive() or fallback() function. Funds received here are
     ///         treated as subscription payments and can be withdrawn by the
     ///         owner via `withdraw`.
+    /// @dev    Does NOT credit the sender's subscription - it only emits an
+    ///         event so the owner can decide what to do with the funds. This
+    ///         keeps the contract's accounting model simple and avoids
+    ///         accidental double-crediting when a user pays via paySubscription
+    ///         and also sends a tip.
     receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
     /// @notice Fallback for non-call-data sends. Same behaviour as receive().
+    /// @dev    Kept for completeness; in practice plain CELO transfers hit
+    ///         receive() and only malformed calls hit fallback().
     fallback() external payable {
         emit Received(msg.sender, msg.value);
     }
