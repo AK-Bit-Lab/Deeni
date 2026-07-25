@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "deeni_theme";
 
@@ -45,7 +45,10 @@ export function useTheme() {
     return () => mql.removeListener(onChange);
   }, [userOverride]);
 
-  // Apply theme to <html> and persist
+  // Apply theme to <html> and persist. Skip the very first run so we don't
+  // overwrite a stored value with the default "light" before the init
+  // effect has had a chance to read storage.
+  const firstApply = useRef(true);
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
@@ -53,7 +56,15 @@ export function useTheme() {
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem(STORAGE_KEY, theme);
+    if (firstApply.current) {
+      firstApply.current = false;
+      return;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      // ignore (private mode, quota, etc.)
+    }
   }, [theme]);
 
   const toggle = () => {
