@@ -130,6 +130,15 @@ contract DeeniSubscription {
     }
 
     /// @notice Pay 5 CELO to extend the subscription by 30 days.
+    /// @dev    The new expiry is computed as max(currentExpiry, now) +
+    ///         SUBSCRIPTION_DURATION. This means:
+    ///         - If the user is currently subscribed, the 30 days are added
+    ///           on top of their existing expiry (no time is lost).
+    ///         - If the subscription has lapsed, the 30 days start from now.
+    ///         This is the standard "extend, don't reset" model used by most
+    ///         subscription services.
+    /// @dev    Reverts with "Must pay exactly 5 CELO" if msg.value does not
+    ///         match SUBSCRIPTION_FEE, or "Paused" if the contract is paused.
     function paySubscription() external payable whenNotPaused {
         require(msg.value == SUBSCRIPTION_FEE, "Must pay exactly 5 CELO");
 
