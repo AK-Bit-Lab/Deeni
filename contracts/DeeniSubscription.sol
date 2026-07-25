@@ -276,10 +276,15 @@ contract DeeniSubscription {
         emit OwnershipTransferCancelled(owner, pending);
     }
 
-    /// @notice Pause user-facing subscription actions. Use this in an
-    ///         emergency (e.g. discovered vulnerability, planned migration,
-    ///         regulatory request). Admin functions (withdraw, ownership
-    ///         management) remain available so funds are never locked.
+    /// @notice Pause user-facing subscription actions.
+    /// @dev Use this in an emergency (e.g. discovered vulnerability, planned migration,
+    ///      regulatory request). Admin functions (`withdraw`, ownership management)
+    ///      remain available so funds are never locked. Reverts with "Already paused"
+    ///      if the contract is already paused, which avoids emitting a redundant
+    ///      `Paused` event. While paused, `startFreeTrial` and `paySubscription` both
+    ///      revert because they carry the `whenNotPaused` modifier; existing
+    ///      subscriptions continue to be queryable through the view functions and
+    ///      remain valid until their stored expiry timestamp.
     function pause() external onlyOwner {
         require(!paused, "Already paused");
         paused = true;
@@ -287,6 +292,11 @@ contract DeeniSubscription {
     }
 
     /// @notice Resume user-facing subscription actions after a pause.
+    /// @dev Reverts with "Not paused" if the contract is not currently paused, which
+    ///      avoids emitting a redundant `Unpaused` event. After unpausing, new users
+    ///      can once again call `startFreeTrial` and `paySubscription`. Users whose
+    ///      subscription expired during the pause window must start a new trial or
+    ///      pay again to regain access.
     function unpause() external onlyOwner {
         require(paused, "Not paused");
         paused = false;
