@@ -21,6 +21,11 @@ contract DeeniQuiz {
         uint16  score;       // correct answers
         uint16  total;        // total questions
         bytes32 questionHash; // keccak of question IDs (optional, zero allowed)
+        // NOTE: timestamp is stored as uint64. Unix timestamps fit in uint64
+        // until year 584,942,417,355 (~5.8e11 AD), well beyond any practical
+        // horizon. uint64 was chosen over uint256 to pack the struct tightly
+        // (1 + 2 + 2 + 32 + 8 = 45 bytes, rounded to two 32-byte storage
+        // slots) and save gas on SSTOREs.
         uint64  timestamp;
     }
 
