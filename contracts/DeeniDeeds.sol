@@ -48,12 +48,20 @@ contract DeeniDeeds {
         return uint32(block.timestamp / 1 days);
     }
 
+    /// @notice Maximum units of a single deed that can be recorded in one
+    ///         entry. 100,000 is well above any realistic single-day value
+    ///         (e.g. ~600 pages of Quran, ~200 rakats of salah, ~50,000
+    ///         dhikr beads) and prevents accidental or malicious huge
+    ///         values from inflating on-chain stats or wasting gas.
+    uint32 public constant MAX_DEED_COUNT = 100_000;
+
     /// @notice Record a deed on-chain. Can only be recorded once per deed type per day.
     /// @param deedType 0-7 (see contract header).
     /// @param count    quantity for this deed (e.g. pages of Quran, rakats).
     function recordDeed(uint8 deedType, uint32 count) external {
         require(deedType <= 7, "Invalid deed type");
         require(count > 0, "Count must be > 0");
+        require(count <= MAX_DEED_COUNT, "Count too large");
 
         uint32 day = _today();
         require(lastDay[msg.sender][deedType] != day, "Already recorded today");
