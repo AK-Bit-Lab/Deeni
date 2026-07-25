@@ -106,6 +106,15 @@ contract DeeniSubscription {
     }
 
     /// @notice Claim the one-time 30-day free trial.
+    /// @dev    Each address may claim the trial at most once. The trial is
+    ///         also blocked while the user already has an active paid
+    ///         subscription - they should let it lapse (or cancel) before
+    ///         claiming the trial, otherwise they would effectively get a
+    ///         free month on top of their paid month.
+    /// @dev    Reverts with "Free trial already claimed" if the caller has
+    ///         previously claimed the trial, "Already subscribed" if their
+    ///         subscription is still active, or "Paused" if the contract is
+    ///         paused.
     function startFreeTrial() external whenNotPaused {
         require(!hasClaimedTrial[msg.sender], "Free trial already claimed");
         require(
