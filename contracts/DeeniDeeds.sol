@@ -111,6 +111,14 @@ contract DeeniDeeds {
     }
 
     /// @notice Returns a page of deed logs (newest first via offset from end).
+    /// @param user   The user whose deeds to read.
+    /// @param offset Number of most-recent entries to skip (0 = start from the
+    ///               newest). Capped implicitly by the user's log length.
+    /// @param limit  Maximum number of entries to return. Callers should pass
+    ///               a sensible upper bound (e.g. 20) to bound gas.
+    /// @return page  Array of DeedLog entries, ordered oldest -> newest within
+    ///               the returned window. Returns an empty array if offset is
+    ///               past the end of the log.
     function getDeeds(address user, uint256 offset, uint256 limit)
         external
         view
