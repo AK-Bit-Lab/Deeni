@@ -13,16 +13,37 @@ const STORAGE_KEY = "deeni_theme";
  */
 export function useTheme() {
   const [theme, setTheme] = useState("light");
+  // Tracks whether the user has explicitly chosen a theme. While false,
+  // we follow the OS preference and react to live OS theme changes.
+  const [userOverride, setUserOverride] = useState(false);
 
   // Initialise from storage or system preference
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark") {
       setTheme(stored);
+      setUserOverride(true);
     } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark");
     }
   }, []);
+
+  // Follow OS theme changes live, but only while the user hasn't picked
+  // their own theme. Once they toggle, their choice wins until they clear
+  // localStorage.
+  useEffect(() => {
+    if (userOverride) return;
+    if (!window.matchMedia) return;
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e) => setTheme(e.matches ? "dark" : "light");
+    // addEventListener is the modern API; addListener is the legacy fallback.
+    if (mql.addEventListener) {
+      mql.addEventListener("change", onChange);
+      return () => mql.removeEventListener("change", onChange);
+    }
+    mql.addListener(onChange);
+    return () => mql.removeListener(onChange);
+  }, [userOverride]);
 
   // Apply theme to <html> and persist
   useEffect(() => {
@@ -35,7 +56,15 @@ export function useTheme() {
     localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
-  const toggle = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+  const toggle = () => {
+    setUserOverride(true);
+    setTheme((t) => (t === "dark" ? "light" : "dark"));
+  };
 
-  return { theme, toggle, setTheme };
+  const setThemeAndOverride = (next) => {
+    setUserOverride(true);
+    setTheme(next);
+  };
+
+  return { theme, toggle, setTheme: setThemeAndOverride };
 }
