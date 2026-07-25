@@ -75,8 +75,24 @@ contract DeeniSubscription {
         return hasClaimedTrial[user];
     }
 
+    // Reentrancy guard: protects external functions that perform an external
+    // call (currently only `withdraw`). The lock is released automatically
+    // when the function returns, even on revert.
+    uint256 private _locked = 1;
+
+    modifier nonReentrant() {
+        require(_locked == 1, "Reentrant call");
+        _locked = 2;
+        _;
+        _locked = 1;
+    }
+
     /// @notice Owner withdraws accumulated subscription fees.
-    function withdraw(address payable to) external onlyOwner {
+    /// @dev Uses the checks-effects-interactions pattern with a reentrancy
+    ///      guard. The state (balance read) is captured BEFORE the external
+    ///      call, and the lock prevents a malicious recipient from re-entering
+    ///      `withdraw` (or any future guarded function) during the transfer.
+    function withdraw(address payable to) external onlyOwner nonReentrant {
         uint256 balance = address(this).balance;
         require(balance > 0, "Nothing to withdraw");
         (bool success, ) = to.call{value: balance}("");
