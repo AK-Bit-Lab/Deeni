@@ -76,12 +76,27 @@ contract DeeniQuiz {
         attempts[msg.sender][topic] += 1;
         totalQuizzes[msg.sender] += 1;
 
-        // Track best score (by raw correct count, then by percentage tiebreak)
+        // Track best score (by raw correct count, then by percentage tiebreak).
+        // On a tie (same correct count), prefer the attempt with the higher
+        // percentage, i.e. the one with the SMALLER total (fewer questions
+        // answered correctly out of a smaller pool = higher %).
         if (score > bestScore[msg.sender][topic]) {
             bestScore[msg.sender][topic] = score;
             bestTotal[msg.sender][topic] = total;
-        } else if (score == bestScore[msg.sender][topic] && total < bestTotal[msg.sender][topic]) {
-            // same correct count on a shorter quiz => higher %, update total
+        } else if (
+            score == bestScore[msg.sender][topic] &&
+            bestTotal[msg.sender][topic] == 0
+        ) {
+            // First-ever tie on a brand-new topic: record the total so the
+            // percentage can be computed. Without this, bestTotal stays 0
+            // and the UI shows 0% even after a correct submission.
+            bestTotal[msg.sender][topic] = total;
+        } else if (
+            score == bestScore[msg.sender][topic] &&
+            total < bestTotal[msg.sender][topic] &&
+            bestTotal[msg.sender][topic] > 0
+        ) {
+            // Same correct count on a shorter quiz => higher %, update total.
             bestTotal[msg.sender][topic] = total;
         }
 
