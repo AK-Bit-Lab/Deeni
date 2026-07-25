@@ -59,6 +59,8 @@ contract DeeniSubscription {
     ///         emergencies do not lock the contract.
     bool public paused;
 
+    /// @notice Restricts execution to the current contract owner.
+    /// @dev    Reverts with "Not owner" if `msg.sender` is not the owner.
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
         _;
@@ -66,6 +68,7 @@ contract DeeniSubscription {
 
     /// @notice Reverts while the contract is paused. Applied to user-facing
     ///         subscription actions only; admin functions remain available.
+    /// @dev    Reverts with "Paused" if the `paused` flag is true.
     modifier whenNotPaused() {
         require(!paused, "Paused");
         _;
