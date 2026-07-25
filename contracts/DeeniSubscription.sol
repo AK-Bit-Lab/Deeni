@@ -25,9 +25,26 @@ contract DeeniSubscription {
     event OwnershipTransferStarted(address indexed currentOwner, address indexed pendingOwner);
     /// @notice Emitted when a pending ownership transfer is cancelled.
     event OwnershipTransferCancelled(address indexed currentOwner, address indexed pendingOwner);
+    /// @notice Emitted when the contract is paused by the owner.
+    event Paused(address indexed account);
+    /// @notice Emitted when the contract is unpaused by the owner.
+    event Unpaused(address indexed account);
+
+    /// @notice Circuit-breaker flag. While true, user-facing subscription
+    ///         actions (startFreeTrial, paySubscription) are blocked. The
+    ///         owner can still withdraw funds and manage ownership so that
+    ///         emergencies do not lock the contract.
+    bool public paused;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    /// @notice Reverts while the contract is paused. Applied to user-facing
+    ///         subscription actions only; admin functions remain available.
+    modifier whenNotPaused() {
+        require(!paused, "Paused");
         _;
     }
 
@@ -52,7 +69,7 @@ contract DeeniSubscription {
     }
 
     /// @notice Claim the one-time 30-day free trial.
-    function startFreeTrial() external {
+    function startFreeTrial() external whenNotPaused {
         require(!hasClaimedTrial[msg.sender], "Free trial already claimed");
         require(
             subscriptionExpiry[msg.sender] < block.timestamp,
@@ -67,7 +84,7 @@ contract DeeniSubscription {
     }
 
     /// @notice Pay 5 CELO to extend the subscription by 30 days.
-    function paySubscription() external payable {
+    function paySubscription() external payable whenNotPaused {
         require(msg.value == SUBSCRIPTION_FEE, "Must pay exactly 5 CELO");
 
         uint256 currentExpiry = subscriptionExpiry[msg.sender];
@@ -159,5 +176,22 @@ contract DeeniSubscription {
         require(pending != address(0), "No pending transfer");
         pendingOwner = address(0);
         emit OwnershipTransferCancelled(owner, pending);
+    }
+
+    /// @notice Pause user-facing subscription actions. Use this in an
+    ///         emergency (e.g. discovered vulnerability, planned migration,
+    ///         regulatory request). Admin functions (withdraw, ownership
+    ///         management) remain available so funds are never locked.
+    function pause() external onlyOwner {
+        require(!paused, "Already paused");
+        paused = true;
+        emit Paused(msg.sender);
+    }
+
+    /// @notice Resume user-facing subscription actions after a pause.
+    function unpause() external onlyOwner {
+        require(paused, "Not paused");
+        paused = false;
+        emit Unpaused(msg.sender);
     }
 }
