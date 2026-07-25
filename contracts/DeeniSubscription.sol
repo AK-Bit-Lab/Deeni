@@ -10,9 +10,17 @@ contract DeeniSubscription {
     uint256 public constant TRIAL_DURATION = 30 days;
     uint256 public constant SUBSCRIPTION_DURATION = 30 days;
 
+    /// @notice Unix timestamp at which each user's subscription access expires.
+    ///         A value of 0 means the user has never subscribed. A value in
+    ///         the past means the subscription has lapsed.
     mapping(address => uint256) public subscriptionExpiry;
+    /// @notice Tracks whether each address has already claimed the one-time
+    ///         free trial. Once true, `startFreeTrial` will revert for that
+    ///         address forever.
     mapping(address => bool) public hasClaimedTrial;
 
+    /// @notice The current owner of the contract. The owner can withdraw
+    ///         funds, pause/unpause user actions, and transfer ownership.
     address public owner;
 
     /// @notice Emitted when a user successfully claims the one-time free trial.
