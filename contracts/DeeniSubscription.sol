@@ -88,7 +88,10 @@ contract DeeniSubscription {
     /// @notice Deploys the contract and assigns ownership to the deployer.
     /// @dev    Emits an initial `OwnershipTransferred` event from the zero
     ///         address so off-chain indexers can detect the deployment and
-    ///         record the first owner without an extra transaction.
+    ///         record the first owner without an extra transaction. The
+    ///         contract is non-upgradeable: there is no `initialize` function
+    ///         and no proxy, so the constructor is the only place ownership
+    ///         is ever assigned to a non-zero address from the zero address.
     constructor() {
         owner = msg.sender;
         emit OwnershipTransferred(address(0), msg.sender);
