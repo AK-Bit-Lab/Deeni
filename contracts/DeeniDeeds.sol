@@ -34,22 +34,37 @@ contract DeeniDeeds {
         uint64 timestamp;
     }
 
-    // user => array of all deed logs
+    /// @notice Append-only per-user log of every deed ever recorded.
+    /// @dev Indexed by user address. Each push appends a new `DeedLog` entry;
+    ///      entries are never removed or reordered, so the array index doubles
+    ///      as a chronological ordering. Off-chain clients paginate this array
+    ///      via `getDeeds(user, offset, limit)`.
     mapping(address => DeedLog[]) public deedLogs;
 
-    // user => deedType => total count ever
+    /// @notice Running total of `count` units the user has ever recorded for a
+    ///         given deed type. Never decreases.
     mapping(address => mapping(uint8 => uint32)) public totalCount;
 
-    // user => deedType => last day recorded (days since epoch)
+    /// @notice The day index (days since the unix epoch, i.e. `block.timestamp / 1 days`)
+    ///         on which the user most recently recorded a deed of the given type.
+    /// @dev Used by `recordDeed` to decide whether the current entry continues
+    ///      the streak (same day or exactly +1 day) or resets it (gap of 2+ days).
     mapping(address => mapping(uint8 => uint32)) public lastDay;
 
-    // user => deedType => current streak (consecutive days)
+    /// @notice The user's current consecutive-day streak for the given deed type.
+    /// @dev Reset to 1 whenever a new streak begins and incremented by 1 when
+    ///      the next day's entry arrives. Reset to 0 when the streak is broken.
     mapping(address => mapping(uint8 => uint32)) public currentStreak;
 
-    // user => deedType => best streak ever
+    /// @notice The longest streak the user has ever achieved for the given deed type.
+    /// @dev Monotonically non-decreasing. Updated by `recordDeed` whenever the
+    ///      current streak exceeds the previous best.
     mapping(address => mapping(uint8 => uint32)) public bestStreak;
 
-    // user => total deeds recorded
+    /// @notice Total number of `DeedLog` entries the user has recorded across all deed types.
+    /// @dev Equivalent to `deedLogs[user].length` but exposed as a top-level
+    ///      mapping so it can be read with a single `eth_call` instead of
+    ///      fetching the dynamic array's length separately.
     mapping(address => uint256) public totalDeeds;
 
     event DeedRecorded(
