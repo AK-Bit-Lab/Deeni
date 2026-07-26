@@ -298,7 +298,10 @@ contract DeeniSubscription {
     ///      reported as active. Users who have never paid or trialed return false because their
     ///      stored expiry is the default zero, which is always in the past. The function is a
     ///      thin wrapper around a single SLOAD and is safe to call from any off-chain client
-    ///      (no gas cost beyond the `eth_call` overhead).
+    ///      (no gas cost beyond the `eth_call` overhead). The function does NOT check the
+    ///      `paused` flag - a paused contract still reports existing subscriptions as active
+    ///      because the pause only blocks NEW subscriptions, not access for users who already
+    ///      paid. This matches the OpenZeppelin Pausable convention.
     function isSubscribed(address user) external view returns (bool) {
         return subscriptionExpiry[user] >= block.timestamp;
     }
