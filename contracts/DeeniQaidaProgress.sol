@@ -39,16 +39,38 @@ contract DeeniQaidaProgress {
         uint64 timestamp;
     }
 
-    // user => array of all completed lesson logs (append-only)
+    /// @notice Append-only per-user log of every lesson completion ever recorded.
+    /// @dev Indexed by user address. Each push appends a new `LessonLog`
+    ///      entry; entries are never removed or reordered, so the array
+    ///      index doubles as a chronological ordering. Off-chain clients
+    ///      paginate this array via `getLogs(user, offset, limit)`. The
+    ///      array grows unbounded over time, so very active users may
+    ///      eventually hit RPC gas limits when paginating - the frontend
+    ///      should bound `limit` accordingly.
     mapping(address => LessonLog[]) public logs;
 
-    // user => lessonId => whether completed at least once
+    /// @notice Whether the user has completed a given lesson at least once.
+    /// @dev    Stored as `bool` (one slot per (user, lessonId) pair). The
+    ///         flag is monotonic: it only ever flips from false to true,
+    ///         never back. There is intentionally no admin function to
+    ///         reset it - the "completed at least once" record is permanent.
     mapping(address => mapping(uint8 => bool)) public completed;
 
-    // user => highest lesson completed
+    /// @notice The highest lesson number the user has ever completed.
+    /// @dev    Updated by `completeLesson` only when the new lessonId
+    ///         exceeds the previous best. Stored as `uint8` because the
+    ///         curriculum has at most 255 lessons (currently 17). The
+    ///         value is monotonic: it only ever increases, never decreases.
     mapping(address => uint8) public highestLesson;
 
-    // user => total completions (including repeats)
+    /// @notice Total number of lesson completions the user has recorded,
+    ///         including repeats of the same lesson.
+    /// @dev    Equivalent to `logs[user].length` but exposed as a top-level
+    ///         mapping so it can be read with a single `eth_call` instead
+    ///         of fetching the dynamic array's length separately. Stored
+    ///         as `uint256` because the count is unbounded over a user's
+    ///         lifetime. The mapping is monotonic: it only ever increases,
+    ///         never decreases.
     mapping(address => uint256) public totalCompletions;
 
     event LessonCompleted(
