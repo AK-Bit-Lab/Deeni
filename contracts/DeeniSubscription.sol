@@ -338,7 +338,10 @@ contract DeeniSubscription {
     ///      avoids emitting a redundant `Unpaused` event. After unpausing, new users
     ///      can once again call `startFreeTrial` and `paySubscription`. Users whose
     ///      subscription expired during the pause window must start a new trial or
-    ///      pay again to regain access.
+    ///      pay again to regain access. The function does NOT extend any user's
+    ///      expiry to compensate for the pause window - the pause is treated as
+    ///      "time still passes" so users who let their subscription lapse during
+    ///      the pause are not silently re-subscribed.
     function unpause() external onlyOwner {
         require(paused, "Not paused");
         paused = false;
