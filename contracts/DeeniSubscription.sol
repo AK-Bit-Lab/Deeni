@@ -65,6 +65,11 @@ contract DeeniSubscription {
     ///         the two-step transfer finalisation in `acceptOwnership`.
     /// @param previousOwner The address that owned the contract before.
     /// @param newOwner      The address that owns the contract after.
+    /// @dev    Both fields are indexed so off-chain indexers can subscribe to
+    ///         ownership changes by either the old or new owner. The
+    ///         constructor emits this event with `previousOwner == 0x0` so
+    ///         indexers can detect the deployment and record the first owner
+    ///         without an extra transaction.
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     /// @notice Emitted when the contract receives plain CELO via receive()/fallback().
     event Received(address indexed from, uint256 amount);
