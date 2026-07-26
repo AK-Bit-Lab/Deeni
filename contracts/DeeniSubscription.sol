@@ -312,7 +312,9 @@ contract DeeniSubscription {
     ///      "No pending transfer" if there is nothing to cancel. The cancelled
     ///      nominee is included in the `OwnershipTransferCancelled` event so the
     ///      off-chain nominee (if it is monitoring events) can be notified that
-    ///      it no longer needs to call `acceptOwnership`.
+    ///      it no longer needs to call `acceptOwnership`. The function does NOT
+    ///      notify the nominee out-of-band (no calls to the nominee address) - it
+    ///      relies entirely on event monitoring for off-chain notification.
     function cancelOwnershipTransfer() external onlyOwner {
         address pending = pendingOwner;
         require(pending != address(0), "No pending transfer");
