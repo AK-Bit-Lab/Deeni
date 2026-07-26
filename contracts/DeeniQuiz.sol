@@ -46,19 +46,35 @@ contract DeeniQuiz {
         uint64  timestamp;
     }
 
-    // user => array of all quiz results (append-only)
+    /// @notice Append-only per-user log of every quiz attempt ever submitted.
+    /// @dev Indexed by user address. Each push appends a new `QuizResult` entry;
+    ///      entries are never removed or reordered, so the array index doubles
+    ///      as a chronological ordering. Off-chain clients paginate this array
+    ///      via `getResults(user, offset, limit)`.
     mapping(address => QuizResult[]) public results;
 
-    // user => topic => best score (correct answers)
+    /// @notice The user's best (highest) raw score ever achieved for a given topic.
+    /// @dev Updated by `submitQuiz` only when the new attempt's score exceeds the
+    ///      previous best. Stored as `uint16` because no quiz has more than
+    ///      65,535 questions.
     mapping(address => mapping(uint8 => uint16)) public bestScore;
 
-    // user => topic => best total (so a % can be computed)
+    /// @notice The `total` value paired with `bestScore` so the percentage can
+    ///         be reconstructed off-chain as `bestScore * 100 / bestTotal`.
+    /// @dev Stored alongside `bestScore` because the same attempt that set the
+    ///      best score also defines the denominator for that score.
     mapping(address => mapping(uint8 => uint16)) public bestTotal;
 
-    // user => topic => number of attempts
+    /// @notice Number of quiz attempts the user has made for a given topic.
+    /// @dev Incremented on every successful `submitQuiz` call regardless of
+    ///      whether the score was a new best. Useful for the frontend to show
+    ///      "5 attempts, best 8/10" style stats.
     mapping(address => mapping(uint8 => uint32)) public attempts;
 
-    // user => total quizzes taken
+    /// @notice Total number of quiz attempts the user has made across all topics.
+    /// @dev Equivalent to `results[user].length` but exposed as a top-level
+    ///      mapping so it can be read with a single `eth_call` instead of
+    ///      fetching the dynamic array's length separately.
     mapping(address => uint256) public totalQuizzes;
 
     event QuizSubmitted(
