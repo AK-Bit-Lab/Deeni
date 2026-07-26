@@ -2,10 +2,16 @@
 pragma solidity ^0.8.20;
 
 /// @title DeeniDeeds
+/// @author  Deeni Labs (AK-Bit-Lab)
 /// @notice On-chain daily Islamic deeds tracker. Every action a user completes
 ///         (Quran recitation, dua, dhikr, prayer, fasting, charity, learning)
 ///         is recorded on-chain so the user pays gas on Celo and builds an
 ///         immutable, verifiable spiritual log with streaks and counts.
+/// @dev     Self-contained (no external imports) so it compiles cleanly in
+///         Remix. The contract is non-upgradeable and has no owner: every
+///         user is their own admin. Gas is minimised by packing structs into
+///         single storage slots and using `uint8`/`uint32`/`uint64` instead
+///         of `uint256` where the value range permits.
 contract DeeniDeeds {
     // Deed type IDs (0-7)
     // 0 = Quran recitation, 1 = Dua, 2 = Dhikr, 3 = Salah (prayer),
