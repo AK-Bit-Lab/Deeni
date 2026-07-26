@@ -124,7 +124,11 @@ contract DeeniSubscription {
 
     /// @notice Fallback for non-call-data sends. Same behaviour as receive().
     /// @dev    Kept for completeness; in practice plain CELO transfers hit
-    ///         receive() and only malformed calls hit fallback().
+    ///         receive() and only malformed calls hit fallback(). Solidity
+    ///         requires both functions to be present if either is, so we
+    ///         define both with identical bodies. The fallback is also
+    ///         `payable` so it can accept CELO attached to a call with
+    ///         non-empty (but unmatched) calldata.
     fallback() external payable {
         emit Received(msg.sender, msg.value);
     }
