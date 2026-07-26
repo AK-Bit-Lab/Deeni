@@ -8,13 +8,22 @@ pragma solidity ^0.8.20;
 ///         "once per day" restriction — users can complete multiple lessons
 ///         in a single session.
 contract DeeniQaidaProgress {
+    /// @notice A single immutable record of one Qaida lesson completion by one user.
+    /// @dev Stored in the per-user `logs` array. The struct is intentionally
+    ///      packed into a single 32-byte storage slot:
+    ///      `uint8 lessonId` (1 byte) + `uint64 timestamp` (8 bytes) = 9 bytes
+    ///      of payload, padded to one slot. This packing halves the SSTORE
+    ///      cost compared to using wider types such as `uint256`.
+    /// @param lessonId  Identifier of the completed lesson (1..17). Matches the
+    ///                  `QAIDA_LESSONS` array in the frontend so off-chain
+    ///                  clients can resolve the lesson title and content.
+    /// @param timestamp Unix timestamp (seconds since epoch) at which the
+    ///                  lesson was completed. Stored as `uint64` because unix
+    ///                  timestamps fit comfortably until year 584,942,417,355
+    ///                  AD, well beyond any practical horizon, and `uint64`
+    ///                  packs tighter than `uint256`.
     struct LessonLog {
-        uint8  lessonId;   // 1-17 (matches frontend QAIDA_LESSONS)
-        // NOTE: timestamp is stored as uint64. Unix timestamps fit in uint64
-        // until year 584,942,417,355 (~5.8e11 AD), well beyond any practical
-        // horizon. uint64 was chosen over uint256 to pack the struct tightly
-        // (1 byte lessonId + 8 bytes timestamp = 9 bytes, rounded to one
-        // 32-byte storage slot) and save gas on SSTOREs.
+        uint8  lessonId;
         uint64 timestamp;
     }
 
