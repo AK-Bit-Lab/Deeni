@@ -87,9 +87,23 @@ contract DeeniDeeds {
     ///         values from inflating on-chain stats or wasting gas.
     uint32 public constant MAX_DEED_COUNT = 100_000;
 
-    /// @notice Record a deed on-chain. Can only be recorded once per deed type per day.
-    /// @param deedType 0-7 (see contract header).
-    /// @param count    quantity for this deed (e.g. pages of Quran, rakats).
+    /// @notice Record a deed on-chain for the caller. Each (user, deedType) pair
+    ///         can only be recorded once per UTC day.
+    /// @param deedType Identifier of the deed category (0..7). See the comment
+    ///                  block at the top of the contract for the canonical mapping.
+    /// @param count    Quantity for this deed (e.g. pages of Quran, rakats of
+    ///                  salah, repetitions of dhikr). Must be in the range
+    ///                  (0, MAX_DEED_COUNT].
+    /// @dev Reverts with "Invalid deed type" if `deedType > 7`, with
+    ///      "Count must be > 0" if `count == 0`, with "Count too large" if
+    ///      `count > MAX_DEED_COUNT`, and with "Already recorded today" if the
+    ///      caller has already recorded this deed type on the current UTC day.
+    ///      The streak logic is: if the previous entry was exactly one day
+    ///      before today, the streak is incremented; otherwise (first entry
+    ///      ever, or a gap of 2+ days) the streak resets to 1. `bestStreak`
+    ///      is updated monotonically. Emits a single `DeedRecorded` event
+    ///      containing the new streak so off-chain indexers can update their
+    ///      UI without re-reading storage.
     function recordDeed(uint8 deedType, uint32 count) external {
         require(deedType <= 7, "Invalid deed type");
         require(count > 0, "Count must be > 0");
