@@ -182,6 +182,11 @@ contract DeeniDeeds {
     /// @return True if `user` has already called `recordDeed` for `deedType` on the
     ///         current UTC day, false otherwise. Useful for the frontend to disable
     ///         the "Record" button after the user has already submitted for the day.
+    /// @dev    The function is a thin wrapper around a single SLOAD on
+    ///         `lastDay[user][deedType]` and a call to `_today()`. It is
+    ///         safe to call from any off-chain client (no gas cost beyond
+    ///         the `eth_call` overhead). The day boundary is UTC, not the
+    ///         user's local timezone.
     function recordedToday(address user, uint8 deedType) external view returns (bool) {
         return lastDay[user][deedType] == _today();
     }
