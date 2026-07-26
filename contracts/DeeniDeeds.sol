@@ -141,12 +141,21 @@ contract DeeniDeeds {
         emit DeedRecorded(msg.sender, deedType, count, uint64(block.timestamp), streak);
     }
 
-    /// @notice Whether the user already recorded this deed today.
+    /// @notice Returns whether the user has already recorded the given deed type today (UTC).
+    /// @param user     The address to query.
+    /// @param deedType The deed category to check (0..7).
+    /// @return True if `user` has already called `recordDeed` for `deedType` on the
+    ///         current UTC day, false otherwise. Useful for the frontend to disable
+    ///         the "Record" button after the user has already submitted for the day.
     function recordedToday(address user, uint8 deedType) external view returns (bool) {
         return lastDay[user][deedType] == _today();
     }
 
-    /// @notice Total number of deed logs for a user.
+    /// @notice Returns the total number of deed log entries the user has recorded.
+    /// @param user The address to query.
+    /// @return The length of `deedLogs[user]`. Equivalent to the public
+    ///         `totalDeeds[user]` mapping but exposed as a dedicated function so
+    ///         off-chain clients can call it without knowing the storage layout.
     function deedCount(address user) external view returns (uint256) {
         return deedLogs[user].length;
     }
@@ -160,6 +169,11 @@ contract DeeniDeeds {
     /// @return page  Array of DeedLog entries, ordered oldest -> newest within
     ///               the returned window. Returns an empty array if offset is
     ///               past the end of the log.
+    /// @dev The function reads from the end of the array backwards so that
+    ///      `offset = 0` returns the most recent `limit` entries, which is the
+    ///      common UI use case (a "recent activity" feed). The returned slice
+    ///      is internally ordered oldest -> newest so the frontend can render
+    ///      it directly without re-sorting.
     function getDeeds(address user, uint256 offset, uint256 limit)
         external
         view
@@ -177,7 +191,14 @@ contract DeeniDeeds {
         }
     }
 
-    /// @notice Returns a summary: totalCount, currentStreak, bestStreak for a deed type.
+    /// @notice Returns a summary of the user's stats for a single deed type.
+    /// @param user     The address to query.
+    /// @param deedType The deed category (0..7).
+    /// @return total  The lifetime total of `count` units recorded for this deed type.
+    /// @return streak The user's current consecutive-day streak for this deed type.
+    /// @return best   The user's longest-ever streak for this deed type.
+    /// @dev Bundles three storage reads into a single `eth_call` so the frontend
+    ///      can render a stats card with one round-trip instead of three.
     function getStats(address user, uint8 deedType)
         external
         view
