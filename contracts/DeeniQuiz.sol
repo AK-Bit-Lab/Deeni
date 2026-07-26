@@ -17,6 +17,15 @@ pragma solidity ^0.8.20;
 ///         two storage slots and using `uint8`/`uint16`/`uint64` instead of
 ///         `uint256` where the value range permits.
 contract DeeniQuiz {
+    /// @notice Canonical mapping of `uint8` topic IDs to quiz categories.
+    /// @dev Kept as `uint8` so the frontend can map freely without worrying
+    ///      about gas. The IDs are stable: changing them would break every
+    ///      existing user's `bestScore`/`bestTotal`/`attempts` history, so
+    ///      new topics must be appended at the next free index rather than
+    ///      re-using or re-ordering existing ones.
+    ///      0 = Quran, 1 = Tajweed, 2 = Arabic Letters, 3 = Pillars of Islam,
+    ///      4 = Pillars of Iman, 5 = Prophets (Anbiya), 6 = Seerah,
+    ///      7 = Fiqh / Salah, 8 = Hadith, 9 = General Knowledge.
     // Topic IDs (0-9) — kept as uint8 so the frontend can map freely.
     // 0 = Quran, 1 = Tajweed, 2 = Arabic Letters, 3 = Pillars of Islam,
     // 4 = Pillars of Iman, 5 = Prophets (Anbiya), 6 = Seerah,
@@ -30,7 +39,9 @@ contract DeeniQuiz {
     ///      slot 1 = `uint64 timestamp` (8) padded to 32.
     ///      Using `uint16` for score/total and `uint64` for the timestamp keeps
     ///      the struct compact and saves gas on SSTOREs compared to using
-    ///      `uint256` everywhere.
+    ///      `uint256` everywhere. The struct is `internal` to the contract -
+    ///      off-chain clients see it through the ABI but cannot construct one
+    ///      directly.
     /// @param topic         Identifier of the quiz topic (0..9). See the comment
     ///                      block above the struct for the canonical mapping.
     /// @param score         Number of questions the user answered correctly.
