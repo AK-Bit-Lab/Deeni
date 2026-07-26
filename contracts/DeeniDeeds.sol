@@ -88,7 +88,9 @@ contract DeeniDeeds {
     /// @notice Total number of `DeedLog` entries the user has recorded across all deed types.
     /// @dev Equivalent to `deedLogs[user].length` but exposed as a top-level
     ///      mapping so it can be read with a single `eth_call` instead of
-    ///      fetching the dynamic array's length separately.
+    ///      fetching the dynamic array's length separately. Stored as
+    ///      `uint256` because the count is unbounded over a user's lifetime.
+    ///      The mapping is monotonic: it only ever increases, never decreases.
     mapping(address => uint256) public totalDeeds;
 
     /// @notice Emitted when a user successfully records a deed on-chain.
