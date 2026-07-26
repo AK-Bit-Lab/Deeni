@@ -16,16 +16,33 @@ contract DeeniQuiz {
     // 4 = Pillars of Iman, 5 = Prophets (Anbiya), 6 = Seerah,
     // 7 = Fiqh / Salah, 8 = Hadith, 9 = General Knowledge
 
+    /// @notice A single immutable record of one quiz attempt by one user.
+    /// @dev Stored in the per-user `results` array. The struct is intentionally
+    ///      packed into two 32-byte storage slots:
+    ///      slot 0 = `uint8 topic` (1) + `uint16 score` (2) + `uint16 total` (2)
+    ///               + `bytes32 questionHash` (32) = 37 bytes (padded to 64);
+    ///      slot 1 = `uint64 timestamp` (8) padded to 32.
+    ///      Using `uint16` for score/total and `uint64` for the timestamp keeps
+    ///      the struct compact and saves gas on SSTOREs compared to using
+    ///      `uint256` everywhere.
+    /// @param topic         Identifier of the quiz topic (0..9). See the comment
+    ///                      block above the struct for the canonical mapping.
+    /// @param score         Number of questions the user answered correctly.
+    /// @param total         Total number of questions in the quiz. The percentage
+    ///                      score is `score * 100 / total`.
+    /// @param questionHash  Optional keccak256 hash of the question IDs that were
+    ///                      asked, used as tamper-evidence. May be left as the
+    ///                      zero hash if the caller does not want to commit to a
+    ///                      specific question set.
+    /// @param timestamp     Unix timestamp (seconds since epoch) at which the
+    ///                      result was submitted. Stored as `uint64` because unix
+    ///                      timestamps fit comfortably until year 584,942,417,355
+    ///                      AD, well beyond any practical horizon.
     struct QuizResult {
-        uint8   topic;       // 0-9
-        uint16  score;       // correct answers
-        uint16  total;        // total questions
-        bytes32 questionHash; // keccak of question IDs (optional, zero allowed)
-        // NOTE: timestamp is stored as uint64. Unix timestamps fit in uint64
-        // until year 584,942,417,355 (~5.8e11 AD), well beyond any practical
-        // horizon. uint64 was chosen over uint256 to pack the struct tightly
-        // (1 + 2 + 2 + 32 + 8 = 45 bytes, rounded to two 32-byte storage
-        // slots) and save gas on SSTOREs.
+        uint8   topic;
+        uint16  score;
+        uint16  total;
+        bytes32 questionHash;
         uint64  timestamp;
     }
 
