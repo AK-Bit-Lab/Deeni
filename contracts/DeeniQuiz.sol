@@ -41,7 +41,10 @@ contract DeeniQuiz {
     ///      the struct compact and saves gas on SSTOREs compared to using
     ///      `uint256` everywhere. The struct is `internal` to the contract -
     ///      off-chain clients see it through the ABI but cannot construct one
-    ///      directly.
+    ///      directly. Because Solidity auto-generates a getter for public
+    ///      mappings of struct arrays, the struct fields are still readable
+    ///      via `results(user, index)` even though the struct itself is not
+    ///      marked `public`.
     /// @param topic         Identifier of the quiz topic (0..9). See the comment
     ///                      block above the struct for the canonical mapping.
     /// @param score         Number of questions the user answered correctly.
