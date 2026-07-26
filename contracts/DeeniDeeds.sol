@@ -244,7 +244,10 @@ contract DeeniDeeds {
     /// @return streak The user's current consecutive-day streak for this deed type.
     /// @return best   The user's longest-ever streak for this deed type.
     /// @dev Bundles three storage reads into a single `eth_call` so the frontend
-    ///      can render a stats card with one round-trip instead of three.
+    ///      can render a stats card with one round-trip instead of three. The
+    ///      function is `view` and does not modify state. The three returned
+    ///      values are independent and can be cached separately by off-chain
+    ///      clients if needed.
     function getStats(address user, uint8 deedType)
         external
         view
