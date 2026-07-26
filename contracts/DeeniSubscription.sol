@@ -33,6 +33,11 @@ contract DeeniSubscription {
     /// @notice Tracks whether each address has already claimed the one-time
     ///         free trial. Once true, `startFreeTrial` will revert for that
     ///         address forever.
+    /// @dev    Stored as `bool` (packed into one slot per user alongside
+    ///         other small fields if any are added later). The flag is
+    ///         monotonic: it only ever flips from false to true, never back.
+    ///         There is intentionally no admin function to reset it - the
+    ///         one-trial-per-address rule is permanent.
     mapping(address => bool) public hasClaimedTrial;
 
     /// @notice The current owner of the contract. The owner can withdraw
