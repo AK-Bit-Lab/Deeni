@@ -92,6 +92,15 @@ contract DeeniSubscription {
     ///         signal for the pending owner to call `acceptOwnership`.
     event OwnershipTransferStarted(address indexed currentOwner, address indexed pendingOwner);
     /// @notice Emitted when a pending ownership transfer is cancelled.
+    /// @param currentOwner The address that cancelled the transfer (always the
+    ///                     current owner at the time of cancellation).
+    /// @param pendingOwner The address that was nominated but whose nomination
+    ///                     has now been cancelled.
+    /// @dev    Both fields are indexed so off-chain indexers can subscribe to
+    ///         ownership-transfer cancellations by either party. The event is
+    ///         emitted by `cancelOwnershipTransfer` and is the signal for the
+    ///         cancelled nominee to stop monitoring for an `acceptOwnership`
+    ///         call that will never come.
     event OwnershipTransferCancelled(address indexed currentOwner, address indexed pendingOwner);
     /// @notice Emitted when the contract is paused by the owner.
     event Paused(address indexed account);
