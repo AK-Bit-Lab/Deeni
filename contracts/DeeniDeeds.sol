@@ -97,6 +97,10 @@ contract DeeniDeeds {
     ///         (e.g. ~600 pages of Quran, ~200 rakats of salah, ~50,000
     ///         dhikr beads) and prevents accidental or malicious huge
     ///         values from inflating on-chain stats or wasting gas.
+    /// @dev    Stored as `uint32` because no realistic single-day value
+    ///         exceeds 4 billion. The constant is `public` so off-chain
+    ///         clients can read it via a single `eth_call` and validate
+    ///         user input before submitting a transaction.
     uint32 public constant MAX_DEED_COUNT = 100_000;
 
     /// @notice Record a deed on-chain for the caller. Each (user, deedType) pair
