@@ -83,6 +83,13 @@ contract DeeniSubscription {
     ///         donation).
     event Received(address indexed from, uint256 amount);
     /// @notice Emitted when the current owner nominates a new pending owner.
+    /// @param currentOwner The address that initiated the transfer.
+    /// @param pendingOwner The address that has been nominated and must call
+    ///                     `acceptOwnership` to finalise the transfer.
+    /// @dev    Both fields are indexed so off-chain indexers can subscribe to
+    ///         ownership-transfer activity by either the current or pending
+    ///         owner. The event is emitted by `transferOwnership` and is the
+    ///         signal for the pending owner to call `acceptOwnership`.
     event OwnershipTransferStarted(address indexed currentOwner, address indexed pendingOwner);
     /// @notice Emitted when a pending ownership transfer is cancelled.
     event OwnershipTransferCancelled(address indexed currentOwner, address indexed pendingOwner);
