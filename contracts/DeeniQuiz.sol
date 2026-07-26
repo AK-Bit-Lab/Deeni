@@ -86,11 +86,28 @@ contract DeeniQuiz {
         uint64  timestamp
     );
 
-    /// @notice Submit a quiz result on-chain.
-    /// @param topic        0-9 (see contract header).
-    /// @param score        number of correct answers.
-    /// @param total        total number of questions.
-    /// @param questionHash keccak256 of the question IDs (or bytes32(0) to skip).
+    /// @notice Submit a quiz result on-chain for the caller.
+    /// @dev The quiz questions and grading happen entirely off-chain in the
+    ///      frontend; this contract only stores the final score so gas stays
+    ///      low. The optional `questionHash` provides tamper-evidence: an
+    ///      auditor can recompute the hash from the question IDs and verify
+    ///      that the recorded result corresponds to the claimed question set.
+    /// @param topic        Identifier of the quiz topic (0..9). See the comment
+    ///                     block at the top of the contract for the canonical
+    ///                     mapping.
+    /// @param score        Number of questions the user answered correctly.
+    ///                     Must satisfy `0 <= score <= total`.
+    /// @param total        Total number of questions in the quiz. Must be > 0.
+    /// @param questionHash keccak256 hash of the question IDs that were asked,
+    ///                     or `bytes32(0)` to skip the tamper-evidence check.
+    /// @dev Reverts with "Invalid topic" if `topic > 9`, with "Total must be > 0"
+    ///      if `total == 0`, and with "Score > total" if `score > total`.
+    ///      The best-score tracking prefers higher raw scores; on a tie it
+    ///      prefers the attempt with the higher percentage (i.e. the smaller
+    ///      `total`). A special case records `bestTotal` on the very first
+    ///      submission for a topic so the UI can show a non-zero percentage.
+    ///      Emits a single `QuizSubmitted` event so off-chain indexers can
+    ///      update their UI without re-reading storage.
     function submitQuiz(
         uint8   topic,
         uint16  score,
