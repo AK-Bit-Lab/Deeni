@@ -84,7 +84,11 @@ contract DeeniSubscription {
 
     /// @notice Reverts while the contract is paused. Applied to user-facing
     ///         subscription actions only; admin functions remain available.
-    /// @dev    Reverts with "Paused" if the `paused` flag is true.
+    /// @dev    Reverts with "Paused" if the `paused` flag is true. Currently
+    ///         applied to `startFreeTrial` and `paySubscription`. Admin
+    ///         functions (`withdraw`, ownership management, pause/unpause)
+    ///         intentionally do NOT carry this modifier so the owner can
+    ///         always manage the contract even during an emergency pause.
     modifier whenNotPaused() {
         require(!paused, "Paused");
         _;
