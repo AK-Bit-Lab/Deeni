@@ -62,6 +62,9 @@ contract DeeniDeeds {
     ///         on which the user most recently recorded a deed of the given type.
     /// @dev Used by `recordDeed` to decide whether the current entry continues
     ///      the streak (same day or exactly +1 day) or resets it (gap of 2+ days).
+    ///      Stored as `uint32` because the day index fits comfortably until
+    ///      year ~10,675 AD. A value of 0 means the user has never recorded
+    ///      this deed type (the default zero is treated as "no prior entry").
     mapping(address => mapping(uint8 => uint32)) public lastDay;
 
     /// @notice The user's current consecutive-day streak for the given deed type.
