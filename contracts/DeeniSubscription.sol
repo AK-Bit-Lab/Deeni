@@ -197,9 +197,15 @@ contract DeeniSubscription {
         return hasClaimedTrial[user];
     }
 
-    // Reentrancy guard: protects external functions that perform an external
-    // call (currently only `withdraw`). The lock is released automatically
-    // when the function returns, even on revert.
+    /// @notice Reentrancy guard flag. Initialised to 1 (unlocked) and flipped
+    ///         to 2 (locked) for the duration of any function carrying the
+    ///         `nonReentrant` modifier. The lock is released automatically when
+    ///         the function returns, even on revert, so callers never need to
+    ///         manually unlock. Currently protects `withdraw`; future external
+    ///         calls should also carry the modifier.
+    /// @dev    Uses uint256 instead of bool so the storage slot is initialised
+    ///         to a non-zero value (cheaper SSTORE on first write) and so the
+    ///         check `require(_locked == 1, ...)` is unambiguous.
     uint256 private _locked = 1;
 
     modifier nonReentrant() {
