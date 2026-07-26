@@ -220,6 +220,9 @@ contract DeeniSubscription {
     ///      same invariant in `startFreeTrial` by reverting when the flag is already true, so
     ///      this view is the canonical way for off-chain clients to decide whether to show the
     ///      "Start free trial" button or hide it in favour of the "Pay subscription" option.
+    ///      The function is a thin wrapper around the public `hasClaimedTrial` mapping and
+    ///      exists primarily for ABI discoverability and to give the frontend a stable,
+    ///      named entry point that matches the camelCase convention used elsewhere.
     function trialClaimed(address user) external view returns (bool) {
         return hasClaimedTrial[user];
     }
