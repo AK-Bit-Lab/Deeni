@@ -403,7 +403,9 @@ contract DeeniSubscription {
     ///      overwrites `pendingOwner` with the new nominee; the previous nominee loses
     ///      its pending status without ever being notified. The function does NOT
     ///      check that `newOwner` is a contract or an EOA - any address type is
-    ///      accepted, including multi-sigs and other contracts.
+    ///      accepted, including multi-sigs and other contracts. The function does NOT
+    ///      check the `paused` flag - ownership management must always be available
+    ///      so the owner can rotate keys or hand off control during an emergency.
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Zero address");
         require(newOwner != owner, "Already owner");
