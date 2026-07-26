@@ -372,7 +372,9 @@ contract DeeniSubscription {
     ///      no `Withdrawn` event is emitted, so off-chain indexers can rely on the event as
     ///      proof of a successful payout. The function intentionally withdraws the ENTIRE
     ///      balance rather than an arbitrary amount to keep the accounting model simple and
-    ///      to avoid leaving dust in the contract.
+    ///      to avoid leaving dust in the contract. The function does NOT check the `paused`
+    ///      flag - the owner must always be able to withdraw funds, even during an emergency
+    ///      pause, so users can be refunded or funds can be moved to a safer contract.
     function withdraw(address payable to) external onlyOwner nonReentrant {
         uint256 balance = address(this).balance;
         require(balance > 0, "Nothing to withdraw");
