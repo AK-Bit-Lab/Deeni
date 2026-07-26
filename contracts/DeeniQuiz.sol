@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 /// @title DeeniQuiz
+/// @author  Deeni Labs (AK-Bit-Lab)
 /// @notice On-chain Islamic knowledge test recorder. When a user finishes a quiz
 ///         (Quran, Tajweed, Pillars of Islam, Prophets, Fiqh, Seerah, etc.) the
 ///         result is committed on-chain so it is immutable, verifiable, and the
@@ -10,6 +11,11 @@ pragma solidity ^0.8.20;
 ///         The quiz questions and grading happen off-chain in the frontend; this
 ///         contract only stores the final score so gas stays low. A cheap hash of
 ///         the questions is optionally stored for tamper-evidence.
+/// @dev     Self-contained (no external imports) so it compiles cleanly in
+///         Remix. The contract is non-upgradeable and has no owner: every
+///         user is their own admin. Gas is minimised by packing structs into
+///         two storage slots and using `uint8`/`uint16`/`uint64` instead of
+///         `uint256` where the value range permits.
 contract DeeniQuiz {
     // Topic IDs (0-9) — kept as uint8 so the frontend can map freely.
     // 0 = Quran, 1 = Tajweed, 2 = Arabic Letters, 3 = Pillars of Islam,
