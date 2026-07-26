@@ -73,6 +73,21 @@ contract DeeniDeeds {
     ///      fetching the dynamic array's length separately.
     mapping(address => uint256) public totalDeeds;
 
+    /// @notice Emitted when a user successfully records a deed on-chain.
+    /// @param user       The address that recorded the deed.
+    /// @param deedType   The deed category (0..7). See the comment block at
+    ///                    the top of the contract for the canonical mapping.
+    /// @param count      The number of units recorded for this deed.
+    /// @param timestamp  Unix timestamp (seconds since epoch) at which the
+    ///                    deed was recorded.
+    /// @param newStreak  The user's new consecutive-day streak for this deed
+    ///                    type after this entry. Off-chain indexers can use
+    ///                    this to update streak badges without re-reading
+    ///                    storage.
+    /// @dev    `user` and `deedType` are indexed so off-chain indexers can
+    ///         subscribe to per-user or per-deed-type feeds. The other
+    ///         fields are not indexed because they are rarely queried as
+    ///         filters.
     event DeedRecorded(
         address indexed user,
         uint8 indexed deedType,
