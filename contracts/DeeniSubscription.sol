@@ -216,6 +216,11 @@ contract DeeniSubscription {
     ///         accidental double-crediting when a user pays via paySubscription
     ///         and also sends a tip. The function is intentionally cheap: no
     ///         storage writes, no external calls, just an event emission.
+    ///         The function is `payable` so it can accept CELO attached to a
+    ///         plain transfer (no calldata). It is intentionally NOT marked
+    ///         `whenNotPaused` so the contract can still receive funds during
+    ///         an emergency pause - the owner may need incoming CELO to
+    ///         refund users or cover gas.
     receive() external payable {
         emit Received(msg.sender, msg.value);
     }
