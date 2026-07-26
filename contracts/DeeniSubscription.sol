@@ -129,7 +129,9 @@ contract DeeniSubscription {
     /// @dev    Reverts with "Free trial already claimed" if the caller has
     ///         previously claimed the trial, "Already subscribed" if their
     ///         subscription is still active, or "Paused" if the contract is
-    ///         paused.
+    ///         paused. The function is non-payable (no `msg.value` accepted)
+    ///         and writes to two storage slots: `hasClaimedTrial` and
+    ///         `subscriptionExpiry`.
     function startFreeTrial() external whenNotPaused {
         require(!hasClaimedTrial[msg.sender], "Free trial already claimed");
         require(
