@@ -235,10 +235,13 @@ contract DeeniSubscription {
         emit Withdrawn(to, balance);
     }
 
-    /// @notice Pending owner set by the current owner. The transfer is only
-    ///         finalised once the pending owner calls acceptOwnership().
-    ///         This two-step pattern prevents accidental transfers to
-    ///         mistyped or unrecoverable addresses.
+    /// @notice Pending owner set by the current owner via `transferOwnership`.
+    ///         The transfer is only finalised once the pending owner calls
+    ///         `acceptOwnership()`. This two-step pattern prevents accidental
+    ///         transfers to mistyped or unrecoverable addresses.
+    /// @dev    The zero address is used as the sentinel for "no pending
+    ///         transfer". `cancelOwnershipTransfer` and `acceptOwnership` both
+    ///         reset this to `address(0)` on success.
     address public pendingOwner;
 
     /// @notice Step 1 of the two-step ownership transfer: nominate a new owner.
