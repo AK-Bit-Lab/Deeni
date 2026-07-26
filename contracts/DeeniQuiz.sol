@@ -158,7 +158,11 @@ contract DeeniQuiz {
         emit QuizSubmitted(msg.sender, topic, score, total, questionHash, uint64(block.timestamp));
     }
 
-    /// @notice Number of quiz results stored for a user.
+    /// @notice Returns the total number of quiz results stored for a user.
+    /// @param user The address to query.
+    /// @return The length of `results[user]`. Equivalent to the public
+    ///         `totalQuizzes[user]` mapping but exposed as a dedicated function
+    ///         so off-chain clients can call it without knowing the storage layout.
     function resultCount(address user) external view returns (uint256) {
         return results[user].length;
     }
@@ -172,6 +176,11 @@ contract DeeniQuiz {
     /// @return page  Array of QuizResult entries, ordered oldest -> newest
     ///               within the returned window. Returns an empty array if
     ///               offset is past the end of the history.
+    /// @dev The function reads from the end of the array backwards so that
+    ///      `offset = 0` returns the most recent `limit` entries, which is the
+    ///      common UI use case (a "recent quizzes" feed). The returned slice
+    ///      is internally ordered oldest -> newest so the frontend can render
+    ///      it directly without re-sorting.
     function getResults(address user, uint256 offset, uint256 limit)
         external
         view
@@ -189,7 +198,15 @@ contract DeeniQuiz {
         }
     }
 
-    /// @notice Returns best score + total + attempts for a topic.
+    /// @notice Returns the user's best score, paired total, and attempt count for a topic.
+    /// @param user  The address to query.
+    /// @param topic The quiz topic (0..9).
+    /// @return bestS The user's best raw score for this topic.
+    /// @return bestT The `total` value paired with `bestS`, so the percentage
+    ///               can be reconstructed as `bestS * 100 / bestT`.
+    /// @return tries The total number of attempts the user has made for this topic.
+    /// @dev Bundles three storage reads into a single `eth_call` so the frontend
+    ///      can render a "best score" card with one round-trip instead of three.
     function getBest(address user, uint8 topic)
         external
         view
