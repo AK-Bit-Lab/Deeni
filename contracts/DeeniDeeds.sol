@@ -44,7 +44,9 @@ contract DeeniDeeds {
     /// @dev Indexed by user address. Each push appends a new `DeedLog` entry;
     ///      entries are never removed or reordered, so the array index doubles
     ///      as a chronological ordering. Off-chain clients paginate this array
-    ///      via `getDeeds(user, offset, limit)`.
+    ///      via `getDeeds(user, offset, limit)`. The array grows unbounded
+    ///      over time, so very active users may eventually hit RPC gas limits
+    ///      when paginating - the frontend should bound `limit` accordingly.
     mapping(address => DeedLog[]) public deedLogs;
 
     /// @notice Running total of `count` units the user has ever recorded for a
