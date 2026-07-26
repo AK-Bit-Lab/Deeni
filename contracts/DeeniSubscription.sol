@@ -208,6 +208,14 @@ contract DeeniSubscription {
     ///         check `require(_locked == 1, ...)` is unambiguous.
     uint256 private _locked = 1;
 
+    /// @notice Reentrancy guard modifier. Reverts with "Reentrant call" if the
+    ///         guard is already engaged. The lock is acquired before the
+    ///         function body runs and released after it returns (including on
+    ///         revert), so callers never need to manually unlock.
+    /// @dev    Apply this modifier to any function that performs an external
+    ///         call (currently only `withdraw`). The guard is intentionally
+    ///         cross-function: a re-entrant call into ANY guarded function
+    ///         reverts, not just the one currently executing.
     modifier nonReentrant() {
         require(_locked == 1, "Reentrant call");
         _locked = 2;
