@@ -169,8 +169,19 @@ contract DeeniQaidaProgress {
         }
     }
 
-    /// @notice Returns a summary: highestLesson, totalCompletions, and whether
-    /// a specific lesson is completed.
+    /// @notice Returns a summary of the user's Qaida progress.
+    /// @param user     The address to query.
+    /// @param lessonId The lesson number (1..17) to check completion for.
+    /// @return highest     The user's highest lesson number ever completed.
+    /// @return total       The user's total number of lesson completions
+    ///                      (including repeats).
+    /// @return isCompleted True if the user has completed `lessonId` at
+    ///                      least once, false otherwise.
+    /// @dev Bundles three storage reads into a single `eth_call` so the
+    ///      frontend can render a progress card with one round-trip
+    ///      instead of three. The function is `view` and does not modify
+    ///      state. The three returned values are independent and can be
+    ///      cached separately by off-chain clients if needed.
     function getProgress(address user, uint8 lessonId)
         external
         view
