@@ -42,6 +42,11 @@ contract DeeniSubscription {
 
     /// @notice The current owner of the contract. The owner can withdraw
     ///         funds, pause/unpause user actions, and transfer ownership.
+    /// @dev    Set once in the constructor to `msg.sender` and then only
+    ///         changed via the two-step `transferOwnership` / `acceptOwnership`
+    ///         flow. Stored as `address` (20 bytes, padded to 32 bytes per
+    ///         storage slot). The owner has no special privileges over user
+    ///         funds beyond withdrawing the contract's own CELO balance.
     address public owner;
 
     /// @notice Emitted when a user successfully claims the one-time free trial.
