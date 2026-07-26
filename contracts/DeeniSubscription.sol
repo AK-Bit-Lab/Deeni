@@ -206,7 +206,9 @@ contract DeeniSubscription {
     /// @dev The frontend uses this value to render countdown timers and "days remaining" labels.
     ///      A return value of zero means the user has no recorded subscription and should be
     ///      prompted to start a trial or pay. The value is a unix timestamp in seconds and is
-    ///      comparable directly against `block.timestamp`.
+    ///      comparable directly against `block.timestamp`. The function is a thin wrapper
+    ///      around the public `subscriptionExpiry` mapping and exists primarily for ABI
+    ///      discoverability and to give the frontend a stable, named entry point.
     function getExpiry(address user) external view returns (uint256) {
         return subscriptionExpiry[user];
     }
