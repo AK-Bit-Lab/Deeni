@@ -2,9 +2,15 @@
 pragma solidity ^0.8.20;
 
 /// @title DeeniSubscription
+/// @author  Deeni Labs (AK-Bit-Lab)
 /// @notice On-chain subscription manager for the Deeni Islamic Mini App.
 ///         New users get a 1-month free trial; afterwards access costs 5 CELO / month.
 ///         Self-contained (no external imports) so it compiles cleanly in Remix.
+/// @dev     Designed for Celo mainnet (CELO native gas token). All accounting is
+///         done in CELO wei (1 ether == 1 CELO). The contract is intentionally
+///         minimal: no upgradeability, no proxy, no external dependencies. The
+///         owner can pause user-facing actions in an emergency but cannot drain
+///         user funds beyond the contract's own balance.
 contract DeeniSubscription {
     uint256 public constant SUBSCRIPTION_FEE = 5 ether; // 5 CELO
     uint256 public constant TRIAL_DURATION = 30 days;
