@@ -72,6 +72,15 @@ contract DeeniSubscription {
     ///         without an extra transaction.
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     /// @notice Emitted when the contract receives plain CELO via receive()/fallback().
+    /// @param from   The address that sent the CELO.
+    /// @param amount The amount of CELO received (in wei).
+    /// @dev    Indexed by `from` so off-chain indexers can subscribe to a
+    ///         per-address feed of plain CELO transfers. This event is the
+    ///         ONLY signal that a plain transfer occurred - the contract does
+    ///         not credit the sender's subscription, so the event is purely
+    ///         informational and lets the owner decide what to do with the
+    ///         funds (e.g. manually credit the sender, refund, or treat as a
+    ///         donation).
     event Received(address indexed from, uint256 amount);
     /// @notice Emitted when the current owner nominates a new pending owner.
     event OwnershipTransferStarted(address indexed currentOwner, address indexed pendingOwner);
