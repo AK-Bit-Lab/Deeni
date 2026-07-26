@@ -11,14 +11,26 @@ contract DeeniDeeds {
     // 0 = Quran recitation, 1 = Dua, 2 = Dhikr, 3 = Salah (prayer),
     // 4 = Fasting, 5 = Charity/Sadaqah, 6 = Learning Arabic, 7 = Reading 99 Names
 
+    /// @notice A single immutable record of one deed performed by one user.
+    /// @dev Stored in the per-user `deedLogs` array. The struct is intentionally
+    ///      packed into a single 32-byte storage slot:
+    ///      `uint8 deedType` (1 byte) + `uint32 count` (4 bytes) + `uint64 timestamp`
+    ///      (8 bytes) = 13 bytes of payload, padded to one slot. This packing
+    ///      halves the SSTORE cost compared to using three separate fields or
+    ///      wider types such as `uint256`.
+    /// @param deedType  Identifier of the deed category (0..7). See the comment
+    ///                  block above the struct for the canonical mapping.
+    /// @param count     How many units of the deed were performed in this single
+    ///                  entry (e.g. pages of Quran, rakats of salah, repetitions
+    ///                  of dhikr). The unit is implicit in `deedType`.
+    /// @param timestamp Unix timestamp (seconds since epoch) at which the deed
+    ///                  was recorded. Stored as `uint64` because unix timestamps
+    ///                  fit comfortably until year 584,942,417,355 AD, well beyond
+    ///                  any practical horizon, and `uint64` packs tighter than
+    ///                  `uint256`.
     struct DeedLog {
         uint8 deedType;
-        uint32 count;      // how many units (e.g. pages, rakats, repetitions)
-        // NOTE: timestamp is stored as uint64. Unix timestamps fit in uint64
-        // until year 584,942,417,355 (~5.8e11 AD), well beyond any practical
-        // horizon. uint64 was chosen over uint256 to pack the struct tightly
-        // (1 byte deedType + 4 bytes count + 8 bytes timestamp = 13 bytes,
-        // rounded to one 32-byte storage slot) and save gas on SSTOREs.
+        uint32 count;
         uint64 timestamp;
     }
 
