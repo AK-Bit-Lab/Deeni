@@ -122,7 +122,16 @@ contract DeeniQaidaProgress {
         emit LessonCompleted(msg.sender, lessonId, uint64(block.timestamp));
     }
 
-    /// @notice Number of lesson logs stored for a user.
+    /// @notice Returns the total number of lesson logs stored for a user.
+    /// @param user The address to query.
+    /// @return The length of `logs[user]`. Equivalent to the public
+    ///         `totalCompletions[user]` mapping but exposed as a dedicated
+    ///         function so off-chain clients can call it without knowing
+    ///         the storage layout.
+    /// @dev    The function is a thin wrapper around `logs[user].length`
+    ///         and exists primarily for ABI discoverability and to give
+    ///         the frontend a stable, named entry point that matches the
+    ///         camelCase convention used elsewhere.
     function logCount(address user) external view returns (uint256) {
         return logs[user].length;
     }
@@ -136,6 +145,13 @@ contract DeeniQaidaProgress {
     /// @return page  Array of LessonLog entries, ordered oldest -> newest
     ///               within the returned window. Returns an empty array if
     ///               offset is past the end of the log.
+    /// @dev The function reads from the end of the array backwards so that
+    ///      `offset = 0` returns the most recent `limit` entries, which is the
+    ///      common UI use case (a "recent lessons" feed). The returned slice
+    ///      is internally ordered oldest -> newest so the frontend can render
+    ///      it directly without re-sorting. The function is `view` and does
+    ///      not modify state, but it allocates a new memory array on every
+    ///      call, so callers should bound `limit` to avoid OOG on the RPC.
     function getLogs(address user, uint256 offset, uint256 limit)
         external
         view
