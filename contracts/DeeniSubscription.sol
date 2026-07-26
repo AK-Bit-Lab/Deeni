@@ -72,6 +72,11 @@ contract DeeniSubscription {
 
     /// @notice Restricts execution to the current contract owner.
     /// @dev    Reverts with "Not owner" if `msg.sender` is not the owner.
+    ///         Applied to all admin functions: `withdraw`, `transferOwnership`,
+    ///         `acceptOwnership`, `cancelOwnershipTransfer`, `pause`, `unpause`.
+    ///         The check is a simple equality test against the `owner` storage
+    ///         variable, which costs a single SLOAD (warm after the first call
+    ///         in a transaction).
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
         _;
