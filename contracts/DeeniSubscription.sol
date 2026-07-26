@@ -54,6 +54,11 @@ contract DeeniSubscription {
     /// @notice Emitted when the owner withdraws accumulated CELO from the contract.
     /// @param to     The destination address that received the funds.
     /// @param amount The amount of CELO withdrawn (in wei).
+    /// @dev    Indexed by `to` so off-chain indexers can subscribe to a
+    ///         per-destination feed of withdrawals. The event is only emitted
+    ///         on a successful transfer; if the underlying `call` fails the
+    ///         entire transaction reverts and no event is emitted, so the
+    ///         event is a reliable proof-of-payout for auditors.
     event Withdrawn(address indexed to, uint256 amount);
     /// @notice Emitted when ownership of the contract is transferred.
     ///         Used for both the initial assignment in the constructor and
