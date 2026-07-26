@@ -14,6 +14,12 @@ contract DeeniQaidaProgress {
     ///      `uint8 lessonId` (1 byte) + `uint64 timestamp` (8 bytes) = 9 bytes
     ///      of payload, padded to one slot. This packing halves the SSTORE
     ///      cost compared to using wider types such as `uint256`.
+    ///      The struct is `internal` to the contract - off-chain clients see
+    ///      it through the ABI but cannot construct one directly. Because
+    ///      Solidity auto-generates a getter for public mappings of struct
+    ///      arrays, the struct fields are still readable via
+    ///      `logs(user, index)` even though the struct itself is not marked
+    ///      `public`.
     /// @param lessonId  Identifier of the completed lesson (1..17). Matches the
     ///                  `QAIDA_LESSONS` array in the frontend so off-chain
     ///                  clients can resolve the lesson title and content.
