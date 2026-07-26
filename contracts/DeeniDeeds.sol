@@ -196,6 +196,10 @@ contract DeeniDeeds {
     /// @return The length of `deedLogs[user]`. Equivalent to the public
     ///         `totalDeeds[user]` mapping but exposed as a dedicated function so
     ///         off-chain clients can call it without knowing the storage layout.
+    /// @dev    The function is a thin wrapper around `deedLogs[user].length`
+    ///         and exists primarily for ABI discoverability and to give the
+    ///         frontend a stable, named entry point that matches the
+    ///         camelCase convention used elsewhere.
     function deedCount(address user) external view returns (uint256) {
         return deedLogs[user].length;
     }
