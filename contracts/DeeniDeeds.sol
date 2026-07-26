@@ -78,7 +78,11 @@ contract DeeniDeeds {
 
     /// @notice The longest streak the user has ever achieved for the given deed type.
     /// @dev Monotonically non-decreasing. Updated by `recordDeed` whenever the
-    ///      current streak exceeds the previous best.
+    ///      current streak exceeds the previous best. Stored as `uint32`
+    ///      because no realistic streak exceeds 4 billion days. The flag is
+    ///      monotonic: it only ever increases, never decreases. There is
+    ///      intentionally no admin function to reset it - the
+    ///      personal-record invariant is permanent.
     mapping(address => mapping(uint8 => uint32)) public bestStreak;
 
     /// @notice Total number of `DeedLog` entries the user has recorded across all deed types.
