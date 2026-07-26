@@ -70,6 +70,10 @@ contract DeeniDeeds {
     /// @notice The user's current consecutive-day streak for the given deed type.
     /// @dev Reset to 1 whenever a new streak begins and incremented by 1 when
     ///      the next day's entry arrives. Reset to 0 when the streak is broken.
+    ///      Stored as `uint32` because no realistic streak exceeds 4 billion
+    ///      days (~11 million years). The streak is "current" in the sense
+    ///      that it reflects the most recent unbroken run; it is NOT a
+    ///      lifetime total (see `bestStreak` for that).
     mapping(address => mapping(uint8 => uint32)) public currentStreak;
 
     /// @notice The longest streak the user has ever achieved for the given deed type.
