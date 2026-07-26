@@ -45,6 +45,11 @@ contract DeeniSubscription {
     /// @param user      The address that paid.
     /// @param newExpiry Unix timestamp at which the new subscription expires.
     /// @param amount    The amount of CELO paid (in wei).
+    /// @dev    Indexed by `user` so off-chain indexers can subscribe to a
+    ///         per-address feed of subscription payments. `newExpiry` and
+    ///         `amount` are not indexed because they are rarely queried as
+    ///         filters. The `amount` field is always equal to SUBSCRIPTION_FEE
+    ///         (5 CELO) because the contract reverts on any other value.
     event SubscriptionPaid(address indexed user, uint256 newExpiry, uint256 amount);
     /// @notice Emitted when the owner withdraws accumulated CELO from the contract.
     /// @param to     The destination address that received the funds.
