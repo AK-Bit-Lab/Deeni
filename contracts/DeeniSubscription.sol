@@ -324,7 +324,9 @@ contract DeeniSubscription {
     ///      `Paused` event. While paused, `startFreeTrial` and `paySubscription` both
     ///      revert because they carry the `whenNotPaused` modifier; existing
     ///      subscriptions continue to be queryable through the view functions and
-    ///      remain valid until their stored expiry timestamp.
+    ///      remain valid until their stored expiry timestamp. The pause is a single
+    ///      boolean flag - there is no per-user pause, no grace period, and no
+    ///      automatic unpause. The owner must explicitly call `unpause` to resume.
     function pause() external onlyOwner {
         require(!paused, "Already paused");
         paused = true;
