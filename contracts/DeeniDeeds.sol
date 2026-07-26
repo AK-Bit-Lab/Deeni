@@ -134,7 +134,11 @@ contract DeeniDeeds {
     ///      ever, or a gap of 2+ days) the streak resets to 1. `bestStreak`
     ///      is updated monotonically. Emits a single `DeedRecorded` event
     ///      containing the new streak so off-chain indexers can update their
-    ///      UI without re-reading storage.
+    ///      UI without re-reading storage. The function writes to five
+    ///      storage slots: `lastDay`, `currentStreak`, `bestStreak`,
+    ///      `totalCount`, and `totalDeeds`, plus one push to the `deedLogs`
+    ///      array. The day boundary is UTC (block.timestamp / 1 days), not
+    ///      the user's local timezone.
     function recordDeed(uint8 deedType, uint32 count) external {
         require(deedType <= 7, "Invalid deed type");
         require(count > 0, "Count must be > 0");
