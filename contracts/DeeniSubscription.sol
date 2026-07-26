@@ -156,6 +156,10 @@ contract DeeniSubscription {
     ///         subscription services.
     /// @dev    Reverts with "Must pay exactly 5 CELO" if msg.value does not
     ///         match SUBSCRIPTION_FEE, or "Paused" if the contract is paused.
+    ///         The function is `payable` so it accepts CELO with the call;
+    ///         any value other than exactly SUBSCRIPTION_FEE reverts to
+    ///         prevent accidental over/under-payment. The CELO stays in the
+    ///         contract balance until the owner calls `withdraw`.
     function paySubscription() external payable whenNotPaused {
         require(msg.value == SUBSCRIPTION_FEE, "Must pay exactly 5 CELO");
 
