@@ -51,6 +51,11 @@ contract DeeniDeeds {
 
     /// @notice Running total of `count` units the user has ever recorded for a
     ///         given deed type. Never decreases.
+    /// @dev    Stored as `uint32` because no realistic lifetime total exceeds
+    ///         4 billion units (e.g. 4 billion pages of Quran). The mapping
+    ///         is monotonic: it only ever increases, never decreases. There
+    ///         is intentionally no admin function to reset it - the
+    ///         lifetime-total invariant is permanent.
     mapping(address => mapping(uint8 => uint32)) public totalCount;
 
     /// @notice The day index (days since the unix epoch, i.e. `block.timestamp / 1 days`)
