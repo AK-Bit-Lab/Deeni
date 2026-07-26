@@ -23,7 +23,9 @@ contract DeeniDeeds {
     ///      `uint8 deedType` (1 byte) + `uint32 count` (4 bytes) + `uint64 timestamp`
     ///      (8 bytes) = 13 bytes of payload, padded to one slot. This packing
     ///      halves the SSTORE cost compared to using three separate fields or
-    ///      wider types such as `uint256`.
+    ///      wider types such as `uint256`. The struct is `internal` to the
+    ///      contract - off-chain clients see it through the ABI but cannot
+    ///      construct one directly.
     /// @param deedType  Identifier of the deed category (0..7). See the comment
     ///                  block above the struct for the canonical mapping.
     /// @param count     How many units of the deed were performed in this single
