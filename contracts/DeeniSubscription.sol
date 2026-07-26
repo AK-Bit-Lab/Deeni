@@ -423,7 +423,15 @@ contract DeeniSubscription {
     ///      off-chain indexers and `pendingOwner` is reset to zero so a new
     ///      transfer can be initiated later. The function is intentionally
     ///      permissionless (no `onlyOwner` modifier) so the nominated address
-    ///      does not need to be the current owner to accept.
+    ///      does not need to be the current owner to accept. The function does
+    ///      NOT check the `paused` flag - a pending ownership handover must
+    ///      always be completable so the contract is never stuck with an
+    ///      unreachable owner during an emergency pause. The function does NOT
+    ///      perform any post-transfer validation (e.g. it does not call a hook
+    ///      on the new owner) - the new owner simply takes over immediately.
+    ///      The function does NOT emit a separate "ownership accepted" event;
+    ///      the `OwnershipTransferred` event is the single source of truth for
+    ///      the handover and is emitted exactly once on success.
     function acceptOwnership() external {
         address pending = pendingOwner;
         require(msg.sender == pending, "Not pending owner");
