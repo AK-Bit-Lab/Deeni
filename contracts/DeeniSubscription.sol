@@ -24,6 +24,11 @@ contract DeeniSubscription {
     /// @notice Unix timestamp at which each user's subscription access expires.
     ///         A value of 0 means the user has never subscribed. A value in
     ///         the past means the subscription has lapsed.
+    /// @dev    Stored as `uint256` (one full storage slot per user) because
+    ///         unix timestamps in seconds fit comfortably until year
+    ///         ~584,942,417,355 AD. The mapping is append-only in the sense
+    ///         that values only ever increase (extend-don't-reset model),
+    ///         so the slot is written at most a handful of times per user.
     mapping(address => uint256) public subscriptionExpiry;
     /// @notice Tracks whether each address has already claimed the one-time
     ///         free trial. Once true, `startFreeTrial` will revert for that
