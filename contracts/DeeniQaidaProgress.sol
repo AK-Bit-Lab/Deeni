@@ -2,11 +2,17 @@
 pragma solidity ^0.8.20;
 
 /// @title DeeniQaidaProgress
+/// @author  Deeni Labs (AK-Bit-Lab)
 /// @notice On-chain Qaida (Arabic reading) lesson completion tracker.
 ///         Every time a user completes a lesson, they sign a transaction
 ///         on Celo to record it immutably. Unlike DeeniDeeds, there is no
 ///         "once per day" restriction — users can complete multiple lessons
 ///         in a single session.
+/// @dev     Self-contained (no external imports) so it compiles cleanly in
+///         Remix. The contract is non-upgradeable and has no owner: every
+///         user is their own admin. Gas is minimised by packing structs into
+///         single storage slots and using `uint8`/`uint64` instead of
+///         `uint256` where the value range permits.
 contract DeeniQaidaProgress {
     /// @notice A single immutable record of one Qaida lesson completion by one user.
     /// @dev Stored in the per-user `logs` array. The struct is intentionally
