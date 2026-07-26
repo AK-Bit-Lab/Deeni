@@ -217,7 +217,9 @@ contract DeeniDeeds {
     ///      `offset = 0` returns the most recent `limit` entries, which is the
     ///      common UI use case (a "recent activity" feed). The returned slice
     ///      is internally ordered oldest -> newest so the frontend can render
-    ///      it directly without re-sorting.
+    ///      it directly without re-sorting. The function is `view` and does
+    ///      not modify state, but it allocates a new memory array on every
+    ///      call, so callers should bound `limit` to avoid OOG on the RPC.
     function getDeeds(address user, uint256 offset, uint256 limit)
         external
         view
