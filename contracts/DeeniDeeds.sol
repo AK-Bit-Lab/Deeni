@@ -82,6 +82,12 @@ contract DeeniDeeds {
     );
 
     /// @notice Returns the current day index (days since Unix epoch).
+    /// @dev    Computed as `block.timestamp / 1 days` and cast to `uint32`.
+    ///         The cast is safe until year ~10,675 AD (well beyond any
+    ///         practical horizon) and saves one SLOAD on subsequent reads
+    ///         because the value fits in a single slot. The function is
+    ///         `internal` so it can be called from other functions in this
+    ///         contract without going through the external ABI.
     function _today() internal view returns (uint32) {
         return uint32(block.timestamp / 1 days);
     }
