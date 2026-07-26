@@ -37,6 +37,9 @@ contract DeeniSubscription {
     /// @notice Emitted when a user successfully claims the one-time free trial.
     /// @param user   The address that claimed the trial.
     /// @param expiry Unix timestamp at which the trial access expires.
+    /// @dev    Indexed by `user` so off-chain indexers can subscribe to a
+    ///         per-address feed of trial activations. The `expiry` field is
+    ///         not indexed because it is rarely queried as a filter.
     event TrialStarted(address indexed user, uint256 expiry);
     /// @notice Emitted when a user pays the subscription fee and extends access.
     /// @param user      The address that paid.
