@@ -12,8 +12,13 @@ pragma solidity ^0.8.20;
 ///         owner can pause user-facing actions in an emergency but cannot drain
 ///         user funds beyond the contract's own balance.
 contract DeeniSubscription {
+    /// @notice Subscription fee in CELO wei. 5 CELO == 5 * 10**18 wei.
     uint256 public constant SUBSCRIPTION_FEE = 5 ether; // 5 CELO
+    /// @notice Length of the one-time free trial in seconds (30 days).
     uint256 public constant TRIAL_DURATION = 30 days;
+    /// @notice Length of one paid subscription period in seconds (30 days).
+    ///         Each successful `paySubscription` call extends the user's expiry
+    ///         by exactly this many seconds (extend-don't-reset model).
     uint256 public constant SUBSCRIPTION_DURATION = 30 days;
 
     /// @notice Unix timestamp at which each user's subscription access expires.
