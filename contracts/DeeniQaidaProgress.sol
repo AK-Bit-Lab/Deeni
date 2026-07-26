@@ -73,6 +73,14 @@ contract DeeniQaidaProgress {
     ///         never decreases.
     mapping(address => uint256) public totalCompletions;
 
+    /// @notice Emitted when a user successfully completes a Qaida lesson on-chain.
+    /// @param user      The address that completed the lesson.
+    /// @param lessonId  The lesson number (1..17).
+    /// @param timestamp Unix timestamp (seconds since epoch) at which the
+    ///                   lesson was completed.
+    /// @dev    `user` and `lessonId` are indexed so off-chain indexers can
+    ///         subscribe to per-user or per-lesson feeds. The `timestamp`
+    ///         field is not indexed because it is rarely queried as a filter.
     event LessonCompleted(
         address indexed user,
         uint8   indexed lessonId,
@@ -80,7 +88,20 @@ contract DeeniQaidaProgress {
     );
 
     /// @notice Record completion of a Qaida lesson on-chain.
+    /// @dev    Unlike `DeeniDeeds.recordDeed`, there is no "once per day"
+    ///         restriction - users can complete multiple lessons in a single
+    ///         session. The function writes to four storage slots:
+    ///         `logs` (push), `completed`, `totalCompletions`, and
+    ///         `highestLesson` (only if the new lessonId is greater).
+    ///         Emits a single `LessonCompleted` event so off-chain indexers
+    ///         can update their UI without re-reading storage.
     /// @param lessonId The lesson number (1-17).
+    /// @dev    Reverts with "Invalid lesson ID" if `lessonId` is outside
+    ///         the inclusive range [1, 17]. The lesson ID range is stable:
+    ///         changing it would break every existing user's `completed`
+    ///         and `highestLesson` history, so new lessons must be appended
+    ///         at the next free index rather than re-using or re-ordering
+    ///         existing ones.
     function completeLesson(uint8 lessonId) external {
         require(lessonId >= 1 && lessonId <= 17, "Invalid lesson ID");
 
