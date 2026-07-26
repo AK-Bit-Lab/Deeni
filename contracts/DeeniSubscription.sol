@@ -13,12 +13,31 @@ pragma solidity ^0.8.20;
 ///         user funds beyond the contract's own balance.
 contract DeeniSubscription {
     /// @notice Subscription fee in CELO wei. 5 CELO == 5 * 10**18 wei.
+    /// @dev    Stored as `uint256` (one full storage slot) because the
+    ///         constant is exposed via the public getter so off-chain
+    ///         clients can read it via a single `eth_call` and validate
+    ///         user input before submitting a transaction. The value is
+    ///         intentionally fixed at deployment time - changing it would
+    ///         require a contract upgrade, which this contract does not
+    ///         support.
     uint256 public constant SUBSCRIPTION_FEE = 5 ether; // 5 CELO
     /// @notice Length of the one-time free trial in seconds (30 days).
+    /// @dev    Stored as `uint256` (one full storage slot) because the
+    ///         constant is exposed via the public getter so off-chain
+    ///         clients can read it via a single `eth_call`. The value is
+    ///         intentionally fixed at deployment time - changing it would
+    ///         require a contract upgrade, which this contract does not
+    ///         support.
     uint256 public constant TRIAL_DURATION = 30 days;
     /// @notice Length of one paid subscription period in seconds (30 days).
     ///         Each successful `paySubscription` call extends the user's expiry
     ///         by exactly this many seconds (extend-don't-reset model).
+    /// @dev    Stored as `uint256` (one full storage slot) because the
+    ///         constant is exposed via the public getter so off-chain
+    ///         clients can read it via a single `eth_call`. The value is
+    ///         intentionally fixed at deployment time - changing it would
+    ///         require a contract upgrade, which this contract does not
+    ///         support.
     uint256 public constant SUBSCRIPTION_DURATION = 30 days;
 
     /// @notice Unix timestamp at which each user's subscription access expires.
