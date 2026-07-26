@@ -193,6 +193,12 @@ contract DeeniSubscription {
     ///         contract is non-upgradeable: there is no `initialize` function
     ///         and no proxy, so the constructor is the only place ownership
     ///         is ever assigned to a non-zero address from the zero address.
+    ///         The constructor does NOT initialise `pendingOwner` (it
+    ///         defaults to the zero address, which is the sentinel for "no
+    ///         pending transfer") and does NOT initialise `paused` (it
+    ///         defaults to false, which is the desired initial state). Both
+    ///         defaults are cheaper than explicit assignments because the
+    ///         EVM already zero-initialises storage.
     constructor() {
         owner = msg.sender;
         emit OwnershipTransferred(address(0), msg.sender);
