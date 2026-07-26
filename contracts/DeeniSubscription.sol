@@ -121,6 +121,11 @@ contract DeeniSubscription {
     ///         actions (startFreeTrial, paySubscription) are blocked. The
     ///         owner can still withdraw funds and manage ownership so that
     ///         emergencies do not lock the contract.
+    /// @dev    Stored as a single `bool` (one storage slot). The flag is
+    ///         toggled by `pause` and `unpause`, both of which revert on a
+    ///         no-op transition to avoid emitting redundant events. The flag
+    ///         is intentionally global (not per-user) so the owner can halt
+    ///         all subscription activity with a single transaction.
     bool public paused;
 
     /// @notice Restricts execution to the current contract owner.
