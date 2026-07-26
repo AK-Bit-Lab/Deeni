@@ -291,7 +291,9 @@ contract DeeniSubscription {
     ///      transfer (i.e. `pendingOwner` is the zero address). On success the
     ///      previous owner is recorded in the `OwnershipTransferred` event for
     ///      off-chain indexers and `pendingOwner` is reset to zero so a new
-    ///      transfer can be initiated later.
+    ///      transfer can be initiated later. The function is intentionally
+    ///      permissionless (no `onlyOwner` modifier) so the nominated address
+    ///      does not need to be the current owner to accept.
     function acceptOwnership() external {
         address pending = pendingOwner;
         require(msg.sender == pending, "Not pending owner");
