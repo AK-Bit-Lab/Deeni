@@ -107,7 +107,8 @@ contract DeeniSubscription {
     ///         event so the owner can decide what to do with the funds. This
     ///         keeps the contract's accounting model simple and avoids
     ///         accidental double-crediting when a user pays via paySubscription
-    ///         and also sends a tip.
+    ///         and also sends a tip. The function is intentionally cheap: no
+    ///         storage writes, no external calls, just an event emission.
     receive() external payable {
         emit Received(msg.sender, msg.value);
     }
