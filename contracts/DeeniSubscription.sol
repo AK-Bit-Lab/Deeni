@@ -103,8 +103,18 @@ contract DeeniSubscription {
     ///         call that will never come.
     event OwnershipTransferCancelled(address indexed currentOwner, address indexed pendingOwner);
     /// @notice Emitted when the contract is paused by the owner.
+    /// @param account The address that triggered the pause (always the owner).
+    /// @dev    Indexed by `account` so off-chain indexers can subscribe to a
+    ///         per-address feed of pause actions. The event follows the
+    ///         OpenZeppelin Pausable convention so off-chain tooling that
+    ///         already understands that pattern works out of the box.
     event Paused(address indexed account);
     /// @notice Emitted when the contract is unpaused by the owner.
+    /// @param account The address that triggered the unpause (always the owner).
+    /// @dev    Indexed by `account` so off-chain indexers can subscribe to a
+    ///         per-address feed of unpause actions. The event follows the
+    ///         OpenZeppelin Pausable convention so off-chain tooling that
+    ///         already understands that pattern works out of the box.
     event Unpaused(address indexed account);
 
     /// @notice Circuit-breaker flag. While true, user-facing subscription
