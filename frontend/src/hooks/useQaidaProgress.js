@@ -9,6 +9,20 @@ import { QAIDA_PROGRESS_ADDRESS, QAIDA_PROGRESS_ABI } from "../constants";
  * a write helper to record lesson completion (which costs gas on Celo).
  * Unlike DeeniDeeds, there is no "once per day" restriction - users can
  * complete multiple lessons in a single session.
+ *
+ * Returned shape:
+ *   address          - connected wallet address (or undefined)
+ *   highestLesson    - highest lesson id the user has completed (0 if none)
+ *   totalCompletions - lifetime count of lesson completions (a user can
+ *                      complete the same lesson multiple times; this counts
+ *                      every completion, not just unique lessons)
+ *   completeLesson   - (lessonId: number) => void - kicks off the
+ *                      completeLesson tx
+ *   txHash           - hash of the in-flight tx (or undefined)
+ *   isPending        - true while the wallet is awaiting user confirmation
+ *   isConfirming     - true while the tx is mined but not yet confirmed
+ *   isConfirmed      - true once the tx has confirmed on-chain
+ *   error            - last write/confirm error, if any
  */
 export function useQaidaProgress() {
   const { address } = useAccount();
