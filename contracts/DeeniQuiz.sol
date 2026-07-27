@@ -120,6 +120,20 @@ contract DeeniQuiz {
     ///      fetching the dynamic array's length separately.
     mapping(address => uint256) public totalQuizzes;
 
+    /// @notice Emitted when a user successfully submits a quiz result on-chain.
+    /// @param user         The address that submitted the result.
+    /// @param topic        The quiz topic (0..9). See the comment block at
+    ///                      the top of the contract for the canonical mapping.
+    /// @param score        Number of questions the user answered correctly.
+    /// @param total        Total number of questions in the quiz.
+    /// @param questionHash keccak256 hash of the question IDs that were asked,
+    ///                      or `bytes32(0)` if the caller skipped the
+    ///                      tamper-evidence check.
+    /// @param timestamp    Unix timestamp (seconds since epoch) at which the
+    ///                      result was submitted.
+    /// @dev    `user` and `topic` are indexed so off-chain indexers can
+    ///         subscribe to per-user or per-topic feeds. The other fields
+    ///         are not indexed because they are rarely queried as filters.
     event QuizSubmitted(
         address indexed user,
         uint8   indexed topic,
