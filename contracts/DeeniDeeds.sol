@@ -305,4 +305,16 @@ contract DeeniDeeds {
             bestStreak[user][deedType]
         );
     }
+
+    /// @notice Returns the contract version string (semver).
+    /// @dev    Bumped when the contract ABI or behaviour changes in a
+    ///         backwards-incompatible way. Off-chain clients can read this
+    ///         via a single `eth_call` to detect which version of the
+    ///         contract they are talking to and adapt their UI accordingly.
+    ///         The function is `pure` and does not read storage, so it is
+    ///         free to call.
+    function version() external pure returns (string memory) {
+        return "1.1.0";
+    }
 }
+
