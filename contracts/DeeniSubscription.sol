@@ -452,7 +452,15 @@ contract DeeniSubscription {
     ///      off-chain nominee (if it is monitoring events) can be notified that
     ///      it no longer needs to call `acceptOwnership`. The function does NOT
     ///      notify the nominee out-of-band (no calls to the nominee address) - it
-    ///      relies entirely on event monitoring for off-chain notification.
+    ///      relies entirely on event monitoring for off-chain notification. The
+    ///      function does NOT check the `paused` flag - the owner must always be
+    ///      able to revoke a pending handover, even during an emergency pause,
+    ///      so the contract is never stuck with an unwanted nominee. The
+    ///      function does NOT take a parameter identifying which transfer to
+    ///      cancel - there is only ever one pending transfer at a time, so
+    ///      cancelling is unambiguous. After cancellation, `pendingOwner` is
+    ///      reset to the zero address and the owner can immediately call
+    ///      `transferOwnership` again with a different nominee.
     function cancelOwnershipTransfer() external onlyOwner {
         address pending = pendingOwner;
         require(pending != address(0), "No pending transfer");
