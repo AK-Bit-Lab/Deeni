@@ -4,10 +4,33 @@ import { useQueryClient } from "@tanstack/react-query";
 import { parseEther } from "viem";
 import { DEENI_SUBSCRIPTION_ADDRESS, DEENI_ABI } from "../constants";
 
+// Subscription fee in CELO. Kept in sync with SUBSCRIPTION_FEE on the
+// DeeniSubscription contract. If the on-chain fee ever changes, update
+// this constant in lockstep so the UI sends the correct value.
+const SUBSCRIPTION_FEE_CELO = "5";
+
 /**
  * useSubscription
  * Reads the on-chain subscription state for the connected wallet and exposes
- * write helpers for starting the free trial and paying the 5 CELO fee.
+ * write helpers for starting the free trial and paying the subscription fee.
+ *
+ * Returned shape:
+ *   address        - connected wallet address (or undefined)
+ *   isConnected    - true when a wallet is connected
+ *   isSubscribed   - true when the connected wallet currently has an active
+ *                    subscription (expiry > now)
+ *   expiry         - subscription expiry as a unix timestamp in seconds (0
+ *                    when not subscribed)
+ *   trialClaimed   - true when the connected wallet has already used its
+ *                    one-time free trial
+ *   subLoading     - true while the initial reads are in flight
+ *   startTrial     - () => void - kicks off the startFreeTrial tx
+ *   paySubscription - () => void - kicks off the paySubscription tx with the
+ *                    correct CELO value attached
+ *   isPending      - true while the wallet is awaiting user confirmation
+ *   isConfirming   - true while the tx is mined but not yet confirmed
+ *   isConfirmed    - true once the tx has confirmed on-chain
+ *   error          - last write/confirm error, if any
  */
 export function useSubscription() {
   const { address, isConnected } = useAccount();
@@ -69,7 +92,7 @@ export function useSubscription() {
       address: DEENI_SUBSCRIPTION_ADDRESS,
       abi: DEENI_ABI,
       functionName: "paySubscription",
-      value: parseEther("5"),
+      value: parseEther(SUBSCRIPTION_FEE_CELO),
     });
 
   return {
