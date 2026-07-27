@@ -189,6 +189,27 @@ export function useQiblaDirection() {
   const needleAngle =
     direction !== null && heading !== null ? direction - heading : direction;
 
+  // Returned shape:
+  //   direction     - true bearing from the user to Mecca in degrees
+  //                   (0 = north, 90 = east), or null while geolocation
+  //                   is still resolving.
+  //   heading       - device compass heading in degrees from north, or
+  //                   null while the compass is starting / unavailable.
+  //   needleAngle   - direction - heading, the angle the UI needle
+  //                   should rotate by to point at Mecca relative to
+  //                   where the phone is currently facing. Falls back to
+  //                   `direction` when no compass heading is available.
+  //   location      - { latitude, longitude } once geolocation resolves,
+  //                   or null.
+  //   error         - human-readable error string, or null.
+  //   permission    - "prompt" | "granted" | "denied" - tracks the
+  //                   geolocation permission state.
+  //   compassState  - "idle" | "starting" | "active" | "unavailable" -
+  //                   tracks the compass lifecycle so the UI can show
+  //                   "Calibrating compass…" / "Compass unavailable".
+  //   requestCompass - () => void - must be called from a user gesture
+  //                   on iOS 13+ to trigger the orientation permission
+  //                   prompt. No-op on platforms that don't need it.
   return {
     direction,
     heading,
