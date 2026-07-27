@@ -12,6 +12,29 @@ pragma solidity ^0.8.20;
 ///         owner can pause user-facing actions in an emergency but cannot drain
 ///         user funds beyond the contract's own balance.
 contract DeeniSubscription {
+    /// @notice Custom errors used in place of `require` strings. Custom errors
+    ///         are cheaper to deploy and to revert with than string-based
+    ///         requires (no ABI string, no revert data allocation), and they
+    ///         give off-chain clients a stable, typed selector to decode
+    ///         instead of a free-form message.
+    /// @dev    Each error is declared once at the top of the contract so the
+    ///         ABI is small and the selectors are easy to reference from
+    ///         off-chain code (e.g. wagmi/viem `decodeErrorResult`).
+    error NotOwner();
+    error Paused();
+    error AlreadyPaused();
+    error NotPaused();
+    error ZeroAddress();
+    error AlreadyOwner();
+    error NotPendingOwner();
+    error NoPendingTransfer();
+    error FreeTrialAlreadyClaimed();
+    error AlreadySubscribed();
+    error MustPayExactlyFiveCelo();
+    error NothingToWithdraw();
+    error WithdrawalFailed();
+    error ReentrantCall();
+
     /// @notice Subscription fee in CELO wei. 5 CELO == 5 * 10**18 wei.
     /// @dev    Stored as `uint256` (one full storage slot) because the
     ///         constant is exposed via the public getter so off-chain
@@ -170,7 +193,7 @@ contract DeeniSubscription {
     ///         variable, which costs a single SLOAD (warm after the first call
     ///         in a transaction).
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not owner");
+        if (msg.sender != owner) revert NotOwner();
         _;
     }
 
@@ -182,7 +205,7 @@ contract DeeniSubscription {
     ///         intentionally do NOT carry this modifier so the owner can
     ///         always manage the contract even during an emergency pause.
     modifier whenNotPaused() {
-        require(!paused, "Paused");
+        if (paused) revert Paused();
         _;
     }
 
@@ -249,11 +272,10 @@ contract DeeniSubscription {
     ///         and writes to two storage slots: `hasClaimedTrial` and
     ///         `subscriptionExpiry`.
     function startFreeTrial() external whenNotPaused {
-        require(!hasClaimedTrial[msg.sender], "Free trial already claimed");
-        require(
-            subscriptionExpiry[msg.sender] < block.timestamp,
-            "Already subscribed"
-        );
+        if (hasClaimedTrial[msg.sender]) revert FreeTrialAlreadyClaimed();
+        if (subscriptionExpiry[msg.sender] >= block.timestamp) {
+            revert AlreadySubscribed();
+        }
 
         hasClaimedTrial[msg.sender] = true;
         uint256 expiry = block.timestamp + TRIAL_DURATION;
@@ -277,7 +299,7 @@ contract DeeniSubscription {
     ///         prevent accidental over/under-payment. The CELO stays in the
     ///         contract balance until the owner calls `withdraw`.
     function paySubscription() external payable whenNotPaused {
-        require(msg.value == SUBSCRIPTION_FEE, "Must pay exactly 5 CELO");
+        if (msg.value != SUBSCRIPTION_FEE) revert MustPayExactlyFiveCelo();
 
         uint256 currentExpiry = subscriptionExpiry[msg.sender];
         if (currentExpiry < block.timestamp) {
@@ -353,7 +375,7 @@ contract DeeniSubscription {
     ///         cross-function: a re-entrant call into ANY guarded function
     ///         reverts, not just the one currently executing.
     modifier nonReentrant() {
-        require(_locked == 1, "Reentrant call");
+        if (_locked != 1) revert ReentrantCall();
         _locked = 2;
         _;
         _locked = 1;
@@ -377,9 +399,9 @@ contract DeeniSubscription {
     ///      pause, so users can be refunded or funds can be moved to a safer contract.
     function withdraw(address payable to) external onlyOwner nonReentrant {
         uint256 balance = address(this).balance;
-        require(balance > 0, "Nothing to withdraw");
+        if (balance == 0) revert NothingToWithdraw();
         (bool success, ) = to.call{value: balance}("");
-        require(success, "Withdrawal failed");
+        if (!success) revert WithdrawalFailed();
         emit Withdrawn(to, balance);
     }
 
@@ -407,8 +429,8 @@ contract DeeniSubscription {
     ///      check the `paused` flag - ownership management must always be available
     ///      so the owner can rotate keys or hand off control during an emergency.
     function transferOwnership(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "Zero address");
-        require(newOwner != owner, "Already owner");
+        if (newOwner == address(0)) revert ZeroAddress();
+        if (newOwner == owner) revert AlreadyOwner();
         pendingOwner = newOwner;
         emit OwnershipTransferStarted(owner, newOwner);
     }
@@ -434,8 +456,8 @@ contract DeeniSubscription {
     ///      the handover and is emitted exactly once on success.
     function acceptOwnership() external {
         address pending = pendingOwner;
-        require(msg.sender == pending, "Not pending owner");
-        require(pending != address(0), "No pending transfer");
+        if (msg.sender != pending) revert NotPendingOwner();
+        if (pending == address(0)) revert NoPendingTransfer();
 
         address previousOwner = owner;
         owner = pending;
@@ -463,7 +485,7 @@ contract DeeniSubscription {
     ///      `transferOwnership` again with a different nominee.
     function cancelOwnershipTransfer() external onlyOwner {
         address pending = pendingOwner;
-        require(pending != address(0), "No pending transfer");
+        if (pending == address(0)) revert NoPendingTransfer();
         pendingOwner = address(0);
         emit OwnershipTransferCancelled(owner, pending);
     }
@@ -480,7 +502,7 @@ contract DeeniSubscription {
     ///      boolean flag - there is no per-user pause, no grace period, and no
     ///      automatic unpause. The owner must explicitly call `unpause` to resume.
     function pause() external onlyOwner {
-        require(!paused, "Already paused");
+        if (paused) revert AlreadyPaused();
         paused = true;
         emit Paused(msg.sender);
     }
@@ -495,7 +517,7 @@ contract DeeniSubscription {
     ///      "time still passes" so users who let their subscription lapse during
     ///      the pause are not silently re-subscribed.
     function unpause() external onlyOwner {
-        require(paused, "Not paused");
+        if (!paused) revert NotPaused();
         paused = false;
         emit Unpaused(msg.sender);
     }
