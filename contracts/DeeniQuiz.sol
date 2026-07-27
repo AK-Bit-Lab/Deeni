@@ -43,6 +43,17 @@ contract DeeniQuiz {
     error ZeroTotal();
     error ScoreExceedsTotal();
 
+    /// @notice Highest valid topic ID. The quiz curriculum currently has
+    ///         10 topics (0..9); this constant is the inclusive upper bound
+    ///         used by `submitQuiz` to validate input.
+    /// @dev    Stored as `uint8` because the curriculum has at most 255
+    ///         topics. The constant is `public` so off-chain clients can
+    ///         read it via a single `eth_call` and validate user input
+    ///         before submitting a transaction. The value is intentionally
+    ///         fixed at deployment time - changing it would require a
+    ///         contract upgrade, which this contract does not support.
+    uint8 public constant MAX_TOPIC = 9;
+
     /// @notice A single immutable record of one quiz attempt by one user.
     /// @dev Stored in the per-user `results` array. The struct is intentionally
     ///      packed into two 32-byte storage slots:
@@ -146,7 +157,7 @@ contract DeeniQuiz {
         uint16  total,
         bytes32 questionHash
     ) external {
-        if (topic > 9) revert InvalidTopic();
+        if (topic > MAX_TOPIC) revert InvalidTopic();
         if (total == 0) revert ZeroTotal();
         if (score > total) revert ScoreExceedsTotal();
 
