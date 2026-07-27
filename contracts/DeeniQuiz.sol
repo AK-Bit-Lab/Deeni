@@ -31,6 +31,18 @@ contract DeeniQuiz {
     // 4 = Pillars of Iman, 5 = Prophets (Anbiya), 6 = Seerah,
     // 7 = Fiqh / Salah, 8 = Hadith, 9 = General Knowledge
 
+    /// @notice Custom errors used in place of `require` strings. Custom errors
+    ///         are cheaper to deploy and to revert with than string-based
+    ///         requires (no ABI string, no revert data allocation), and they
+    ///         give off-chain clients a stable, typed selector to decode
+    ///         instead of a free-form message.
+    /// @dev    Each error is declared once at the top of the contract so the
+    ///         ABI is small and the selectors are easy to reference from
+    ///         off-chain code (e.g. wagmi/viem `decodeErrorResult`).
+    error InvalidTopic();
+    error ZeroTotal();
+    error ScoreExceedsTotal();
+
     /// @notice A single immutable record of one quiz attempt by one user.
     /// @dev Stored in the per-user `results` array. The struct is intentionally
     ///      packed into two 32-byte storage slots:
@@ -134,9 +146,9 @@ contract DeeniQuiz {
         uint16  total,
         bytes32 questionHash
     ) external {
-        require(topic <= 9, "Invalid topic");
-        require(total > 0, "Total must be > 0");
-        require(score <= total, "Score > total");
+        if (topic > 9) revert InvalidTopic();
+        if (total == 0) revert ZeroTotal();
+        if (score > total) revert ScoreExceedsTotal();
 
         results[msg.sender].push(
             QuizResult({
