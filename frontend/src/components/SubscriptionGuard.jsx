@@ -4,6 +4,12 @@ import { useSubscription } from "../hooks/useSubscription";
 import { isMiniPay, DEENI_SUBSCRIPTION_ADDRESS } from "../constants";
 import { formatTxError } from "../utils/formatTxError";
 
+/**
+ * Format a unix timestamp (in seconds) as a short, locale-aware date
+ * string suitable for display in the paywall ("Renews on Mar 14, 2026").
+ * Returns null when the timestamp is missing/zero so callers can render
+ * a placeholder instead of "Jan 1, 1970".
+ */
 function formatExpiry(ts) {
   if (!ts) return null;
   const d = new Date(ts * 1000);
@@ -14,12 +20,35 @@ function formatExpiry(ts) {
   });
 }
 
+/**
+ * Compute the number of whole days remaining until a unix timestamp
+ * (in seconds). Returns 0 when the timestamp is missing/zero or has
+ * already passed, so callers can safely use the result in conditional
+ * UI ("3 days left" / "Expired") without further clamping.
+ */
 function daysLeft(ts) {
   if (!ts) return 0;
   const diff = ts * 1000 - Date.now();
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
 
+/**
+ * SubscriptionGuard
+ * Wraps the app and gates access behind the on-chain subscription state.
+ *
+ * Behaviour:
+ * - When no wallet is connected, shows a "connect wallet" paywall.
+ * - When a wallet is connected but the user is not subscribed, shows a
+ *   paywall with two CTAs: start the free trial (if available) or pay
+ *   the 5 CELO subscription fee.
+ * - When the user is subscribed, renders `children` directly.
+ * - When the contract address is still the all-zero placeholder
+ *   (development mode), access is granted unconditionally so the UI
+ *   can be built and tested before deployment.
+ *
+ * Props:
+ *   children - the protected subtree to render when access is granted.
+ */
 export default function SubscriptionGuard({ children }) {
   const { isConnected } = useAccount();
   const { connect, connectors, isPending: isConnecting, error: connectError } = useConnect();
