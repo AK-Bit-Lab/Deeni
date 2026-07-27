@@ -59,6 +59,22 @@ function daysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
 }
 
+/**
+ * HijriCalendar
+ * Renders a month-view calendar that shows both the Gregorian and
+ * Hijri dates for each day. The user can navigate prev/next months.
+ * Today's cell is highlighted.
+ *
+ * The Hijri conversion uses the Fliegel-Van Flandern algorithm (a
+ * tabular approximation, not an astronomically-observed calendar).
+ * This is sufficient for a UI display but may be off by 1-2 days from
+ * the officially-observed Hijri date in any given country. For
+ * religious rulings that depend on the observed moon sighting, users
+ * should consult their local authority.
+ *
+ * The visible month's cells are memoized so unrelated parent
+ * re-renders do not trigger 30+ Hijri conversions.
+ */
 export default function HijriCalendar() {
   const today = new Date();
   const [view, setView] = useState({
