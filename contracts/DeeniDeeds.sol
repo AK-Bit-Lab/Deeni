@@ -30,6 +30,17 @@ contract DeeniDeeds {
     error CountTooLarge();
     error AlreadyRecordedToday();
 
+    /// @notice Highest valid deed type ID. The deed curriculum currently has
+    ///         8 types (0..7); this constant is the inclusive upper bound
+    ///         used by `recordDeed` to validate input.
+    /// @dev    Stored as `uint8` because the curriculum has at most 255
+    ///         deed types. The constant is `public` so off-chain clients can
+    ///         read it via a single `eth_call` and validate user input
+    ///         before submitting a transaction. The value is intentionally
+    ///         fixed at deployment time - changing it would require a
+    ///         contract upgrade, which this contract does not support.
+    uint8 public constant MAX_DEED_TYPE = 7;
+
     /// @notice A single immutable record of one deed performed by one user.
     /// @dev Stored in the per-user `deedLogs` array. The struct is intentionally
     ///      packed into a single 32-byte storage slot:
@@ -175,7 +186,7 @@ contract DeeniDeeds {
     ///      array. The day boundary is UTC (block.timestamp / 1 days), not
     ///      the user's local timezone.
     function recordDeed(uint8 deedType, uint32 count) external {
-        if (deedType > 7) revert InvalidDeedType();
+        if (deedType > MAX_DEED_TYPE) revert InvalidDeedType();
         if (count == 0) revert ZeroCount();
         if (count > MAX_DEED_COUNT) revert CountTooLarge();
 
