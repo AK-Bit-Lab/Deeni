@@ -84,9 +84,11 @@ export default function SubscriptionGuard({ children }) {
         ) : hasInjected ? (
           <div className="w-full max-w-xs">
             <button
+              type="button"
               onClick={() => connect({ connector: connectors[0] })}
               disabled={isConnecting}
-              className="w-full py-3.5 px-4 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-60"
+              aria-label="Connect a Celo-compatible wallet"
+              className="w-full py-3.5 px-4 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
             >
               {isConnecting ? "Connecting…" : "Connect Wallet"}
             </button>
@@ -187,9 +189,11 @@ export default function SubscriptionGuard({ children }) {
         <div className="space-y-4">
           {!trialClaimed && (
             <button
+              type="button"
               onClick={startTrial}
               disabled={isPending || isConfirming}
-              className="w-full py-3.5 px-4 bg-emerald-100 text-emerald-800 font-semibold rounded-xl hover:bg-emerald-200 transition-colors disabled:opacity-60"
+              aria-label="Start a one-month free trial of Deeni"
+              className="w-full py-3.5 px-4 bg-emerald-100 text-emerald-800 font-semibold rounded-xl hover:bg-emerald-200 transition-colors disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
             >
               {isPending || isConfirming ? "Processing…" : "Start 1-Month Free Trial"}
             </button>
@@ -202,9 +206,11 @@ export default function SubscriptionGuard({ children }) {
           </div>
 
           <button
+            type="button"
             onClick={paySubscription}
             disabled={isPending || isConfirming}
-            className="w-full py-3.5 px-4 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-60"
+            aria-label="Pay 5 CELO for 30 days of Deeni access"
+            className="w-full py-3.5 px-4 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
           >
             {isPending || isConfirming ? "Processing…" : "Pay 5 CELO (30 Days)"}
           </button>
