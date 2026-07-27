@@ -102,6 +102,14 @@ contract DeeniQaidaProgress {
     /// @dev    `user` and `lessonId` are indexed so off-chain indexers can
     ///         subscribe to per-user or per-lesson feeds. The `timestamp`
     ///         field is not indexed because it is rarely queried as a filter.
+    /// @notice Emitted when a user successfully completes a Qaida lesson on-chain.
+    /// @param user      The address that completed the lesson.
+    /// @param lessonId  The lesson number (1..17).
+    /// @param timestamp Unix timestamp (seconds since epoch) at which the
+    ///                   lesson was completed.
+    /// @dev    `user` and `lessonId` are indexed so off-chain indexers can
+    ///         subscribe to per-user or per-lesson feeds. The `timestamp`
+    ///         field is not indexed because it is rarely queried as a filter.
     event LessonCompleted(
         address indexed user,
         uint8   indexed lessonId,
