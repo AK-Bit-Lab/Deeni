@@ -108,6 +108,18 @@ const NAMES = [
 
 // speak() is imported from ../utils/speak (robust mobile-friendly speech helper)
 
+/**
+ * NamesOfAllah
+ * Renders the 99 Names of Allah (Asma ul-Husna) as a searchable list.
+ * Each entry shows the Arabic name, its transliteration, and its
+ * English meaning. Tapping a name plays its pronunciation via the
+ * speak() utility (which falls back to a Google Translate TTS audio
+ * URL on platforms without speechSynthesis, e.g. MiniPay).
+ *
+ * The search box filters by transliteration or meaning (case-insensitive
+ * substring match). The Arabic text is not searched because most users
+ * will not type Arabic in the search box.
+ */
 export default function NamesOfAllah() {
   const [query, setQuery] = useState("");
 
