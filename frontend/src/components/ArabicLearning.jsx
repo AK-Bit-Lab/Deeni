@@ -542,6 +542,27 @@ const QAIDA_LESSONS = [
   }
 ];
 
+/**
+ * ArabicLearning
+ * Renders the Qaida (Arabic alphabet primer) lesson browser. Each lesson
+ * contains a list of words; tapping a word plays its pronunciation via
+ * the speak() utility and shows its transliteration. Completing a lesson
+ * records the completion on-chain via the DeeniQaidaProgress contract
+ * (which costs gas) and locally in localStorage so the UI can show
+ * progress even before the tx confirms.
+ *
+ * Local progress is stored under the "deeni_qaida_progress" key as a
+ * JSON array of completed lesson ids. The on-chain record is the
+ * source of truth for cross-device sync; localStorage is only used to
+ * avoid a flash of "not completed" while the initial on-chain reads
+ * are in flight.
+ *
+ * Tx state machine for the "Complete lesson" button:
+ *   idle -> pending (wallet awaiting confirmation)
+ *        -> confirming (tx mined, awaiting finality)
+ *        -> confirmed (local progress updated, auto-advance to next)
+ *        -> error (tx reverted or rejected)
+ */
 export default function ArabicLearning() {
   const [activeLessonId, setActiveLessonId] = useState(1);
   const [activeWord, setActiveWord] = useState(null);
