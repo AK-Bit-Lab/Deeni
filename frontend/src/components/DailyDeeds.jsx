@@ -5,8 +5,27 @@ import { useDeeds } from "../hooks/useDeeds";
 import { DEED_TYPES, DEENI_DEEDS_ADDRESS } from "../constants";
 import { formatTxError } from "../utils/formatTxError";
 
+// True when the DeeniDeeds contract address is still the all-zero
+// placeholder. Used to gate the "record deed" UI in dev mode so the
+// screen can be built and tested before deployment.
 const DEEDS_ZERO = /^0x0+$/.test(DEENI_DEEDS_ADDRESS);
 
+/**
+ * DailyDeeds
+ * Renders the daily-deeds tracker screen. Each row shows a deed type
+ * (e.g. prayer, dhikr, charity), the user's lifetime total, current
+ * streak, and a "done today" checkmark. The user can adjust the count
+ * for the day and tap "Record" to submit a recordDeed transaction.
+ *
+ * State machine for the record button:
+ *   idle -> pending (wallet awaiting confirmation)
+ *        -> confirming (tx mined, awaiting finality)
+ *        -> confirmed (stats refetch via TanStack Query invalidation)
+ *        -> idle (activeId cleared so the spinner stops)
+ *
+ * In dev mode (DEEDS_ZERO), the record button is disabled and a banner
+ * explains that the contract is not yet deployed.
+ */
 export default function DailyDeeds() {
   const { stats, totalDeeds, recordDeed, isPending, isConfirming, isConfirmed, error } =
     useDeeds();
