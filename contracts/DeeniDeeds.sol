@@ -17,6 +17,19 @@ contract DeeniDeeds {
     // 0 = Quran recitation, 1 = Dua, 2 = Dhikr, 3 = Salah (prayer),
     // 4 = Fasting, 5 = Charity/Sadaqah, 6 = Learning Arabic, 7 = Reading 99 Names
 
+    /// @notice Custom errors used in place of `require` strings. Custom errors
+    ///         are cheaper to deploy and to revert with than string-based
+    ///         requires (no ABI string, no revert data allocation), and they
+    ///         give off-chain clients a stable, typed selector to decode
+    ///         instead of a free-form message.
+    /// @dev    Each error is declared once at the top of the contract so the
+    ///         ABI is small and the selectors are easy to reference from
+    ///         off-chain code (e.g. wagmi/viem `decodeErrorResult`).
+    error InvalidDeedType();
+    error ZeroCount();
+    error CountTooLarge();
+    error AlreadyRecordedToday();
+
     /// @notice A single immutable record of one deed performed by one user.
     /// @dev Stored in the per-user `deedLogs` array. The struct is intentionally
     ///      packed into a single 32-byte storage slot:
@@ -162,12 +175,12 @@ contract DeeniDeeds {
     ///      array. The day boundary is UTC (block.timestamp / 1 days), not
     ///      the user's local timezone.
     function recordDeed(uint8 deedType, uint32 count) external {
-        require(deedType <= 7, "Invalid deed type");
-        require(count > 0, "Count must be > 0");
-        require(count <= MAX_DEED_COUNT, "Count too large");
+        if (deedType > 7) revert InvalidDeedType();
+        if (count == 0) revert ZeroCount();
+        if (count > MAX_DEED_COUNT) revert CountTooLarge();
 
         uint32 day = _today();
-        require(lastDay[msg.sender][deedType] != day, "Already recorded today");
+        if (lastDay[msg.sender][deedType] == day) revert AlreadyRecordedToday();
 
         // Streak logic
         uint32 prev = lastDay[msg.sender][deedType];
