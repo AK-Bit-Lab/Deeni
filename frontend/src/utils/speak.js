@@ -222,3 +222,30 @@ export function speechCapability() {
   if (typeof window !== "undefined" && typeof Audio !== "undefined") return "audio";
   return "none";
 }
+
+/**
+ * Stop any ongoing speech immediately. Cancels both the Web Speech API
+ * utterance queue and pauses the audio fallback element. Safe to call
+ * when nothing is playing - it is a no-op in that case. Useful when the
+ * user navigates away from a screen, taps a "stop" button, or starts a
+ * new utterance that should preempt the previous one.
+ */
+export function stopSpeaking() {
+  if (speechSupported) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (_e) {
+      /* cancel can throw on some engines; non-fatal */
+    }
+  }
+  if (audioEl) {
+    try {
+      audioEl.pause();
+      // Reset currentTime so the next play() starts from the beginning
+      // rather than resuming mid-stream.
+      audioEl.currentTime = 0;
+    } catch (_e) {
+      /* pause can throw if the element is in an invalid state; non-fatal */
+    }
+  }
+}
