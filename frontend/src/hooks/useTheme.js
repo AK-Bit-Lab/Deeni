@@ -8,8 +8,12 @@ const STORAGE_KEY = "deeni_theme";
  * the `dark` class on <html>). Persists the choice in localStorage and
  * falls back to the system color-scheme preference on first visit.
  *
- * Returns: { theme, toggle, setTheme }
+ * Returns: { theme, toggle, setTheme, clearOverride }
  *   theme: "light" | "dark"
+ *   toggle: () => void - flip between light and dark and persist.
+ *   setTheme: (next: "light" | "dark") => void - set explicitly and persist.
+ *   clearOverride: () => void - drop the persisted choice and follow the OS
+ *     preference again (live). Useful for a "reset to system" affordance.
  */
 export function useTheme() {
   const [theme, setTheme] = useState("light");
@@ -77,5 +81,23 @@ export function useTheme() {
     setTheme(next);
   };
 
-  return { theme, toggle, setTheme: setThemeAndOverride };
+  // Drop the persisted choice and re-follow the OS preference live. We
+  // also remove the localStorage entry so a future page load starts from
+  // the system preference again. The current theme is immediately updated
+  // to whatever the OS currently reports so the UI does not flash.
+  const clearOverride = () => {
+    setUserOverride(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore (private mode, quota, etc.)
+    }
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  };
+
+  return { theme, toggle, setTheme: setThemeAndOverride, clearOverride };
 }
