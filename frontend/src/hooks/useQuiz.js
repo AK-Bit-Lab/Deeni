@@ -1,12 +1,29 @@
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { DEENI_QUIZ_ADDRESS, QUIZ_ABI } from "../constants";
 
+// Number of quiz topics supported by the DeeniQuiz contract. Kept in
+// sync with the contract's enum / mapping sizes. If a new topic is
+// added on-chain, bump this and add a matching useBest call below.
+const QUIZ_TOPIC_COUNT = 10;
+
 /**
  * useQuiz
  * Reads on-chain quiz stats (best score per topic, total quizzes) for the
  * connected wallet and exposes a write helper to submit a quiz result (which
  * costs gas on Celo). All hooks are called unconditionally at the top level
- * (10 topics, fixed) to respect the Rules of Hooks.
+ * (QUIZ_TOPIC_COUNT topics, fixed) to respect the Rules of Hooks.
+ *
+ * Returned shape:
+ *   address      - connected wallet address (or undefined)
+ *   stats        - array of length QUIZ_TOPIC_COUNT; each entry is
+ *                  { id, bestScore, bestTotal, pct, attempts }
+ *   totalQuizzes - lifetime total quizzes submitted by this wallet
+ *   submitQuiz   - (topic, score, total, questionHash) => void - kicks
+ *                  off the submitQuiz tx
+ *   isPending    - true while the wallet is awaiting user confirmation
+ *   isConfirming - true while the tx is mined but not yet confirmed
+ *   isConfirmed  - true once the tx has confirmed on-chain
+ *   error        - last write/confirm error, if any
  */
 export function useQuiz() {
   const { address } = useAccount();
@@ -19,7 +36,9 @@ export function useQuiz() {
     query: { enabled: !!address },
   });
 
-  // Unrolled best-score reads for topics 0-9
+  // Unrolled best-score reads for topics 0..QUIZ_TOPIC_COUNT-1. The
+  // unroll is intentional: a loop would call useBest conditionally,
+  // which violates the Rules of Hooks.
   const b0 = useBest(address, 0);
   const b1 = useBest(address, 1);
   const b2 = useBest(address, 2);
