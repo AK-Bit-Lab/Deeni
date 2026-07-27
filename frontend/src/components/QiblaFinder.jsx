@@ -2,6 +2,22 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, Navigation } from "lucide-react";
 import { useQiblaDirection } from "../hooks/useQiblaDirection";
 
+/**
+ * QiblaFinder
+ * Renders the Qibla compass screen. Uses the useQiblaDirection hook to
+ * resolve the user's geolocation, compute the true bearing to Mecca,
+ * and track the device compass heading. The UI shows:
+ * - A rotating needle that points toward Mecca relative to where the
+ *   phone is currently facing.
+ * - A "Qibla found" indicator when the user is within 5 degrees of
+ *   the correct bearing.
+ * - A "Calibrating compass…" message while the compass is starting.
+ * - A "Compass unavailable" message when no orientation sensor is
+ *   available (desktop, denied permission, etc.) - in that case the
+ *   user can still see the static bearing and rotate manually.
+ * - A "Tap to enable compass" button on iOS 13+ where the orientation
+ *   permission must be requested from a user gesture.
+ */
 export default function QiblaFinder() {
   const { direction, heading, needleAngle, location, error, permission, compassState, requestCompass } =
     useQiblaDirection();
