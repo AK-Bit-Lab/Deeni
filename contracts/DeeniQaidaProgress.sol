@@ -14,6 +14,16 @@ pragma solidity ^0.8.20;
 ///         single storage slots and using `uint8`/`uint64` instead of
 ///         `uint256` where the value range permits.
 contract DeeniQaidaProgress {
+    /// @notice Custom errors used in place of `require` strings. Custom errors
+    ///         are cheaper to deploy and to revert with than string-based
+    ///         requires (no ABI string, no revert data allocation), and they
+    ///         give off-chain clients a stable, typed selector to decode
+    ///         instead of a free-form message.
+    /// @dev    Each error is declared once at the top of the contract so the
+    ///         ABI is small and the selectors are easy to reference from
+    ///         off-chain code (e.g. wagmi/viem `decodeErrorResult`).
+    error InvalidLessonId();
+
     /// @notice A single immutable record of one Qaida lesson completion by one user.
     /// @dev Stored in the per-user `logs` array. The struct is intentionally
     ///      packed into a single 32-byte storage slot:
@@ -103,7 +113,7 @@ contract DeeniQaidaProgress {
     ///         at the next free index rather than re-using or re-ordering
     ///         existing ones.
     function completeLesson(uint8 lessonId) external {
-        require(lessonId >= 1 && lessonId <= 17, "Invalid lesson ID");
+        if (lessonId < 1 || lessonId > 17) revert InvalidLessonId();
 
         logs[msg.sender].push(
             LessonLog({
