@@ -161,6 +161,24 @@ function shuffle(arr) {
 /* ------------------------------------------------------------------ */
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
+/**
+ * KnowledgeTest
+ * Renders the on-chain knowledge quiz screen. The user picks a topic
+ * (e.g. Pillars of Islam, Quran basics), answers a shuffled subset of
+ * questions from the local QUESTION_BANK, and submits the result on-chain
+ * via the DeeniQuiz contract (which costs gas). The on-chain record
+ * stores the score, total, and a hash of the question set so the result
+ * is verifiable later.
+ *
+ * Stage state machine:
+ *   topics  - show the topic picker
+ *   quiz    - show one question at a time with prev/next navigation
+ *   result  - show the score and a "submit on-chain" CTA
+ *
+ * The question set is hashed (hashQuestions) before submission so the
+ * contract can later prove which questions were asked without storing
+ * the full text on-chain.
+ */
 export default function KnowledgeTest() {
   const { stats, totalQuizzes, submitQuiz, isPending, isConfirming, isConfirmed, error } = useQuiz();
   const { history } = useQuizHistory(0, 10);
