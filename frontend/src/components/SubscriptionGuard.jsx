@@ -3,34 +3,7 @@ import { useAccount, useConnect } from "wagmi";
 import { useSubscription } from "../hooks/useSubscription";
 import { isMiniPay, DEENI_SUBSCRIPTION_ADDRESS } from "../constants";
 import { formatTxError } from "../utils/formatTxError";
-
-/**
- * Format a unix timestamp (in seconds) as a short, locale-aware date
- * string suitable for display in the paywall ("Renews on Mar 14, 2026").
- * Returns null when the timestamp is missing/zero so callers can render
- * a placeholder instead of "Jan 1, 1970".
- */
-function formatExpiry(ts) {
-  if (!ts) return null;
-  const d = new Date(ts * 1000);
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-/**
- * Compute the number of whole days remaining until a unix timestamp
- * (in seconds). Returns 0 when the timestamp is missing/zero or has
- * already passed, so callers can safely use the result in conditional
- * UI ("3 days left" / "Expired") without further clamping.
- */
-function daysLeft(ts) {
-  if (!ts) return 0;
-  const diff = ts * 1000 - Date.now();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-}
+import { formatExpiry, daysLeft } from "../utils/date";
 
 /**
  * SubscriptionGuard
