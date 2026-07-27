@@ -11,6 +11,24 @@ const SILVER_NISAB_GRAMS = 595;
 
 const ZAKAT_RATE = 0.025;
 
+/**
+ * ZakatCalculator
+ * Renders a simple Zakat estimation form. The user enters their
+ * zakatable assets (gold grams, silver grams, cash, investments,
+ * business assets) and short-term debts; the calculator sums the
+ * assets, subtracts the debts, and shows:
+ *   - total zakatable wealth
+ *   - whether the user meets the nisab threshold (gold or silver,
+ *     whichever is lower - silver is the stricter threshold)
+ *   - the Zakat due (2.5% of zakatable wealth, only if nisab is met)
+ *
+ * IMPORTANT: This is an estimation tool, not a fatwa. The nisab
+ * thresholds and metal prices are hard-coded approximations; in
+ * production they should be sourced from a live feed. Users should
+ * consult a qualified scholar for their actual Zakat obligation,
+ * especially for complex cases (business inventory valuation,
+ * receivables, debts owed to / by the user, etc.).
+ */
 export default function ZakatCalculator() {
   const [goldGrams, setGoldGrams] = useState("");
   const [silverGrams, setSilverGrams] = useState("");
