@@ -24,6 +24,17 @@ contract DeeniQaidaProgress {
     ///         off-chain code (e.g. wagmi/viem `decodeErrorResult`).
     error InvalidLessonId();
 
+    /// @notice Highest valid lesson ID. The Qaida curriculum currently has
+    ///         17 lessons; this constant is the inclusive upper bound used
+    ///         by `completeLesson` to validate input.
+    /// @dev    Stored as `uint8` because the curriculum has at most 255
+    ///         lessons. The constant is `public` so off-chain clients can
+    ///         read it via a single `eth_call` and validate user input
+    ///         before submitting a transaction. The value is intentionally
+    ///         fixed at deployment time - changing it would require a
+    ///         contract upgrade, which this contract does not support.
+    uint8 public constant MAX_LESSON_ID = 17;
+
     /// @notice A single immutable record of one Qaida lesson completion by one user.
     /// @dev Stored in the per-user `logs` array. The struct is intentionally
     ///      packed into a single 32-byte storage slot:
@@ -113,7 +124,7 @@ contract DeeniQaidaProgress {
     ///         at the next free index rather than re-using or re-ordering
     ///         existing ones.
     function completeLesson(uint8 lessonId) external {
-        if (lessonId < 1 || lessonId > 17) revert InvalidLessonId();
+        if (lessonId < 1 || lessonId > MAX_LESSON_ID) revert InvalidLessonId();
 
         logs[msg.sender].push(
             LessonLog({
