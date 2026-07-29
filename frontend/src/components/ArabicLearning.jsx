@@ -673,8 +673,11 @@ export default function ArabicLearning() {
         {QAIDA_LESSONS.map((lesson) => (
           <button
             key={lesson.id}
+            type="button"
             onClick={() => { setActiveLessonId(lesson.id); setActiveWord(null); }}
-            className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-semibold transition-all ${activeLessonId === lesson.id
+            aria-label={`Lesson ${lesson.id}: ${lesson.title}${completedLessons.includes(lesson.id) ? " (completed)" : ""}`}
+            aria-current={activeLessonId === lesson.id ? "true" : undefined}
+            className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 ${activeLessonId === lesson.id
               ? "bg-emerald-600 text-white shadow-sm"
               : completedLessons.includes(lesson.id)
                 ? "bg-emerald-100/50 text-emerald-700 border-emerald-200 border"
@@ -712,8 +715,11 @@ export default function ArabicLearning() {
         {currentLesson.words.map((item, idx) => (
           <button
             key={idx}
+            type="button"
             onClick={() => selectWord(item)}
-            className={`bg-emerald-50/40 rounded-xl border p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-90 ${activeWord && activeWord.text === item.text
+            aria-label={`Pronounce ${item.text} (${item.phonetic})`}
+            aria-pressed={activeWord && activeWord.text === item.text ? "true" : "false"}
+            className={`bg-emerald-50/40 rounded-xl border p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-90 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 ${activeWord && activeWord.text === item.text
               ? "border-emerald-500 ring-2 ring-emerald-200 bg-emerald-100"
               : "border-emerald-100 hover:bg-emerald-100/60"
               }`}
@@ -730,9 +736,11 @@ export default function ArabicLearning() {
 
       {/* Walsalam Button Bottom Bar */}
       <button
+        type="button"
         onClick={completeLesson}
         disabled={isPending || isConfirming}
-        className={`w-full relative overflow-hidden rounded-b-2xl p-6 shadow-sm transition-all group flex flex-col items-center justify-center ${
+        aria-label={isConnected ? "Sign on-chain to complete this lesson" : "Mark this lesson as finished"}
+        className={`w-full relative overflow-hidden rounded-b-2xl p-6 shadow-sm transition-all group flex flex-col items-center justify-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
           isPending || isConfirming
             ? "bg-gradient-to-r from-emerald-500 to-emerald-700 cursor-wait"
             : "bg-gradient-to-r from-emerald-600 to-emerald-800 active:scale-[0.99]"
