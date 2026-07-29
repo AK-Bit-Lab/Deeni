@@ -5,6 +5,34 @@ import { isMiniPay, DEENI_SUBSCRIPTION_ADDRESS } from "../constants";
 import { formatTxError } from "../utils/formatTxError";
 import { formatExpiry, daysLeft } from "../utils/date";
 
+// Paywall copy. Centralised so the strings can be tweaked (or later
+// translated) without hunting through the JSX below.
+const COPY = {
+  welcomeTitle: "{COPY.welcomeTitle}",
+  welcomeBody:
+    "Your fully on-chain Islamic companion - learn Arabic, find Qibla, calculate Zakat and more.",
+  miniPayHint: "{COPY.miniPayHint}",
+  connectCta: "Connect Wallet",
+  connectHint:
+    "{COPY.connectHint}",
+  noWalletBody:
+    "No wallet detected. Install a Celo-compatible wallet extension to continue.",
+  installCta: "{COPY.installCta}",
+  installHint: "{COPY.installHint}",
+  devBanner: "{COPY.devBanner}",
+  loading: "{COPY.loading}",
+  paywallTitle: "{COPY.paywallTitle}",
+  paywallBody:
+    "Get full access to Arabic learning, Qibla compass, Zakat calculator, Hijri calendar and the 99 Names of Allah - fully on-chain.",
+  trialCta: "Start 1-Month Free Trial",
+  payCta: "Pay 5 CELO (30 Days)",
+  processing: "Processing…",
+  connecting: "Connecting…",
+  confirmed: "{COPY.confirmed}",
+  expiresPrefix: "Current access expires: ",
+  daysLeftSuffix: "d left",
+};
+
 /**
  * SubscriptionGuard
  * Wraps the app and gates access behind the on-chain subscription state.
@@ -70,16 +98,15 @@ export default function SubscriptionGuard({ children }) {
           <span className="text-4xl">☪️</span>
         </div>
         <h1 className="text-3xl font-extrabold text-deeni-dark mb-2">
-          Welcome to Deeni
+          {COPY.welcomeTitle}
         </h1>
         <p className="text-gray-600 mb-6 max-w-xs">
-          Your fully on-chain Islamic companion - learn Arabic, find Qibla,
-          calculate Zakat and more.
+          {COPY.welcomeBody}
         </p>
 
         {isMiniPay() ? (
           <p className="text-sm text-emerald-600 mt-4">
-            Connecting to MiniPay wallet…
+            {COPY.miniPayHint}
           </p>
         ) : hasInjected ? (
           <div className="w-full max-w-xs">
@@ -90,10 +117,10 @@ export default function SubscriptionGuard({ children }) {
               aria-label="Connect a Celo-compatible wallet"
               className="w-full py-3.5 px-4 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
             >
-              {isConnecting ? "Connecting…" : "Connect Wallet"}
+              {isConnecting ? COPY.connecting : COPY.connectCta}
             </button>
             <p className="text-xs text-gray-400 mt-3">
-              Connect with MetaMask, Valora, Celo Wallet or any injected wallet.
+              {COPY.connectHint}
             </p>
             {connectError && (
               <p role="alert" className="text-xs text-red-600 mt-2">
@@ -104,8 +131,7 @@ export default function SubscriptionGuard({ children }) {
         ) : (
           <div className="w-full max-w-xs">
             <p className="text-sm text-gray-500 mb-4">
-              No wallet detected. Install a Celo-compatible wallet extension
-              to continue.
+              {COPY.noWalletBody}
             </p>
             <a
               href="https://metamask.io/download/"
@@ -113,10 +139,10 @@ export default function SubscriptionGuard({ children }) {
               rel="noopener noreferrer"
               className="inline-block py-3 px-5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm"
             >
-              Install MetaMask
+              {COPY.installCta}
             </a>
             <p className="text-xs text-gray-400 mt-4">
-              Or open this app inside the MiniPay wallet on Celo.
+              {COPY.installHint}
             </p>
           </div>
         )}
@@ -130,7 +156,7 @@ export default function SubscriptionGuard({ children }) {
       <>
         {children}
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-amber-100 text-amber-800 text-xs px-3 py-1.5 rounded-full shadow z-40">
-          Dev mode - set contract address to enable on-chain subscription
+          {COPY.devBanner}
         </div>
       </>
     );
@@ -140,7 +166,7 @@ export default function SubscriptionGuard({ children }) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-gray-500">Checking your subscription…</p>
+        <p className="text-gray-500">{COPY.loading}</p>
       </div>
     );
   }
@@ -152,7 +178,7 @@ export default function SubscriptionGuard({ children }) {
         {children}
         {expiry > 0 && (
           <div className="fixed top-3 right-3 bg-emerald-600 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow z-40">
-            {daysLeft(expiry)}d left
+            {daysLeft(expiry)}{COPY.daysLeftSuffix}
           </div>
         )}
       </>
@@ -167,11 +193,10 @@ export default function SubscriptionGuard({ children }) {
           <span className="text-3xl">☪️</span>
         </div>
         <h2 className="text-2xl font-extrabold text-emerald-800 mb-2">
-          Subscribe to Deeni
+          {COPY.paywallTitle}
         </h2>
         <p className="text-gray-600 mb-6 text-sm">
-          Get full access to Arabic learning, Qibla compass, Zakat calculator,
-          Hijri calendar and the 99 Names of Allah - fully on-chain.
+          {COPY.paywallBody}
         </p>
 
         {error && (
@@ -182,7 +207,7 @@ export default function SubscriptionGuard({ children }) {
 
         {isConfirmed && (
           <div role="status" aria-live="polite" className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
-            ✅ Transaction confirmed! Reloading…
+            {COPY.confirmed}
           </div>
         )}
 
@@ -195,7 +220,7 @@ export default function SubscriptionGuard({ children }) {
               aria-label="Start a one-month free trial of Deeni"
               className="w-full py-3.5 px-4 bg-emerald-100 text-emerald-800 font-semibold rounded-xl hover:bg-emerald-200 transition-colors disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
             >
-              {isPending || isConfirming ? "Processing…" : "Start 1-Month Free Trial"}
+              {isPending || isConfirming ? COPY.processing : COPY.trialCta}
             </button>
           )}
 
@@ -212,13 +237,13 @@ export default function SubscriptionGuard({ children }) {
             aria-label="Pay 5 CELO for 30 days of Deeni access"
             className="w-full py-3.5 px-4 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
           >
-            {isPending || isConfirming ? "Processing…" : "Pay 5 CELO (30 Days)"}
+            {isPending || isConfirming ? COPY.processing : COPY.payCta}
           </button>
         </div>
 
         {expiry > 0 && (
           <p className="mt-5 text-xs text-gray-400">
-            Current access expires: {formatExpiry(expiry)}
+            {COPY.expiresPrefix}{formatExpiry(expiry)}
           </p>
         )}
       </div>
