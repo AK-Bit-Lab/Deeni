@@ -146,13 +146,23 @@ export default function HijriCalendar() {
       {/* Month grid */}
       <div className="bg-white rounded-2xl shadow-sm border border-purple-100 p-4">
         <div className="flex items-center justify-between mb-3">
-          <button onClick={prev} aria-label="Previous month" className="p-2 rounded-full hover:bg-purple-50">
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous month"
+            className="p-2 rounded-full hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
+          >
             <ChevronLeft className="w-5 h-5 text-purple-700" />
           </button>
           <span className="font-bold text-purple-900">
             {GREG_MONTHS[view.month]} {view.year}
           </span>
-          <button onClick={next} aria-label="Next month" className="p-2 rounded-full hover:bg-purple-50">
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next month"
+            className="p-2 rounded-full hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
+          >
             <ChevronRight className="w-5 h-5 text-purple-700" />
           </button>
         </div>
@@ -170,6 +180,13 @@ export default function HijriCalendar() {
             return (
               <div
                 key={i}
+                role={todayCell ? "gridcell" : undefined}
+                aria-current={todayCell ? "date" : undefined}
+                aria-label={
+                  todayCell
+                    ? `Today, ${GREG_MONTHS[view.month]} ${d}, ${view.year} (${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} AH)`
+                    : `${GREG_MONTHS[view.month]} ${d}, ${view.year} (${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} AH)`
+                }
                 className={`aspect-square flex flex-col items-center justify-center rounded-lg text-xs ${
                   todayCell
                     ? "bg-purple-600 text-white font-bold"
