@@ -149,8 +149,11 @@ export default function TasbihCounter() {
           <ArrowLeft className="w-4 h-4" /> Home
         </Link>
         <button
+          type="button"
           onClick={() => setVibrateOn((v) => !v)}
-          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border ${
+          aria-pressed={vibrateOn ? "true" : "false"}
+          aria-label={vibrateOn ? "Turn vibration off" : "Turn vibration on"}
+          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 ${
             vibrateOn
               ? "border-emerald-300 bg-emerald-50 text-emerald-700"
               : "border-gray-200 bg-white text-gray-400"
@@ -184,8 +187,11 @@ export default function TasbihCounter() {
         {DHIKR_PRESETS.map((p) => (
           <button
             key={p.id}
+            type="button"
             onClick={() => selectPreset(p)}
-            className={`shrink-0 px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${
+            aria-pressed={p.id === presetId ? "true" : "false"}
+            aria-label={`Select ${p.translit} (${p.meaning})`}
+            className={`shrink-0 px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 ${
               p.id === presetId
                 ? "border-teal-500 bg-teal-50 text-teal-800"
                 : "border-gray-200 bg-white text-gray-500"
@@ -202,12 +208,15 @@ export default function TasbihCounter() {
         {TARGET_OPTIONS.map((t) => (
           <button
             key={t}
+            type="button"
             onClick={() => {
               setTarget(t);
               setCount(0);
               setTotalCycles(0);
             }}
-            className={`px-3 py-1 rounded-lg text-xs font-bold border ${
+            aria-pressed={t === target ? "true" : "false"}
+            aria-label={`Set target to ${t}`}
+            className={`px-3 py-1 rounded-lg text-xs font-bold border focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 ${
               t === target
                 ? "border-teal-500 bg-teal-500 text-white"
                 : "border-gray-200 bg-white text-gray-500"
@@ -221,8 +230,10 @@ export default function TasbihCounter() {
       {/* Counter circle - the main tap target */}
       <div className="flex-1 flex flex-col items-center justify-center mb-4">
         <button
+          type="button"
           onClick={tap}
-          className={`relative w-64 h-64 rounded-full flex flex-col items-center justify-center shadow-xl transition-all active:scale-95 select-none ${
+          aria-label={`Tap to count dhikr. Current count ${count} of ${target}.`}
+          className={`relative w-64 h-64 rounded-full flex flex-col items-center justify-center shadow-xl transition-all active:scale-95 select-none focus:outline-none focus:ring-4 focus:ring-teal-300 ${
             pulse
               ? "bg-gradient-to-br from-teal-400 to-emerald-500 scale-105"
               : "bg-gradient-to-br from-teal-500 to-emerald-700"
@@ -289,8 +300,10 @@ export default function TasbihCounter() {
 
       {/* Reset button */}
       <button
+        type="button"
         onClick={reset}
-        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-100 text-gray-600 font-semibold text-sm active:scale-95"
+        aria-label="Reset the counter to zero"
+        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-100 text-gray-600 font-semibold text-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
       >
         <RotateCcw className="w-4 h-4" /> Reset counter
       </button>
