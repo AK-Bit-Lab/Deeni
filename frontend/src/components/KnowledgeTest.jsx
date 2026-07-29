@@ -264,8 +264,10 @@ export default function KnowledgeTest() {
             return (
               <button
                 key={t.id}
+                type="button"
                 onClick={() => startQuiz(t.id)}
-                className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left active:scale-95 transition-transform flex flex-col gap-2"
+                aria-label={`Start ${t.label} quiz${s.attempts > 0 ? `, best ${s.bestScore} of ${s.bestTotal}` : ""}`}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left active:scale-95 transition-transform flex flex-col gap-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">{t.icon}</span>
@@ -346,8 +348,11 @@ export default function KnowledgeTest() {
               return (
                 <button
                   key={i}
+                  type="button"
                   onClick={() => selectOption(i)}
-                  className={`w-full text-left p-3 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                  aria-pressed={selected ? "true" : "false"}
+                  aria-label={`Option ${String.fromCharCode(65 + i)}: ${opt}`}
+                  className={`w-full text-left p-3 rounded-xl border-2 transition-all flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
                     selected
                       ? "border-indigo-500 bg-indigo-50 text-indigo-900"
                       : "border-gray-200 bg-white text-gray-700 active:scale-[0.98]"
@@ -367,25 +372,31 @@ export default function KnowledgeTest() {
 
         <div className="flex gap-3">
           <button
+            type="button"
             onClick={prev}
             disabled={current === 0}
-            className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-600 font-semibold text-sm disabled:opacity-40"
+            aria-label="Previous question"
+            className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-600 font-semibold text-sm disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
           >
             Previous
           </button>
           {current < questions.length - 1 ? (
             <button
+              type="button"
               onClick={next}
               disabled={!answered}
-              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm disabled:opacity-40 active:scale-95"
+              aria-label="Next question"
+              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm disabled:opacity-40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
             >
               Next
             </button>
           ) : (
             <button
+              type="button"
               onClick={finish}
               disabled={!allAnswered}
-              className="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-semibold text-sm disabled:opacity-40 active:scale-95"
+              aria-label="Finish quiz and see results"
+              className="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-semibold text-sm disabled:opacity-40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
             >
               Finish
             </button>
@@ -474,9 +485,11 @@ export default function KnowledgeTest() {
         )}
 
         <button
+          type="button"
           onClick={submitOnChain}
           disabled={isPending || isConfirming || (submitted && isConfirmed)}
-          className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
+          aria-label="Record this quiz result on the Celo blockchain"
+          className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
         >
           {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
           {submitted && isConfirmed ? "Already recorded" : isPending ? "Sign in wallet…" : "Record on Celo"}
