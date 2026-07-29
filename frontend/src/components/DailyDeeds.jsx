@@ -10,6 +10,23 @@ import { formatTxError } from "../utils/formatTxError";
 // screen can be built and tested before deployment.
 const DEEDS_ZERO = /^0x0+$/.test(DEENI_DEEDS_ADDRESS);
 
+// User-facing copy. Centralised so the strings can be tweaked (or later
+// translated) without hunting through the JSX below.
+const COPY = {
+  title: "Daily Deeds",
+  subtitle:
+    "Record your daily worship on-chain. Each entry is a Celo transaction - an immutable, verifiable log of your spiritual journey.",
+  devBanner:
+    "Deeds contract not deployed yet. Deploy DeeniDeeds.sol and set its address in constants/index.js to enable on-chain recording.",
+  progressLabel: "Today" + String.fromCharCode(39) + "s progress",
+  totalLabel: "Total deeds recorded on-chain: ",
+  confirmed: "Deed recorded on-chain! Stats updated.",
+  recordCta: "Record",
+  busy: "...",
+  footer:
+    "Recording a deed sends an on-chain transaction on Celo. You pay a small gas fee for each entry, creating a permanent record of your worship.",
+};
+
 /**
  * DailyDeeds
  * Renders the daily-deeds tracker screen. Each row shows a deed type
@@ -59,23 +76,23 @@ export default function DailyDeeds() {
       <Link to="/" className="flex items-center gap-1 text-sm text-gray-500 mb-4">
         <ChevronLeft className="w-4 h-4" /> Home
       </Link>
-      <h2 className="text-2xl font-extrabold text-emerald-800 mb-1">Daily Deeds</h2>
-      <p className="text-gray-500 text-sm mb-5">
-        Record your daily worship on-chain. Each entry is a Celo transaction - an
-        immutable, verifiable log of your spiritual journey.
-      </p>
+      <h2 className="text-2xl font-extrabold text-emerald-800 mb-1">{COPY.title}</h2>
+      <p className="text-gray-500 text-sm mb-5">{COPY.subtitle}</p>
 
       {DEEDS_ZERO && (
         <div className="mb-4 text-xs text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-100">
-          ⚠️ Deeds contract not deployed yet. Deploy <code>DeeniDeeds.sol</code> and set
-          its address in <code>constants/index.js</code> to enable on-chain recording.
+          ⚠️ {COPY.devBanner}
         </div>
       )}
 
       {/* Progress */}
-      <div className="bg-white rounded-2xl shadow-sm border border-emerald-100 p-4 mb-5">
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="bg-white rounded-2xl shadow-sm border border-emerald-100 p-4 mb-5"
+      >
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-semibold text-gray-700">Today&apos;s progress</span>
+          <span className="text-sm font-semibold text-gray-700">{COPY.progressLabel}</span>
           <span className="text-sm font-bold text-emerald-700">
             {doneTodayCount}/{DEED_TYPES.length}
           </span>
@@ -87,7 +104,7 @@ export default function DailyDeeds() {
           />
         </div>
         <div className="mt-2 text-xs text-gray-400">
-          Total deeds recorded on-chain: {totalDeeds}
+          {COPY.totalLabel}{totalDeeds}
         </div>
       </div>
 
@@ -98,7 +115,7 @@ export default function DailyDeeds() {
       )}
       {isConfirmed && (
         <div role="status" aria-live="polite" className="mb-4 text-sm text-emerald-700 bg-emerald-50 p-3 rounded-xl">
-          ✅ Deed recorded on-chain! Stats updated.
+          ✅ {COPY.confirmed}
         </div>
       )}
 
@@ -153,7 +170,7 @@ export default function DailyDeeds() {
                       className="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
                     >
                       {busy && <Loader2 className="w-3 h-3 animate-spin" />}
-                      {busy ? "…" : "Record"}
+                      {busy ? COPY.busy : COPY.recordCta}
                     </button>
                   </div>
                 )}
@@ -164,8 +181,7 @@ export default function DailyDeeds() {
       </div>
 
       <p className="text-xs text-gray-400 text-center pb-24">
-        Recording a deed sends an on-chain transaction on Celo. You pay a small gas fee
-        for each entry, creating a permanent record of your worship.
+        {COPY.footer}
       </p>
     </div>
   );
