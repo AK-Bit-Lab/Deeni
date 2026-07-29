@@ -137,8 +137,10 @@ export default function QiblaFinder() {
 
           {permission !== "granted" && !compassUnavailable && (
             <button
+              type="button"
               onClick={requestCompass}
-              className="mt-5 inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-emerald-700"
+              aria-label="Enable the live compass to track your phone's heading"
+              className="mt-5 inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
             >
               <Navigation className="w-4 h-4" /> Enable live compass
             </button>
