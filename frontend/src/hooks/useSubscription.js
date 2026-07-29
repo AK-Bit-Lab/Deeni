@@ -9,6 +9,22 @@ import { DEENI_SUBSCRIPTION_ADDRESS, DEENI_ABI } from "../constants";
 // this constant in lockstep so the UI sends the correct value.
 const SUBSCRIPTION_FEE_CELO = "5";
 
+// Centralised contract reference so the address/ABI pair is only typed
+// once. All reads and writes in this hook go through CONTRACT.
+const CONTRACT = {
+  address: DEENI_SUBSCRIPTION_ADDRESS,
+  abi: DEENI_ABI,
+};
+
+// Predicate that matches any TanStack Query cache entry produced by a
+// useReadContract call against the subscription contract. Used to
+// invalidate the right keys after a write confirms.
+const isSubscriptionReadQuery = (q) =>
+  Array.isArray(q.queryKey) &&
+  q.queryKey[0]?.toLowerCase() === "readcontract" &&
+  typeof q.queryKey[1]?.address === "string" &&
+  q.queryKey[1].address.toLowerCase() === CONTRACT.address.toLowerCase();
+
 /**
  * useSubscription
  * Reads the on-chain subscription state for the connected wallet and exposes
@@ -37,24 +53,21 @@ export function useSubscription() {
   const queryClient = useQueryClient();
 
   const { data: isSubscribed, isLoading: subLoading } = useReadContract({
-    address: DEENI_SUBSCRIPTION_ADDRESS,
-    abi: DEENI_ABI,
+    ...CONTRACT,
     functionName: "isSubscribed",
     args: [address],
     query: { enabled: !!address },
   });
 
   const { data: expiry } = useReadContract({
-    address: DEENI_SUBSCRIPTION_ADDRESS,
-    abi: DEENI_ABI,
+    ...CONTRACT,
     functionName: "getExpiry",
     args: [address],
     query: { enabled: !!address },
   });
 
   const { data: trialClaimed } = useReadContract({
-    address: DEENI_SUBSCRIPTION_ADDRESS,
-    abi: DEENI_ABI,
+    ...CONTRACT,
     functionName: "trialClaimed",
     args: [address],
     query: { enabled: !!address },
@@ -70,27 +83,18 @@ export function useSubscription() {
   // (not just isConfirmed) so subsequent transactions also trigger a refetch.
   useEffect(() => {
     if (!isConfirmed || !txHash) return;
-    queryClient.invalidateQueries({
-      predicate: (q) =>
-        Array.isArray(q.queryKey) &&
-        q.queryKey[0]?.toLowerCase() === "readcontract" &&
-        typeof q.queryKey[1]?.address === "string" &&
-        q.queryKey[1].address.toLowerCase() ===
-          DEENI_SUBSCRIPTION_ADDRESS.toLowerCase(),
-    });
+    queryClient.invalidateQueries({ predicate: isSubscriptionReadQuery });
   }, [isConfirmed, txHash, queryClient]);
 
   const startTrial = () =>
     writeContract({
-      address: DEENI_SUBSCRIPTION_ADDRESS,
-      abi: DEENI_ABI,
+      ...CONTRACT,
       functionName: "startFreeTrial",
     });
 
   const paySubscription = () =>
     writeContract({
-      address: DEENI_SUBSCRIPTION_ADDRESS,
-      abi: DEENI_ABI,
+      ...CONTRACT,
       functionName: "paySubscription",
       value: parseEther(SUBSCRIPTION_FEE_CELO),
     });
