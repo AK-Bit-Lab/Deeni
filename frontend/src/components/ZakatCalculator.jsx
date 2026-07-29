@@ -66,6 +66,7 @@ export default function ZakatCalculator() {
           min="0"
           value={value}
           onChange={(e) => setter(e.target.value)}
+          aria-label={label}
           className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-sm"
           placeholder={placeholder}
         />
@@ -95,16 +96,22 @@ export default function ZakatCalculator() {
         <div className="flex items-center gap-2 pt-1">
           <span className="text-xs text-gray-500">Nisab basis:</span>
           <button
+            type="button"
             onClick={() => setUseGoldNisab(true)}
-            className={`text-xs px-3 py-1 rounded-full ${
+            aria-label="Use gold nisab basis"
+            aria-pressed={useGoldNisab}
+            className={`text-xs px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 ${
               useGoldNisab ? "bg-amber-600 text-white" : "bg-amber-50 text-amber-700"
             }`}
           >
             Gold
           </button>
           <button
+            type="button"
             onClick={() => setUseGoldNisab(false)}
-            className={`text-xs px-3 py-1 rounded-full ${
+            aria-label="Use silver nisab basis"
+            aria-pressed={!useGoldNisab}
+            className={`text-xs px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 ${
               !useGoldNisab ? "bg-amber-600 text-white" : "bg-amber-50 text-amber-700"
             }`}
           >
