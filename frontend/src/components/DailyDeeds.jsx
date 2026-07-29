@@ -134,6 +134,7 @@ export default function DailyDeeds() {
                     <input
                       type="number"
                       min="1"
+                      aria-label={`Count for ${deed.label}`}
                       value={getCount(deed.id)}
                       onChange={(e) =>
                         setCounts((c) => ({
@@ -145,9 +146,11 @@ export default function DailyDeeds() {
                       className="w-16 px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-400 outline-none disabled:opacity-50"
                     />
                     <button
+                      type="button"
                       onClick={() => handleRecord(deed)}
                       disabled={busy || DEEDS_ZERO}
-                      className="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-1"
+                      aria-label={`Record ${getCount(deed.id)} ${deed.unit} of ${deed.label}`}
+                      className="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
                     >
                       {busy && <Loader2 className="w-3 h-3 animate-spin" />}
                       {busy ? "…" : "Record"}
