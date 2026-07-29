@@ -324,7 +324,12 @@ export default function KnowledgeTest() {
     return (
       <div className="p-5 pt-8 max-w-md mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => setStage("topics")} className="flex items-center gap-2 text-gray-500 text-sm">
+          <button
+            type="button"
+            onClick={() => setStage("topics")}
+            aria-label="Exit quiz and return to topic list"
+            className="flex items-center gap-2 text-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 rounded-lg px-1"
+          >
             <ArrowLeft className="w-4 h-4" /> Exit
           </button>
           <span className="text-xs font-semibold text-gray-500">
@@ -498,14 +503,18 @@ export default function KnowledgeTest() {
 
       <div className="flex gap-3">
         <button
+          type="button"
           onClick={() => startQuiz(topicId)}
-          className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm active:scale-95"
+          aria-label="Retry this quiz"
+          className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1"
         >
           Retry
         </button>
         <button
+          type="button"
           onClick={() => setStage("topics")}
-          className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm active:scale-95"
+          aria-label="Return to topic list"
+          className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
         >
           Other topics
         </button>
