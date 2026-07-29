@@ -127,7 +127,8 @@ function MainMenu() {
           <Link
             key={i}
             to={card.path}
-            className={`bg-gradient-to-br ${card.color} text-white p-5 rounded-2xl shadow-md flex flex-col gap-3 active:scale-95 transition-transform min-h-[120px]`}
+            aria-label={`${card.title} - ${card.desc}`}
+            className={`bg-gradient-to-br ${card.color} text-white p-5 rounded-2xl shadow-md flex flex-col gap-3 active:scale-95 transition-transform min-h-[120px] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-emerald-50 dark:focus:ring-offset-gray-950`}
           >
             {card.icon}
             <div>
@@ -164,7 +165,9 @@ function BottomNav() {
         <Link
           key={i}
           to={n.path}
-          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg ${
+          aria-label={n.name}
+          aria-current={loc.pathname === n.path ? "page" : undefined}
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
             loc.pathname === n.path ? "text-deeni-dark dark:text-emerald-400" : "text-gray-400 dark:text-gray-500"
           }`}
         >
