@@ -6,6 +6,13 @@ import { DEENI_QUIZ_ADDRESS, QUIZ_ABI } from "../constants";
 // added on-chain, bump this and add a matching useBest call below.
 const QUIZ_TOPIC_COUNT = 10;
 
+// Centralised contract reference so the address/abi pair is only typed
+// once. All reads and writes in this hook go through CONTRACT.
+const CONTRACT = {
+  address: DEENI_QUIZ_ADDRESS,
+  abi: QUIZ_ABI,
+};
+
 /**
  * useQuiz
  * Reads on-chain quiz stats (best score per topic, total quizzes) for the
@@ -29,8 +36,7 @@ export function useQuiz() {
   const { address } = useAccount();
 
   const { data: totalQuizzes } = useReadContract({
-    address: DEENI_QUIZ_ADDRESS,
-    abi: QUIZ_ABI,
+    ...CONTRACT,
     functionName: "totalQuizzes",
     args: [address],
     query: { enabled: !!address },
@@ -65,8 +71,7 @@ export function useQuiz() {
 
   const submitQuiz = (topic, score, total, questionHash) =>
     writeContract({
-      address: DEENI_QUIZ_ADDRESS,
-      abi: QUIZ_ABI,
+      ...CONTRACT,
       functionName: "submitQuiz",
       args: [topic, score, total, questionHash],
     });
@@ -86,8 +91,7 @@ export function useQuiz() {
 // Helper: read best score + attempts for a single topic.
 function useBest(address, topic) {
   const { data } = useReadContract({
-    address: DEENI_QUIZ_ADDRESS,
-    abi: QUIZ_ABI,
+    ...CONTRACT,
     functionName: "getBest",
     args: [address, topic],
     query: { enabled: !!address },
@@ -106,8 +110,7 @@ function useBest(address, topic) {
 export function useQuizHistory(offset = 0, limit = 20) {
   const { address } = useAccount();
   const { data, isLoading } = useReadContract({
-    address: DEENI_QUIZ_ADDRESS,
-    abi: QUIZ_ABI,
+    ...CONTRACT,
     functionName: "getResults",
     args: [address, offset, limit],
     query: { enabled: !!address },
