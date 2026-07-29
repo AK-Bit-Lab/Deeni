@@ -168,8 +168,9 @@ export default function NamesOfAllah() {
               <span className="text-xs text-gray-500 block">{name.meaning}</span>
             </div>
             <button
+              type="button"
               onClick={() => speak(name.arabic)}
-              className="p-2 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors shrink-0"
+              className="p-2 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-1"
               aria-label={`Pronounce ${name.translit}`}
             >
               <Volume2 className="w-4 h-4" />
