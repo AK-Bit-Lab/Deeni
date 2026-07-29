@@ -8,18 +8,35 @@ import { DEENI_DEEDS_ADDRESS, DEEDS_ABI } from "../constants";
 // added on-chain, bump this and add a matching useDeedReads call below.
 const DEED_TYPE_COUNT = 8;
 
+// Centralised contract reference so the address/abi pair is only typed
+// once. All reads and writes in this hook go through CONTRACT.
+const CONTRACT = {
+  address: DEENI_DEEDS_ADDRESS,
+  abi: DEEDS_ABI,
+};
+
+// Predicate that matches any TanStack Query cache entry produced by a
+// useReadContract call against the deeds contract. Used to invalidate
+// the right keys after a write confirms.
+const isDeedsReadQuery = (query) =>
+  Array.isArray(query.queryKey) &&
+  query.queryKey.some(
+    (k) =>
+      typeof k === "object" &&
+      k !== null &&
+      k.address === CONTRACT.address
+  );
+
 // Helper to read stats + "recorded today" for a single deed type id.
 function useDeedReads(address, id) {
   const stats = useReadContract({
-    address: DEENI_DEEDS_ADDRESS,
-    abi: DEEDS_ABI,
+    ...CONTRACT,
     functionName: "getStats",
     args: [address, id],
     query: { enabled: !!address },
   });
   const today = useReadContract({
-    address: DEENI_DEEDS_ADDRESS,
-    abi: DEEDS_ABI,
+    ...CONTRACT,
     functionName: "recordedToday",
     args: [address, id],
     query: { enabled: !!address },
@@ -56,8 +73,7 @@ export function useDeeds() {
   const { address } = useAccount();
 
   const { data: totalDeeds } = useReadContract({
-    address: DEENI_DEEDS_ADDRESS,
-    abi: DEEDS_ABI,
+    ...CONTRACT,
     functionName: "totalDeeds",
     args: [address],
     query: { enabled: !!address },
@@ -92,22 +108,12 @@ export function useDeeds() {
   // the UI updates immediately (progress count, streak, checkmark, etc.).
   useEffect(() => {
     if (!isConfirmed) return;
-    queryClient.invalidateQueries({
-      predicate: (query) =>
-        Array.isArray(query.queryKey) &&
-        query.queryKey.some(
-          (k) =>
-            typeof k === "object" &&
-            k !== null &&
-            k.address === DEENI_DEEDS_ADDRESS
-        ),
-    });
+    queryClient.invalidateQueries({ predicate: isDeedsReadQuery });
   }, [isConfirmed, queryClient]);
 
   const recordDeed = (deedType, count) =>
     writeContract({
-      address: DEENI_DEEDS_ADDRESS,
-      abi: DEEDS_ABI,
+      ...CONTRACT,
       functionName: "recordDeed",
       args: [deedType, count],
     });
